@@ -53,5 +53,25 @@
             <jvmarg line="--add-modules javafx.controls,javafx.fxml"/>
         </java>
     </target>
+    <target name="dbg" depends="setWinLib, setUnixLib">
+        <mkdir dir="build"/>
+        <javac srcdir="src" destdir="build" includeantruntime="false">
+            <modulepath path="lib/javafx-${system}-sdk-11.0.2/lib"/>
+            <compilerarg line="--add-modules javafx.controls,javafx.fxml"/>
+            <classpath refid="class.path"/>
+        </javac>
+
+        <mkdir dir="dest"/>
+        <jar destfile="dest/dbg.jar" basedir="build">
+            <manifest>
+                <attribute name="Main-Class" value="project.Debug"/>
+            </manifest>
+            <zipgroupfileset dir="lib" includes="**/*.jar"/>
+        </jar>
+        <java jar="dest/dbg.jar" fork="true">
+            <modulepath path="lib/javafx-win-sdk-11.0.2/lib"/>
+            <jvmarg line="--add-modules javafx.controls,javafx.fxml"/>
+        </java>
+    </target>
 
 </project>
