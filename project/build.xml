@@ -1,0 +1,57 @@
+<project>
+    <condition property="isWin">
+        <os family="windows"/>
+    </condition>
+    <condition property="isUnix">
+        <os family="unix"/>
+    </condition>
+
+    <target name="setWinLib" if="isWin">
+      <property name="system" value="win" />
+    </target>
+  
+    <target name="setUnixLib" if="isUnix">
+      <property name="system" value="unix" />
+    </target>
+
+    <target name="test" depends="setWinLib, setUnixLib">
+        <mkdir dir="${system}ant" />
+      </target>
+
+    <path id="class.path">
+        <fileset dir="lib">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="clean">
+        <delete dir="build"/>
+        <delete dir="dest"/>
+    </target>
+
+    <target name="compile" depends="setWinLib, setUnixLib">
+        <mkdir dir="build"/>
+        <javac srcdir="src" destdir="build" includeantruntime="false">
+            <modulepath path="lib/javafx-${system}-sdk-11.0.2/lib"/>
+            <compilerarg line="--add-modules javafx.controls,javafx.fxml"/>
+            <classpath refid="class.path"/>
+        </javac>
+
+        <mkdir dir="dest"/>
+        <jar destfile="dest/project.jar" basedir="build">
+            <manifest>
+                <attribute name="Main-Class" value="src.project.Main"/>
+            </manifest>
+            <zipgroupfileset dir="lib" includes="**/*.jar"/>
+            <fileset file="data/hello-view.fxml"/>
+        </jar>
+    </target>
+
+    <target name="run">
+        <java jar="dest/project.jar" fork="true">
+            <modulepath path="lib/javafx-win-sdk-11.0.2/lib"/>
+            <jvmarg line="--add-modules javafx.controls,javafx.fxml"/>
+        </java>
+    </target>
+
+</project>
