@@ -40,7 +40,7 @@
         <mkdir dir="dest"/>
         <jar destfile="dest/project.jar" basedir="build">
             <manifest>
-                <attribute name="Main-Class" value="src.project.Main"/>
+                <attribute name="Main-Class" value="project.Main"/>
             </manifest>
             <zipgroupfileset dir="lib" includes="**/*.jar"/>
             <fileset file="data/hello-view.fxml"/>
