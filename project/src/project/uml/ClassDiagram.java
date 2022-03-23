@@ -3,6 +3,7 @@ package src.project.uml;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class ClassDiagram extends Element
 {
     List<UMLClassifier> diagramClassifiers = new ArrayList<>();
@@ -55,5 +56,11 @@ public class ClassDiagram extends Element
         }
 
         return null;
+    }
+
+    // return tree of objects from JSON file
+    public void loadDiagram()
+    {
+       
     }
 }

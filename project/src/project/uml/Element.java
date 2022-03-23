@@ -1,6 +1,5 @@
 package src.project.uml;
 
-
 public class Element 
 {
 	public java.lang.String name;

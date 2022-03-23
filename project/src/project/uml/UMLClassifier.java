@@ -1,4 +1,4 @@
-package ija.homework1.uml;
+package src.project.uml;
 
 public class UMLClassifier extends Element
 {

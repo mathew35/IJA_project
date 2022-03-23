@@ -1,4 +1,4 @@
-package ija.homework1.uml;
+package src.project.uml;
 
 import java.util.Collections;
 import java.util.ArrayList;
