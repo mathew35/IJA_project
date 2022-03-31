@@ -3,8 +3,12 @@ package uml;
 import java.util.List;
 import java.util.ArrayList;
 
+import com.fasterxml.jackson.annotation.*;
+
 public final class UMLOperation extends UMLAttribute{
+    @JsonProperty("args")
     private ArrayList<UMLAttribute> args;
+    public UMLOperation(){}
     public UMLOperation(String name, UMLClassifier type){
         super(name, type);
     }

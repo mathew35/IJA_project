@@ -27,13 +27,16 @@
     <target name="clean">
         <delete dir="build"/>
         <delete dir="dest"/>
+        <delete dir="target"/>
     </target>
 
     <target name="compile" depends="setWinLib, setUnixLib">
         <mkdir dir="build"/>
+        <mkdir dir="target"/>
         <javac srcdir="src" destdir="build" includeantruntime="false">
             <modulepath path="lib/javafx-${system}-sdk-11.0.2/lib"/>
-            <compilerarg line="--add-modules javafx.controls,javafx.fxml"/>
+            <modulepath path="lib/jackson-2.13.2"/>
+            <compilerarg line="--add-modules javafx.controls,javafx.fxml,com.fasterxml.jackson.core,com.fasterxml.jackson.annotation,com.fasterxml.jackson.databind"/>
             <classpath refid="class.path"/>
         </javac>
 
@@ -44,6 +47,7 @@
             </manifest>
             <zipgroupfileset dir="lib" includes="**/*.jar"/>
             <fileset file="data/hello-view.fxml"/>
+            <fileset file="target/diagram.json"/>
         </jar>
     </target>
 

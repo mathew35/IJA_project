@@ -5,6 +5,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import java.awt.*;
 
+import com.fasterxml.jackson.databind.*;
+
+import project.Main;
+
+import uml.*;
+
 public class MainController {
     @FXML
     private Label welcomeText;
@@ -18,6 +24,9 @@ public class MainController {
             welcomeText.setText("Wrong input");
         }
         else{
+            ClassDiagram diag = new ClassDiagram(UMLname.getText());
+            ObjectMapper objMap = new ObjectMapper();
+            Main.exportDiagram(objMap,diag);
             welcomeText.setText("New Diagram: "+UMLname.getText());
         }
     }

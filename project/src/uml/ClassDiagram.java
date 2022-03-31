@@ -1,10 +1,17 @@
 package uml;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.*;
+
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "name")
 public class ClassDiagram extends Element{
-    private ArrayList<UMLClass> classes = new ArrayList<UMLClass>();
-    private ArrayList<UMLClassifier> classifiers = new ArrayList<UMLClassifier>();
+    @JsonProperty("classes")
+    private List<UMLClass> classes = new ArrayList<UMLClass>();
+    @JsonProperty("classifiers")
+    private List<UMLClassifier> classifiers = new ArrayList<UMLClassifier>();
+    public ClassDiagram(){}
     public ClassDiagram(String name){
         super(name);
     }
@@ -17,8 +24,9 @@ public class ClassDiagram extends Element{
             }
         }
         UMLClass newClass = new UMLClass(name);
+        UMLClassifier newClassifier = new UMLClassifier(name);
         this.classes.add(newClass);
-        this.classifiers.add(newClass);
+        this.classifierForName(name);
         return newClass;
         
     }

@@ -1,10 +1,14 @@
 package uml;
 
+import com.fasterxml.jackson.annotation.*;
+
 public class UMLClassifier extends Element{
-    private boolean isUserDefined = false;
-    public UMLClassifier(String name, boolean isUserDefined){
+    @JsonProperty("userDefined")
+    private boolean userDefined = false;
+    public UMLClassifier(){}
+    public UMLClassifier(String name, boolean userDefined){
         super(name);
-        this.isUserDefined = isUserDefined;
+        this.userDefined = userDefined;
     }   
     public UMLClassifier(String name){
         super(name);
@@ -12,11 +16,11 @@ public class UMLClassifier extends Element{
     public static UMLClassifier forName(String name){
         return new UMLClassifier(name);
     }
-    public boolean isUserDefined(){
-        return this.isUserDefined;
+    public boolean userDefined(){
+        return this.userDefined;
     }
     public String toString(){
-        String name = this.getName() + "(" + this.isUserDefined() + ")";
+        String name = this.getName() + "(" + this.userDefined() + ")";
         return name;
     }
 }
