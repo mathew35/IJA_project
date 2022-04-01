@@ -57,14 +57,6 @@ public class Main extends Application{
 
     public static void main(String[] args) {
         ObjectMapper objectMapper = new ObjectMapper();
-        //objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-
-        /*PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
-        .allowIfSubType("com.baeldung.jackson.inheritance")
-        .allowIfSubType("java.util.ArrayList")
-        .build();
-
-        objectMapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL);*/
 
         ClassDiagram d = new ClassDiagram("My model");
         UMLClass cls = d.createClass("C1");
