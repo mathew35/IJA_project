@@ -30,6 +30,22 @@ public class Main extends Application{
         }
         return null;
     }
+
+    static SequenceDiagram loadSequence(ObjectMapper objectMapper)
+    {
+        try {
+            SequenceDiagram diagram = objectMapper.readValue(new File("target/sequence.json"), SequenceDiagram.class);
+    
+            return diagram;
+        } catch (StreamReadException e) {
+            e.printStackTrace();
+        } catch (DatabindException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     
     static void exportDiagram(ObjectMapper objectMapper, ClassDiagram classdiagram)
     {
@@ -105,6 +121,8 @@ public class Main extends Application{
         diagram.createMessage("msg3", cls4, cls2, cls, true);
 
         exportSequence(objectMapper, diagram);
+
+        loadSequence(objectMapper);
 
         launch();
     }
