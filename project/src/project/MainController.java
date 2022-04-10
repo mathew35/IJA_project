@@ -3,11 +3,8 @@ package project;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import java.awt.*;
 
 import com.fasterxml.jackson.databind.*;
-
-import project.Main;
 
 import uml.*;
 

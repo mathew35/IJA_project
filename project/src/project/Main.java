@@ -20,8 +20,6 @@ public class Main extends Application{
         try {
             ClassDiagram diagram = objectMapper.readValue(new File("target/diagram.json"), ClassDiagram.class);
     
-            exportDiagram(objectMapper, diagram);
-    
             return diagram;
         } catch (StreamReadException e) {
             e.printStackTrace();
@@ -45,12 +43,25 @@ public class Main extends Application{
             e.printStackTrace();
         }
     }
+
+    static void exportSequence(ObjectMapper objectMapper, SequenceDiagram seqdiagram)
+    {
+        try {
+            objectMapper.writeValue(new File("target/sequence.json"), seqdiagram);
+        } catch (StreamWriteException e) {
+            e.printStackTrace();
+        } catch (DatabindException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getClassLoader().getResource("hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), Toolkit.getDefaultToolkit().getScreenSize().getWidth()/2, Toolkit.getDefaultToolkit().getScreenSize().getHeight()/2);
-        stage.setTitle("Projekt - UML diagram handler");
+        stage.setTitle("UML Diagram Editor");
         stage.setScene(scene);
         stage.show();
     }
@@ -58,7 +69,7 @@ public class Main extends Application{
     public static void main(String[] args) {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        ClassDiagram d = new ClassDiagram("My model");
+        /*ClassDiagram d = new ClassDiagram("My model");
         UMLClass cls = d.createClass("C1");
         
         UMLClass cls2 = d.createClass("C2");                
@@ -80,7 +91,21 @@ public class Main extends Application{
 
         loadDiagram(objectMapper);
         
-        exportDiagram(objectMapper, d);
+        exportDiagram(objectMapper, d);*/
+
+        SequenceDiagram diagram = new SequenceDiagram("Sequence");
+        UMLClass cls = diagram.createClass("ATM");
+        UMLClass cls2 = diagram.createClass("Bank");
+        UMLClass cls3 = diagram.createClass("Database");
+
+        UMLClassifier cls4 = UMLClassifier.forName("int");
+
+        diagram.createMessage("msg1", cls4, cls, cls2, true);
+        diagram.createMessage("msg2", cls4, cls, cls3, true);
+        diagram.createMessage("msg3", cls4, cls2, cls, true);
+
+        exportSequence(objectMapper, diagram);
+
         launch();
     }
 }
