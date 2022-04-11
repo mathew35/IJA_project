@@ -75,8 +75,6 @@
         <delete dir="build"/>
         <delete dir="dest"/>
         <delete dir="target"/>
-        <delete dir="lib"/>
-        <mkdir dir="lib"/>
     </target>
     
     <target name="makedirs">
