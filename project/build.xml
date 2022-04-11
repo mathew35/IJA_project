@@ -7,13 +7,60 @@
     </condition>
 
     <target name="setWinLib" if="isWin">
-      <property name="system" value="win" />
+        <property name="system" value="win" />
+        <property name="sys_download" value="windows" />
     </target>
   
     <target name="setUnixLib" if="isUnix">
-      <property name="system" value="unix" />
+        <property name="system" value="unix" />
+        <property name="sys_download" value="linux" />
     </target>
-
+    <condition property="notJFXwin">
+        <not>
+            <available file="lib/javafx-win-sdk-11.0.2" type="dir"/>
+        </not>
+    </condition>
+    <condition property="notJFXunix">
+        <not>
+            <available file="lib/javafx-unix-sdk-11.0.2" type="dir"/>
+        </not>
+    </condition>
+    <target name="jfx" depends="setWinLib, setUnixLib" if="notJFX${system}">
+        <get src="https://download2.gluonhq.com/openjfx/11.0.2/openjfx-11.0.2_${sys_download}-x64_bin-sdk.zip"
+             dest="lib"/>
+        <unzip src="lib/openjfx-11.0.2_${sys_download}-x64_bin-sdk.zip"
+             dest="lib"/>
+        <move file="lib/javafx-sdk-11.0.2" 
+             tofile="lib/javafx-${system}-sdk-11.0.2"/>  
+        <delete file="lib/openjfx-11.0.2_${sys_download}-x64_bin-sdk.zip"/>
+    </target>
+    <condition property="notJackson">
+        <not>
+            <available file="lib/jackson-2.13.2" type="dir"/>
+        </not>
+    </condition>
+    <target name="jackson" if="notJackson">
+        <get src="https://download.jar-download.com/cache_jars/com.fasterxml.jackson.core/jackson-databind/2.13.2.2/jar_files.zip"
+            dest="lib"/>
+        <unzip src="lib/jar_files.zip"
+               dest="lib/jackson-2.13.2"/>
+        <delete file="lib/jar_files.zip"/>
+    </target>
+    <condition property="notFontawesomefx">
+        <not>
+            <available file="lib/fontawesomefx" type="dir"/>
+        </not>
+    </condition>
+    <target name="fontawesomefx" if="notFontawesomefx">
+        <get src="https://download.jar-download.com/cache_jars/de.jensd/fontawesomefx-fontawesome/4.7.0-9.1.2/jar_files.zip"
+             dest="lib"/>
+        <unzip src="lib/jar_files.zip"
+               dest="lib/fontawesomefx"/>
+        <delete file="lib/jar_files.zip"/>
+    </target>
+    <target name="check-libs" depends="setWinLib, setUnixLib, jfx, jackson, fontawesomefx" if="dependencyMissing">
+        
+    </target>
     <target name="test" depends="setWinLib, setUnixLib">
         <mkdir dir="${system}ant" />
       </target>
@@ -28,11 +75,17 @@
         <delete dir="build"/>
         <delete dir="dest"/>
         <delete dir="target"/>
+        <delete dir="lib"/>
+        <mkdir dir="lib"/>
     </target>
-
-    <target name="compile" depends="setWinLib, setUnixLib">
+    
+    <target name="makedirs">
         <mkdir dir="build"/>
         <mkdir dir="target"/>
+        <mkdir dir="lib"/>
+    </target>
+
+    <target name="compile" depends="makedirs, setWinLib, setUnixLib, check-libs">
         <javac srcdir="src" destdir="build" includeantruntime="false">
             <modulepath path="lib/javafx-${system}-sdk-11.0.2/lib"/>
             <modulepath path="lib/jackson-2.13.2"/>
@@ -79,5 +132,6 @@
             <jvmarg line="--add-modules javafx.controls,javafx.fxml"/>
         </java>
     </target>
+
 
 </project>
