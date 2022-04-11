@@ -32,12 +32,12 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -82,16 +82,19 @@
         </Menu>
       </menus>
     </MenuBar>
-      <VBox alignment="CENTER" prefHeight="404.0" prefWidth="698.0">
-         <VBox.margin>
-            <Insets />
-         </VBox.margin>
-      </VBox>
-      <HBox prefHeight="0.0" prefWidth="698.0">
-         <children>
-            <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="97.0" text="Class Diagram" />
-            <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="97.0" text="Class Diagram" />
-         </children>
-      </HBox>
+      <TabPane prefHeight="386.0" prefWidth="698.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Class Diagram">
+               <content>
+                  <HBox prefHeight="100.0" prefWidth="200.0" />
+               </content>
+          </Tab>
+          <Tab text="Sequence Diagram">
+               <content>
+                  <HBox prefHeight="100.0" prefWidth="200.0" />
+               </content>
+          </Tab>
+        </tabs>
+      </TabPane>
   </children>
 </VBox>
