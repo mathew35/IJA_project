@@ -1,4 +1,5 @@
 build/
 dest/
 target/
+lib/
 .vscode/settings.json
