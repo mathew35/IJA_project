@@ -36,7 +36,8 @@
         <javac srcdir="src" destdir="build" includeantruntime="false">
             <modulepath path="lib/javafx-${system}-sdk-11.0.2/lib"/>
             <modulepath path="lib/jackson-2.13.2"/>
-            <compilerarg line="--add-modules javafx.controls,javafx.fxml,com.fasterxml.jackson.core,com.fasterxml.jackson.annotation,com.fasterxml.jackson.databind"/>
+            <modulepath path="lib/fontawesomefx"/>
+            <compilerarg line="--add-modules javafx.controls,javafx.fxml,com.fasterxml.jackson.core,com.fasterxml.jackson.annotation,com.fasterxml.jackson.databind,de.jensd.fx.glyphs.fontawesome"/>
             <classpath refid="class.path"/>
         </javac>
 
@@ -46,7 +47,8 @@
                 <attribute name="Main-Class" value="project.Main"/>
             </manifest>
             <zipgroupfileset dir="lib" includes="**/*.jar"/>
-            <fileset file="data/hello-view.fxml"/>
+            <fileset file="data/menu.fxml"/>
+            <fileset file="data/class.fxml"/>
             <fileset file="target/diagram.json"/>
         </jar>
     </target>
