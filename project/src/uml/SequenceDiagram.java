@@ -1,8 +1,6 @@
 package uml;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.*;
 import com.fasterxml.jackson.annotation.*;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "name")

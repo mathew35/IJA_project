@@ -1,8 +1,6 @@
 package uml;
 
-import java.util.List;
-import java.util.ArrayList;
-
+import java.util.*;
 import com.fasterxml.jackson.annotation.*;
 
 public class UMLOperation extends UMLAttribute{
