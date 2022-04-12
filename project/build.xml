@@ -84,7 +84,7 @@
     </target>
 
     <target name="compile" depends="makedirs, setWinLib, setUnixLib, check-libs">
-        <javac srcdir="src" destdir="build" includeantruntime="false">
+        <javac encoding="UTF-8" srcdir="src" destdir="build" includeantruntime="false">
             <modulepath path="lib/javafx-${system}-sdk-11.0.2/lib"/>
             <modulepath path="lib/jackson-2.13.2"/>
             <modulepath path="lib/fontawesomefx"/>
@@ -102,7 +102,7 @@
             <fileset file="data/class.fxml"/>
             <fileset file="target/diagram.json"/>
         </jar>
-        <javadoc destdir="doc">
+        <javadoc destdir="doc" encoding="UTF-8" docencoding="UTF-8">
             <fileset dir="src">
                 <include name="**/*.java"/>
             </fileset>

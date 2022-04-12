@@ -29,9 +29,6 @@ public class EditorController implements Initializable{
     private TabPane tabPane;
 
     
-    public void SelectClass() {
-    }
-    
     /**
      * Po načtení scény provede prvně tyto úkony pro správné zobrazení a pracování aplikace.
      *
@@ -52,7 +49,7 @@ public class EditorController implements Initializable{
     }
 
     /**
-    * TODO
+    * Detekuje selekci třídy v ClassDiagram tabu a zobrazí informace o této tříde
     */
     public void selectItem(){
         TreeItem<String> item = ClassTree.getSelectionModel().getSelectedItem();
@@ -60,9 +57,14 @@ public class EditorController implements Initializable{
             ClassName.setText(item.getValue());
         }
     }
+    /**
+     * TODO
+     */
+    public void SelectClass() {
+    }
 
     /**
-    * TODO
+    * Přidání třídy do diagramu tříd
     */
     public void onAddClassClick(){
         TreeItem<String> rootItem = ClassTree.getRoot();
@@ -75,6 +77,9 @@ public class EditorController implements Initializable{
         rootItem.getChildren().add(new TreeItem<>(text));
         ClassName.setText("");
     }
+    /**
+    * Přidání podtřídy ke vybrané tříde v diagramu tříd
+    */
     public void onAddSubclassClick(){}
 
     /**
