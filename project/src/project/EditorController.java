@@ -16,7 +16,7 @@ import javafx.scene.control.*;
 import uml.*;
 
 /**
- * Objekt řadiče, který je vytvořen pomocí FXML a používá se k inicializaci prvků uživatelského rozhraní v UML Editoru.
+ * Řadič, který řeší přiřazení a logiku metod k prvků UI ve scéně UML editoru.
  */
 public class EditorController implements Initializable{
     @FXML

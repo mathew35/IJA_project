@@ -15,7 +15,7 @@ import javafx.scene.*;
 
 
 /**
- * Objekt řadiče, který je vytvořen pomocí FXML a používá se k inicializaci prvků uživatelského rozhraní v úvodní scéně aplikace.
+ * Řadič, který je vytvořen pomocí FXML a používá se k inicializaci prvků uživatelského rozhraní v úvodní scéně aplikace.
  */
 public class MenuController {
     private Stage stage;

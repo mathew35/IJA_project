@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.*;
 import uml.*;
 
 /**
- * Třída reprezentující spuštění logiky aplikace.
+ * Incializace celé aplikace a zajišťuje spuštění JavaFX s kombinací souborů typu FXML.
  */
 public class Main extends Application{
 
