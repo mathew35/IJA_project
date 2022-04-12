@@ -1,3 +1,11 @@
+/**
+ * Řadič, který řeší přiřazení a logiku metod k prvků UI ve scéně UML editoru.
+ *
+ * @author Adam Bazel (xbazel00)
+ * @author Matůš Vráblik (xvrabl05)
+ * @since  2022-04-12
+ */
+
 package project;
 
 import java.util.ResourceBundle;
@@ -7,6 +15,9 @@ import javafx.scene.control.*;
 
 import uml.*;
 
+/**
+ * Objekt řadiče, který je vytvořen pomocí FXML a používá se k inicializaci prvků uživatelského rozhraní v UML Editoru.
+ */
 public class EditorController implements Initializable{
     @FXML
     private TreeView<String> ClassTree;
@@ -21,6 +32,12 @@ public class EditorController implements Initializable{
     public void SelectClass() {
     }
     
+    /**
+     * Po načtení scény provede prvně tyto úkony pro správné zobrazení a pracování aplikace.
+     *
+     * @param arg0 TODO.
+     * @param arg1 TODO.
+     */
     @Override
     public void initialize(URL arg0, ResourceBundle arg1){
         ClassDiagram cd = new ClassDiagram("Diagram");
@@ -34,12 +51,19 @@ public class EditorController implements Initializable{
         tabPane.getSelectionModel().selectLast(); 
     }
 
+    /**
+    * TODO
+    */
     public void selectItem(){
         TreeItem<String> item = ClassTree.getSelectionModel().getSelectedItem();
         if (item != null){
             ClassName.setText(item.getValue());
         }
     }
+
+    /**
+    * TODO
+    */
     public void onAddClassClick(){
         TreeItem<String> rootItem = ClassTree.getRoot();
         String text = ClassName.getText();
@@ -53,6 +77,9 @@ public class EditorController implements Initializable{
     }
     public void onAddSubclassClick(){}
 
+    /**
+    * Přidání karty do panelu karet 
+    */
     @FXML
     private void addTab() {
         int numTabs = tabPane.getTabs().size();

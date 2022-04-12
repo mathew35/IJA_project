@@ -1,8 +1,9 @@
 /**
- * Třída main reší logiku celé aplikace a zajišťuje spuštění JavaFX s kombinací souborů typu FXML.
+ * Incializace celé aplikace a zajišťuje spuštění JavaFX s kombinací souborů typu FXML.
  *
  * @author Adam Bazel (xbazel00)
  * @author Matůš Vráblik (xvrabl05)
+ * @since  2022-04-12
  */
 
 package project;
@@ -20,12 +21,15 @@ import com.fasterxml.jackson.databind.*;
 
 import uml.*;
 
+/**
+ * Třída reprezentující spuštění logiky aplikace.
+ */
 public class Main extends Application{
 
     /**
-     * Konstruktor inicializuje vychozi hodnoty.
+     * Metoda, která načítá z JSON souboru diagram tříd do aplikace.
      *
-     * @param objectMapper Vychozi hodnota pocatecni pozice umisteni bloku.
+     * @param objectMapper Objekt třídy, která poskytuje funkce pro čtení a zápis JSON.
      */
     static ClassDiagram loadDiagram(ObjectMapper objectMapper)
     {
@@ -43,6 +47,11 @@ public class Main extends Application{
         return null;
     }
 
+    /**
+     * Metoda, která načítá z JSON souboru sekvenční diagram do aplikace.
+     *
+     * @param objectMapper Objekt třídy, která poskytuje funkce pro čtení a zápis JSON.
+     */
     static SequenceDiagram loadSequence(ObjectMapper objectMapper)
     {
         try {
@@ -59,6 +68,11 @@ public class Main extends Application{
         return null;
     }
     
+    /**
+     * Metoda, která exportuje diagram tříd v aplikaci do souboru.
+     *
+     * @param objectMapper Objekt třídy, která poskytuje funkce pro čtení a zápis JSON.
+     */
     static void exportDiagram(ObjectMapper objectMapper, ClassDiagram classdiagram)
     {
         try {
@@ -72,6 +86,11 @@ public class Main extends Application{
         }
     }
 
+    /**
+     * Metoda, která exportuje diagram tříd v aplikaci do souboru.
+     *
+     * @param objectMapper Objekt třídy, která poskytuje funkce pro čtení a zápis JSON.
+     */
     static void exportSequence(ObjectMapper objectMapper, SequenceDiagram seqdiagram)
     {
         try {
@@ -85,6 +104,11 @@ public class Main extends Application{
         }
     }
     
+    /**
+     * Načtení FXML souboru do scény a určení scény na "jeviště".
+     *
+     * @param stage kontejner JavaFX nejvyšší úrovně, který zobrazuje scénu.
+     */
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getClassLoader().getResource("menu.fxml"));
@@ -94,6 +118,11 @@ public class Main extends Application{
         stage.show();
     }
 
+    /**
+     * Inicializace aplikace.
+     *
+     * @param args Argumenty.
+     */
     public static void main(String[] args) {
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -121,7 +150,7 @@ public class Main extends Application{
         
         exportDiagram(objectMapper, d);*/
 
-        SequenceDiagram diagram = new SequenceDiagram("Sequence");
+        /*SequenceDiagram diagram = new SequenceDiagram("Sequence");
         UMLClass cls = diagram.createClass("ATM");
         UMLClass cls2 = diagram.createClass("Bank");
         UMLClass cls3 = diagram.createClass("Database");
@@ -134,7 +163,7 @@ public class Main extends Application{
 
         exportSequence(objectMapper, diagram);
 
-        loadSequence(objectMapper);
+        loadSequence(objectMapper);*/
 
         launch();
     }
