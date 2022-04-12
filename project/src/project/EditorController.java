@@ -60,6 +60,5 @@ public class EditorController implements Initializable{
 
         tabPane.getTabs().add(tab);
         tabPane.getSelectionModel().selectLast();
-
     }
 }

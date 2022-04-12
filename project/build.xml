@@ -102,6 +102,12 @@
             <fileset file="data/class.fxml"/>
             <fileset file="target/diagram.json"/>
         </jar>
+        <javadoc destdir="doc">
+            <fileset dir="src">
+                <include name="**/*.java"/>
+            </fileset>
+            <classpath refid="class.path"/>
+        </javadoc>
     </target>
 
     <target name="run">

@@ -1,3 +1,10 @@
+/**
+ * Třída main reší logiku celé aplikace a zajišťuje spuštění JavaFX s kombinací souborů typu FXML.
+ *
+ * @author Adam Bazel (xbazel00)
+ * @author Matůš Vráblik (xvrabl05)
+ */
+
 package project;
 
 import javafx.application.Application;
@@ -15,6 +22,11 @@ import uml.*;
 
 public class Main extends Application{
 
+    /**
+     * Konstruktor inicializuje vychozi hodnoty.
+     *
+     * @param objectMapper Vychozi hodnota pocatecni pozice umisteni bloku.
+     */
     static ClassDiagram loadDiagram(ObjectMapper objectMapper)
     {
         try {
