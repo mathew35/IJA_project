@@ -88,7 +88,7 @@
             <modulepath path="lib/javafx-${system}-sdk-11.0.2/lib"/>
             <modulepath path="lib/jackson-2.13.2"/>
             <modulepath path="lib/fontawesomefx"/>
-            <compilerarg line="--add-modules javafx.controls,javafx.fxml,com.fasterxml.jackson.core,com.fasterxml.jackson.annotation,com.fasterxml.jackson.databind,de.jensd.fx.glyphs.fontawesome"/>
+            <compilerarg line="--add-modules javafx.controls,javafx.fxml,com.fasterxml.jackson.core,com.fasterxml.jackson.annotation,com.fasterxml.jackson.databind,de.jensd.fx.glyphs.fontawesome -Xlint"/>
             <classpath refid="class.path"/>
         </javac>
 
