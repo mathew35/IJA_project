@@ -34,7 +34,7 @@ public class Main extends Application{
     static ClassDiagram loadDiagram(ObjectMapper objectMapper)
     {
         try {
-            ClassDiagram diagram = objectMapper.readValue(new File("target/diagram.json"), ClassDiagram.class);
+            ClassDiagram diagram = objectMapper.readValue(new File("data/diagram.json"), ClassDiagram.class);
     
             return diagram;
         } catch (StreamReadException e) {
@@ -55,7 +55,7 @@ public class Main extends Application{
     static SequenceDiagram loadSequence(ObjectMapper objectMapper)
     {
         try {
-            SequenceDiagram diagram = objectMapper.readValue(new File("target/sequence.json"), SequenceDiagram.class);
+            SequenceDiagram diagram = objectMapper.readValue(new File("data/sequence.json"), SequenceDiagram.class);
     
             return diagram;
         } catch (StreamReadException e) {
@@ -76,7 +76,7 @@ public class Main extends Application{
     static void exportDiagram(ObjectMapper objectMapper, ClassDiagram classdiagram)
     {
         try {
-            objectMapper.writeValue(new File("target/diagram.json"), classdiagram);
+            objectMapper.writeValue(new File("data/diagram.json"), classdiagram);
         } catch (StreamWriteException e) {
             e.printStackTrace();
         } catch (DatabindException e) {
@@ -94,7 +94,7 @@ public class Main extends Application{
     static void exportSequence(ObjectMapper objectMapper, SequenceDiagram seqdiagram)
     {
         try {
-            objectMapper.writeValue(new File("target/sequence.json"), seqdiagram);
+            objectMapper.writeValue(new File("data/sequence.json"), seqdiagram);
         } catch (StreamWriteException e) {
             e.printStackTrace();
         } catch (DatabindException e) {
