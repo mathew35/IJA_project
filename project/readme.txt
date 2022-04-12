@@ -10,9 +10,9 @@ Překlad a spuštení
 
 Aplikace se prěloží pomocí príkazu: $ant compile
 Spuštení: $ant run
-Zmazání build a další nepotrební soubory: $ant clean
+Smazání build a další nepotřebné soubory: $ant clean
 
-Verze potrebných programú:
+Verze potřebných programů:
 
 Java SE 11
 Apache Ant(TM) version 1.9.16
