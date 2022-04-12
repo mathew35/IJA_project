@@ -37,11 +37,18 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="405.0" prefWidth="698.0" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="405.0" prefWidth="698.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.ClassDiagramController">
   <children>
     <MenuBar prefWidth="694.0" VBox.vgrow="NEVER">
       <menus>
@@ -82,16 +89,55 @@
         </Menu>
       </menus>
     </MenuBar>
-      <VBox alignment="CENTER" prefHeight="404.0" prefWidth="698.0">
-         <VBox.margin>
-            <Insets />
-         </VBox.margin>
-      </VBox>
-      <HBox prefHeight="0.0" prefWidth="698.0">
-         <children>
-            <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="97.0" text="Class Diagram" />
-            <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="97.0" text="Class Diagram" />
-         </children>
-      </HBox>
+      <TabPane prefHeight="386.0" prefWidth="698.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Class Diagram">
+               <content>
+                  <HBox id="ClassDiagramTab" prefHeight="100.0" prefWidth="200.0" style="-fx-id: TabClassDiagram;">
+                     <children>
+                        <VBox alignment="TOP_CENTER" prefHeight="351.0" prefWidth="87.0">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#onAddClassClick" text="Class +" fx:id="AddClassButton">
+                                 <VBox.margin>
+                                    <Insets left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                              </Button>
+                              <Button mnemonicParsing="false" onAction="#onAddSubclassClick" text="Subclass +" fx:id="AddSubclassButton">
+                                 <VBox.margin>
+                                    <Insets left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                              </Button>
+                           </children>
+                        </VBox>
+                        <TreeView fx:id="ClassTree" onContextMenuRequested="#selectItem" onMouseClicked="#selectItem" prefHeight="351.0" prefWidth="434.0" />
+                        <SplitPane dividerPositions="0.85" orientation="VERTICAL" prefHeight="351.0" prefWidth="177.0">
+                          <items>
+                              <ScrollPane fx:id="ClassScrollPane" prefHeight="263.0" prefWidth="177.0">
+                                <content>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="317.0" prefWidth="155.0">
+                                       <children>
+                                          <TextField fx:id="ClassName" layoutX="-1.0" layoutY="6.0" prefHeight="25.0" prefWidth="172.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+                                       </children>
+                                    </AnchorPane>
+                                </content>
+                              </ScrollPane>
+                              <AnchorPane prefHeight="48.0" prefWidth="177.0">
+                                 <children>
+                                    <Button layoutX="14.0" layoutY="12.0" mnemonicParsing="false" text="Reset" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="95.0" AnchorPane.topAnchor="12.0" />
+                                    <Button layoutX="109.0" layoutY="12.0" mnemonicParsing="false" text="Update" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="95.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="12.0" />
+                                 </children>
+                              </AnchorPane>
+                          </items>
+                        </SplitPane>
+                     </children></HBox>
+               </content>
+          </Tab>
+          <Tab text="Sequence Diagram">
+               <content>
+                  <HBox prefHeight="100.0" prefWidth="200.0" />
+               </content>
+          </Tab>
+        </tabs>
+      </TabPane>
   </children>
 </VBox>
