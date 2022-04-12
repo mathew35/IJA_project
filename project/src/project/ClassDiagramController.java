@@ -14,6 +14,9 @@ public class ClassDiagramController implements Initializable{
     @FXML
     private TextField ClassName;
 
+    @FXML
+    private TabPane tabPane;
+
     
     public void SelectClass() {
     }
@@ -25,6 +28,10 @@ public class ClassDiagramController implements Initializable{
         ClassTree.setShowRoot(false);
         ClassTree.setRoot(rootItem);
         ClassName.setPromptText("Class Name");
+
+        Tab deleted = tabPane.getSelectionModel().getSelectedItem();
+        tabPane.getTabs().remove(deleted);
+        tabPane.getSelectionModel().selectLast(); 
     }
 
     public void selectItem(){
@@ -45,4 +52,15 @@ public class ClassDiagramController implements Initializable{
         ClassName.setText("");
     }
     public void onAddSubclassClick(){}
+
+    @FXML
+    private void addTab() {
+        int numTabs = tabPane.getTabs().size();
+        Tab tab = new Tab("Sequence Diagram "+(numTabs-1));
+
+        tabPane.getTabs().add(tab);
+        tabPane.getSelectionModel().selectLast();
+
+    }
+
 }

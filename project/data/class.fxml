@@ -49,8 +49,16 @@
         </Menu>
       </menus>
     </MenuBar>
-      <TabPane prefHeight="386.0" prefWidth="698.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE">
+      <TabPane fx:id="tabPane" prefHeight="386.0" prefWidth="698.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE">
         <tabs>
+        <Tab fx:id="addTaber" onSelectionChanged="#addTab">
+               <content>
+                  <HBox prefHeight="100.0" prefWidth="200.0" />
+               </content>
+               <graphic>
+                  <FontAwesomeIconView fx:id="addTaber" fill="#10ea58" glyphName="PLUS" textAlignment="CENTER" wrappingWidth="15.028609275817871" />
+               </graphic>
+          </Tab>
           <Tab text="Class Diagram">
                <content>
                   <HBox id="ClassDiagramTab" prefHeight="100.0" prefWidth="200.0" style="-fx-id: TabClassDiagram;">
@@ -92,11 +100,32 @@
                      </children></HBox>
                </content>
           </Tab>
-          <Tab text="Sequence Diagram">
+           <Tab text="Sequence Diagram">
                <content>
-                  <HBox prefHeight="100.0" prefWidth="200.0" />
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <VBox alignment="TOP_CENTER" prefHeight="352.0" prefWidth="56.0">
+                           <children>
+                              <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="32.0">
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </VBox.margin>
+                                 <graphic>
+                                    <FontAwesomeIconView glyphName="PLUS" />
+                                 </graphic>
+                              </Button>
+                              <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="30.0" prefWidth="32.0">
+                                 <graphic>
+                                    <FontAwesomeIconView glyphName="SEND" />
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </VBox>
+                        <Line endX="-100.20709991455078" endY="350.4928894042969" startX="-100.0" stroke="#0000005a" />
+                     </children>
+                  </HBox>
                </content>
-          </Tab>
+            </Tab>
         </tabs>
       </TabPane>
   </children>
