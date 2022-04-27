@@ -155,11 +155,13 @@ public class Main extends Application{
         UMLClass cls2 = diagram.createClass("Bank");
         UMLClass cls3 = diagram.createClass("Database");
 
-        UMLClassifier cls4 = UMLClassifier.forName("int");
+        UMLOperation op1 = UMLOperation.create("method1", diagram.classifierForName("void"));
 
-        diagram.createMessage("msg1", cls4, cls, cls2, true);
-        diagram.createMessage("msg2", cls4, cls, cls3, true);
-        diagram.createMessage("msg3", cls4, cls2, cls, true);
+
+        diagram.createMessage(op1, cls, cls2, true);
+        diagram.createMessage(op1, cls, cls3, true);
+        diagram.createMessage(op1, cls2, cls, true);
+
 
         exportSequence(objectMapper, diagram);
 

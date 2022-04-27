@@ -7,6 +7,7 @@
 
 package project;
 
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.IOException;
 import javafx.event.ActionEvent;
@@ -30,6 +31,27 @@ public class MenuController {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getClassLoader().getResource("class.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(fxmlLoader.load());
+
+        EditorController editor = fxmlLoader.getController();
+        editor.selectTab(1);
+
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void openDiagram(ActionEvent event) throws IOException
+    {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getClassLoader().getResource("class.fxml"));
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(fxmlLoader.load());
+
+        /*FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Sequence File...");
+        fileChooser.showOpenDialog(stage);*/
+
+        EditorController editor = fxmlLoader.getController();
+        editor.selectTab(2);
+
         stage.setScene(scene);
         stage.show();
     }
