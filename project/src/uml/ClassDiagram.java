@@ -48,4 +48,15 @@ public class ClassDiagram extends Element{
         }
         return null;
     }
+
+    @JsonIgnore
+    public ArrayList<String> getNameClasses()
+    {
+        ArrayList<String> nameList = new ArrayList<String>();
+        for (int i = 0; i < classes.size(); i++) 
+        {
+            nameList.add(classes.get(i).getName());
+        }
+        return nameList;
+    }
 }
