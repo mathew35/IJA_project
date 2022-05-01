@@ -14,7 +14,6 @@ import uml.SequenceDiagram;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.core.exc.StreamWriteException;
@@ -82,7 +81,7 @@ public class MenuController {
             ObjectMapper objectMapper = new ObjectMapper();
             EditorController editor = fxmlLoader.getController();
 
-            SequenceDiagram seqdiagram = loadSequence(objectMapper, file);
+            editor.sequenceDiagrams.set(0, loadSequence(objectMapper, file));
 
             editor.selectTab(2);
     
@@ -90,14 +89,13 @@ public class MenuController {
             stage.show();
 
             // After show otherwise bad values for lines
-            editor.displaySequence(seqdiagram);
+            editor.displaySequence(loadSequence(objectMapper, file));
         }
     }
 
     private static void configureFileChooser(final FileChooser fileChooser) 
     {      
-        fileChooser.setTitle("Open Sequence File...");
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));                 
+        fileChooser.setTitle("Open Sequence File...");                
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON", "*.json"));
     }
 
@@ -149,7 +147,7 @@ public class MenuController {
      *
      * @param objectMapper Objekt třídy, která poskytuje funkce pro čtení a zápis JSON.
      */
-    static void exportClass(ObjectMapper objectMapper, ClassDiagram classdiagram)
+    void exportClass(ObjectMapper objectMapper, ClassDiagram classdiagram)
     {
         try {
             objectMapper.writeValue(new File("data/diagram.json"), classdiagram);
@@ -167,7 +165,7 @@ public class MenuController {
      *
      * @param objectMapper Objekt třídy, která poskytuje funkce pro čtení a zápis JSON.
      */
-    static void exportSequence(ObjectMapper objectMapper, SequenceDiagram seqdiagram)
+    void exportSequence(ObjectMapper objectMapper, SequenceDiagram seqdiagram)
     {
         try {
             objectMapper.writeValue(new File("data/sequence.json"), seqdiagram);
