@@ -15,12 +15,11 @@
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="420.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.EditorController">
+<VBox prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.EditorController">
   <children>
     <MenuBar prefWidth="704.0" VBox.vgrow="NEVER">
       <menus>
@@ -61,7 +60,7 @@
         </Menu>
       </menus>
     </MenuBar>
-      <TabPane fx:id="tabPane" prefHeight="395.0" prefWidth="700.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE">
+      <TabPane fx:id="tabPane" prefHeight="540.0" prefWidth="700.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE">
         <tabs>
         <Tab fx:id="addTaber" onSelectionChanged="#addTab">
                <content>
@@ -114,9 +113,9 @@
           </Tab>
            <Tab text="Sequence Diagram">
                <content>
-                  <HBox prefHeight="100.0" prefWidth="200.0">
+                  <HBox fx:id="seqEditorBox" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <VBox alignment="TOP_CENTER" prefHeight="352.0" prefWidth="56.0">
+                        <VBox alignment="TOP_CENTER" prefHeight="486.0" prefWidth="60.0">
                            <children>
                               <Button fx:id="addSeqObjButton" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#addSeqObj" prefHeight="30.0" prefWidth="32.0">
                                  <VBox.margin>
@@ -126,32 +125,23 @@
                                     <FontAwesomeIconView glyphName="PLUS" />
                                  </graphic>
                               </Button>
-                              <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0">
+                              <Button fx:id="addMessageButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#addMessage" prefHeight="30.0" prefWidth="30.0">
                                  <graphic>
                                     <FontAwesomeIconView glyphName="SEND" />
                                  </graphic>
                               </Button>
                            </children>
                         </VBox>
-                        <StackPane prefHeight="366.0" prefWidth="700.0">
+                        <VBox fx:id="addSeqObjFirst" alignment="CENTER" onMouseClicked="#addSeqObj" prefHeight="460.0" prefWidth="900.0">
                            <children>
-                              <VBox prefHeight="200.0" prefWidth="100.0" />
-                              <HBox fx:id="seqDisplay" alignment="CENTER" prefHeight="366.0" prefWidth="700.0" scaleShape="false">
-                                 <children>
-                                    <VBox fx:id="addSeqObjFirst" alignment="CENTER" onMouseClicked="#addSeqObj" prefHeight="200.0" prefWidth="100.0">
-                                       <children>
-                                          <Text fill="#00000081" strokeType="OUTSIDE" strokeWidth="0.0" text="+">
-                                             <font>
-                                                <Font size="70.0" />
-                                             </font>
-                                          </Text>
-                                          <Text fill="#0000007f" strokeType="OUTSIDE" strokeWidth="0.0" text="Add Object..." wrappingWidth="69.08398818969727" />
-                                       </children>
-                                    </VBox>
-                                 </children>
-                              </HBox>
+                              <Text fill="#00000081" strokeType="OUTSIDE" strokeWidth="0.0" text="+">
+                                 <font>
+                                    <Font size="70.0" />
+                                 </font>
+                              </Text>
+                              <Text fill="#0000007f" strokeType="OUTSIDE" strokeWidth="0.0" text="Add Object..." wrappingWidth="69.08398818969727" />
                            </children>
-                        </StackPane>
+                        </VBox>
                      </children>
                   </HBox>
                </content>

@@ -33,6 +33,7 @@ public class Main extends Application{
         Scene scene = new Scene(fxmlLoader.load(), Toolkit.getDefaultToolkit().getScreenSize().getWidth()/2, Toolkit.getDefaultToolkit().getScreenSize().getHeight()/2);
         stage.setTitle("UML Diagram Editor");
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
 

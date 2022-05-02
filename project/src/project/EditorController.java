@@ -11,10 +11,15 @@ package project;
 
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+
+import org.w3c.dom.NameList;
+
 import java.net.URL;
 import javafx.fxml.*;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -22,7 +27,10 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 
 import uml.*;
 
@@ -33,6 +41,7 @@ public class EditorController implements Initializable
 {
     ClassDiagram classDiagram = new ClassDiagram();
     ArrayList<SequenceDiagram> sequenceDiagrams = new ArrayList<SequenceDiagram>();
+    GridPane seqGrid = new GridPane();
 
     @FXML
     private TreeView<String> ClassTree;
@@ -44,14 +53,17 @@ public class EditorController implements Initializable
     private TabPane tabPane;
 
     @FXML
-    private HBox seqDisplay;
-
-    @FXML
     private VBox addSeqObjFirst;
 
     @FXML
     private Button addSeqObjButton;
-    
+
+    @FXML
+    private Button addMessageButton;
+
+    @FXML
+    private HBox seqEditorBox;
+
     /**
      * Po načtení scény provede prvně tyto úkony pro správné zobrazení a pracování aplikace.
      *
@@ -70,10 +82,17 @@ public class EditorController implements Initializable
         tabPane.getTabs().remove(deleted);
     }
 
-    private Node createSpacer() {
+    private Node createHSpacer() {
         final Region spacer = new Region();
         // Make it always grow or shrink according to the available space
         HBox.setHgrow(spacer, Priority.ALWAYS);
+        return spacer;
+    }
+
+    private Node createVSpacer() {
+        final Region spacer = new Region();
+        // Make it always grow or shrink according to the available space
+        VBox.setVgrow(spacer, Priority.ALWAYS);
         return spacer;
     }
 
@@ -136,90 +155,150 @@ public class EditorController implements Initializable
     {
         if (addSeqObjFirst != null)
         {
-            seqDisplay.getChildren().remove(addSeqObjFirst);
-        }
+            initGrid();
+        };
 
-        Line line = new Line(0, 0, 0, seqDisplay.getHeight() * 0.9);
+        int objsCount = sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2).getNameClasses().size();
         TextField objField = new TextField();
-        VBox objBox = new VBox();
-
         addSeqObjButton.setDisable(true);
 
-        objField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+        // Multiple Event Handler https://stackoverflow.com/questions/31794167/how-to-handle-multiple-event-types-from-one-class-in-javafx
+        objField.setOnKeyPressed(new EventHandler<KeyEvent>() 
+        {
             @Override
             public void handle(KeyEvent ke) {
                 if (ke.getCode().equals(KeyCode.ENTER)) 
                 {
                     sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2).createClass(objField.getText());
 
-                    Text objName = new Text(objField.getText() + sequenceDiagrams.get(0).getNameClasses());
-                    objBox.getChildren().remove(objField);
-                    objBox.getChildren().add(0, objName);
+                    // sequenceDiagrams.get(0).getNameClasses()+ seqDisplay.getChildren().size()
+                    Text objName = new Text(objField.getText());
+                    seqGrid.getChildren().remove(objField);
+                    seqGrid.add(objName, objsCount, 0);
 
                     addSeqObjButton.setDisable(false);
                 }
             }
         });
 
-        objBox.setAlignment(Pos.CENTER);
-
-        if (seqDisplay.getChildren().size() == 0)
+        objField.focusedProperty().addListener(new ChangeListener<Boolean>()
         {
-            seqDisplay.getChildren().add(createSpacer());
+            @Override
+            public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue)
+            {
+                if (!newPropertyValue)
+                {
+                    if (objField.getText() == "" && objsCount != 0)
+                    {
+                        seqGrid.getChildren().remove(objField);
+                        seqGrid.getColumnConstraints().remove(objsCount);
+                    }
+                    /*else
+                    {
+                        sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2).createClass(objField.getText());
+
+                        Text objName = new Text(objField.getText());
+                        seqGrid.getChildren().remove(objField);
+                        seqGrid.add(objName, objsCount, 0);
+                    }*/
+                    addSeqObjButton.setDisable(false);
+                }
+            }
+        });
+
+        seqGrid.getColumnConstraints().add(new ColumnConstraints(-1, -1, -1, Priority.ALWAYS, HPos.CENTER, false));
+        if (objsCount == 0)
+        {
+            seqGrid.getRowConstraints().add(new RowConstraints(-1, -1, -1, Priority.ALWAYS, VPos.CENTER, false));
+            seqGrid.getRowConstraints().add(new RowConstraints(-1, -1, -1, Priority.ALWAYS, VPos.CENTER, false));
+        }
+        
+        seqGrid.add(objField, objsCount, 0);
+        objField.requestFocus();
+        seqGrid.add(new Line(0, 0, 0, seqEditorBox.getHeight() * 0.9), objsCount, 1);
+    }
+
+    public void clickGrid(javafx.scene.input.MouseEvent event) 
+    {
+        Node clickedNode = event.getPickResult().getIntersectedNode();
+        if (clickedNode != seqGrid) {
+            // click on descendant node
+            Node parent = clickedNode.getParent();
+            while (parent != seqGrid) {
+                clickedNode = parent;
+                parent = clickedNode.getParent();
+            }
+            Integer colIndex = GridPane.getColumnIndex(clickedNode);
+            Integer rowIndex = GridPane.getRowIndex(clickedNode);
+            System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
+        }
+    }
+
+    @FXML
+    public void addMessage()
+    {
+
+    }
+    /*@FXML
+    public void addMessage()
+    {
+        VBox msgBox = new VBox();
+        msgBox.setAlignment(Pos.CENTER);
+        Node nodeSender = seqDisplay.getChildren().get(1);
+        Node nodeSpacer = seqDisplay.getChildren().get(2);
+        Node nodeReciever = seqDisplay.getChildren().get(3);
+        double start_width = 0;
+
+        start_width = ((Region)nodeSpacer).getWidth() + ((((VBox)nodeSender).getWidth() + ((VBox)nodeReciever).getWidth()) / 2);
+
+        if (seqDisplayLines.getChildren().size() == 0)
+        {
+            seqDisplayLines.getChildren().add(createHSpacer());
         }
 
-        seqDisplay.getChildren().add(objBox);
-        objBox.getChildren().addAll(objField, line);
-        seqDisplay.getChildren().add(createSpacer());
-    }
+        //seqDisplayLines.getChildren().addAll(debug, horLine);
+
+        Text debug2 = new Text("" + start_width + " | " + ((VBox)nodeSender).getWidth() + " | " + ((VBox)nodeReciever).getWidth());
+        Line horLine2 = new Line(1, 0, start_width, 0);
+        msgBox.getChildren().addAll(debug2,horLine2);
+        seqDisplayLines.getChildren().addAll(msgBox, createHSpacer());
+    }*/
 
     @FXML
     public void displaySequence(SequenceDiagram diagram)
     {
         if (addSeqObjFirst != null)
         {
-            seqDisplay.getChildren().remove(addSeqObjFirst);
+            initGrid();
         }
 
         ArrayList<String> nameList = new ArrayList<String>();
-        ArrayList<Text> textList = new ArrayList<Text>();
 
         nameList = diagram.getNameClasses();
 
-        //int messagesCount[] = {1, 0};
-        // Add first spacer
-        seqDisplay.getChildren().add(createSpacer());
-
-        Line lines[] = new Line[nameList.size()];
-        VBox seqYAxis[] = new VBox[nameList.size()];
-
-        for(int i=0;i<nameList.size();i++)
+        for (int i = 0; i < nameList.size(); i++)
         {
-            seqYAxis[i] = new VBox();
-            seqYAxis[i].setAlignment(Pos.CENTER);
-            seqDisplay.getChildren().add(seqYAxis[i]);
-
-            //seqDisplay.getHeight()
-            textList.add(new Text(nameList.get(i)));
-            /*if (messagesCount[i] == 0)
+            seqGrid.getColumnConstraints().add(new ColumnConstraints(-1, -1, -1, Priority.ALWAYS, HPos.CENTER, false));
+            if (i == 0)
             {
-                lines[i] = new Line(0, 0, 0, seqDisplay.getHeight() * 0.9);
-                seqYAxis[i].getChildren().addAll(textList.get(i), lines[i]);
+                seqGrid.getRowConstraints().add(new RowConstraints(-1, -1, -1, Priority.ALWAYS, VPos.CENTER, false));
+                seqGrid.getRowConstraints().add(new RowConstraints(-1, -1, -1, Priority.ALWAYS, VPos.CENTER, false));
             }
-            else
-            {
-                lines[i] = new Line(0, 0, 0, seqDisplay.getHeight() * 0.9 / (2 * messagesCount[i]));
-                Line active = new Line(0, 0, 0, seqDisplay.getHeight() * 0.9 / (2 * messagesCount[i]));
-                active.setStrokeWidth(5.0);
-                seqYAxis[i].getChildren().addAll(textList.get(i), lines[i], active);
-            }*/
-            
-            lines[i] = new Line(0, 0, 0, seqDisplay.getHeight() * 0.9);
-            seqYAxis[i].getChildren().addAll(textList.get(i), lines[i]);
-            
-            //lines[i].getStrokeDashArray().addAll(25d, 10d);
-            seqDisplay.getChildren().add(createSpacer());
+        
+            seqGrid.add(new Text(nameList.get(i)), i, 0);
+            seqGrid.add(new Line(0, 0, 0, seqEditorBox.getHeight() * 0.9), i, 1);
         }
-        seqDisplay.setAlignment(Pos.CENTER_RIGHT);
+    }
+
+    @FXML
+    public void initGrid()
+    {
+        seqEditorBox.getChildren().remove(addSeqObjFirst);
+        addSeqObjFirst = null;
+        seqGrid.setMinWidth(900);
+        seqGrid.setMinHeight(460);
+        seqGrid.setAlignment(Pos.CENTER);
+        seqGrid.setGridLinesVisible(true);
+        seqEditorBox.getChildren().add(seqGrid);
     }
 }
