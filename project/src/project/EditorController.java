@@ -12,25 +12,27 @@ package project;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-import org.w3c.dom.NameList;
-
 import java.net.URL;
 import javafx.fxml.*;
 import javafx.geometry.HPos;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 
 import uml.*;
 
@@ -42,6 +44,8 @@ public class EditorController implements Initializable
     ClassDiagram classDiagram = new ClassDiagram();
     ArrayList<SequenceDiagram> sequenceDiagrams = new ArrayList<SequenceDiagram>();
     GridPane seqGrid = new GridPane();
+    GridPane seqGridState = new GridPane();
+    GridPane seqGridMsgs = new GridPane();
 
     @FXML
     private TreeView<String> ClassTree;
@@ -62,7 +66,7 @@ public class EditorController implements Initializable
     private Button addMessageButton;
 
     @FXML
-    private HBox seqEditorBox;
+    private StackPane seqEditorBox;
 
     /**
      * Po načtení scény provede prvně tyto úkony pro správné zobrazení a pracování aplikace.
@@ -156,10 +160,60 @@ public class EditorController implements Initializable
         if (addSeqObjFirst != null)
         {
             initGrid();
+            //initGridState();
         };
 
         int objsCount = sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2).getNameClasses().size();
+        VBox startObj = new VBox();
+        
+        Line startLine = new Line(0, 0, 0, seqEditorBox.getHeight() * 0.01);
+        StackPane objRectangle = new StackPane();
+        Rectangle rectangle = new Rectangle(150, 50);
+        Effect effect = new DropShadow(BlurType.GAUSSIAN, Color.DODGERBLUE, 5, 0.75, 0, 0);
         TextField objField = new TextField();
+
+        rectangle.setOnMouseClicked((MouseEvent event) -> 
+        {
+            rectangle.requestFocus();
+            Node clickedNode = event.getPickResult().getIntersectedNode();
+            System.out.println(clickedNode);
+            if (clickedNode != seqGrid) 
+            {
+                // click on descendant node
+                Node parent = clickedNode.getParent();
+                while (parent != seqGrid) 
+                {
+                    clickedNode = parent;
+                    parent = clickedNode.getParent();
+                }
+                Integer colIndex = GridPane.getColumnIndex(clickedNode);
+                Integer rowIndex = GridPane.getRowIndex(clickedNode);
+                System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
+
+                rectangle.setStroke(Color.DODGERBLUE);
+                rectangle.setEffect(rectangle.getEffect() == null ? effect : null);
+            }
+        });
+
+        rectangle.focusedProperty().addListener(new ChangeListener<Boolean>()
+        {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue)
+            {
+                if (!newPropertyValue)
+                {
+                    rectangle.setStroke(Color.BLACK);
+                    rectangle.setEffect(null);
+                }
+            }
+        });
+
+        startObj.setAlignment(Pos.CENTER);
+
+        rectangle.setStroke(Color.BLACK);
+        rectangle.setFill(Color.TRANSPARENT);
+
+        objRectangle.getChildren().add(rectangle);
         addSeqObjButton.setDisable(true);
 
         // Multiple Event Handler https://stackoverflow.com/questions/31794167/how-to-handle-multiple-event-types-from-one-class-in-javafx
@@ -173,8 +227,9 @@ public class EditorController implements Initializable
 
                     // sequenceDiagrams.get(0).getNameClasses()+ seqDisplay.getChildren().size()
                     Text objName = new Text(objField.getText());
-                    seqGrid.getChildren().remove(objField);
-                    seqGrid.add(objName, objsCount, 0);
+                    objRectangle.getChildren().remove(objField);
+                    objRectangle.getChildren().add(objName);
+                    //seqGrid.add(objName, objsCount, 0);
 
                     addSeqObjButton.setDisable(false);
                 }
@@ -190,7 +245,7 @@ public class EditorController implements Initializable
                 {
                     if (objField.getText() == "" && objsCount != 0)
                     {
-                        seqGrid.getChildren().remove(objField);
+                        seqGrid.getChildren().remove(startObj);
                         seqGrid.getColumnConstraints().remove(objsCount);
                     }
                     /*else
@@ -213,25 +268,22 @@ public class EditorController implements Initializable
             seqGrid.getRowConstraints().add(new RowConstraints(-1, -1, -1, Priority.ALWAYS, VPos.CENTER, false));
         }
         
-        seqGrid.add(objField, objsCount, 0);
+        objRectangle.getChildren().add(objField);
+
+        startObj.getChildren().addAll(objRectangle, startLine);
+
+        seqGrid.add(startObj, objsCount, 0);
         objField.requestFocus();
-        seqGrid.add(new Line(0, 0, 0, seqEditorBox.getHeight() * 0.9), objsCount, 1);
+
+        Line timeAxis = new Line(0, 0, 0, seqEditorBox.getHeight() * 0.85);
+        timeAxis.getStrokeDashArray().addAll(25d, 10d);
+
+        seqGrid.add(timeAxis, objsCount, 1);
     }
 
     public void clickGrid(javafx.scene.input.MouseEvent event) 
     {
-        Node clickedNode = event.getPickResult().getIntersectedNode();
-        if (clickedNode != seqGrid) {
-            // click on descendant node
-            Node parent = clickedNode.getParent();
-            while (parent != seqGrid) {
-                clickedNode = parent;
-                parent = clickedNode.getParent();
-            }
-            Integer colIndex = GridPane.getColumnIndex(clickedNode);
-            Integer rowIndex = GridPane.getRowIndex(clickedNode);
-            System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
-        }
+        
     }
 
     @FXML
@@ -270,6 +322,7 @@ public class EditorController implements Initializable
         if (addSeqObjFirst != null)
         {
             initGrid();
+            initGridState();
         }
 
         ArrayList<String> nameList = new ArrayList<String>();
@@ -298,7 +351,18 @@ public class EditorController implements Initializable
         seqGrid.setMinWidth(900);
         seqGrid.setMinHeight(460);
         seqGrid.setAlignment(Pos.CENTER);
-        seqGrid.setGridLinesVisible(true);
+        //seqGrid.setGridLinesVisible(true);
         seqEditorBox.getChildren().add(seqGrid);
+    }
+
+    @FXML
+    public void initGridState()
+    {
+        addSeqObjFirst = null;
+        seqGridState.setMinWidth(900);
+        seqGridState.setMinHeight(460);
+        seqGridState.setAlignment(Pos.CENTER);
+        seqGridState.setGridLinesVisible(true);
+        seqEditorBox.getChildren().add(seqGridState);
     }
 }

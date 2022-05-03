@@ -15,11 +15,12 @@
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.EditorController">
+<VBox fx:id="editor" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.EditorController">
   <children>
     <MenuBar prefWidth="704.0" VBox.vgrow="NEVER">
       <menus>
@@ -113,7 +114,7 @@
           </Tab>
            <Tab text="Sequence Diagram">
                <content>
-                  <HBox fx:id="seqEditorBox" prefHeight="100.0" prefWidth="200.0">
+                  <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
                         <VBox alignment="TOP_CENTER" prefHeight="486.0" prefWidth="60.0">
                            <children>
@@ -132,16 +133,20 @@
                               </Button>
                            </children>
                         </VBox>
-                        <VBox fx:id="addSeqObjFirst" alignment="CENTER" onMouseClicked="#addSeqObj" prefHeight="460.0" prefWidth="900.0">
+                        <StackPane fx:id="seqEditorBox" maxHeight="486.0" maxWidth="900.0" prefHeight="486.0" prefWidth="900.0">
                            <children>
-                              <Text fill="#00000081" strokeType="OUTSIDE" strokeWidth="0.0" text="+">
-                                 <font>
-                                    <Font size="70.0" />
-                                 </font>
-                              </Text>
-                              <Text fill="#0000007f" strokeType="OUTSIDE" strokeWidth="0.0" text="Add Object..." wrappingWidth="69.08398818969727" />
+                              <VBox fx:id="addSeqObjFirst" alignment="CENTER" onMouseClicked="#addSeqObj" prefHeight="486.0" prefWidth="332.0">
+                                 <children>
+                                    <Text fill="#00000081" strokeType="OUTSIDE" strokeWidth="0.0" text="+">
+                                       <font>
+                                          <Font size="70.0" />
+                                       </font>
+                                    </Text>
+                                    <Text fill="#0000007f" strokeType="OUTSIDE" strokeWidth="0.0" text="Add Object..." wrappingWidth="69.08398818969727" />
+                                 </children>
+                              </VBox>
                            </children>
-                        </VBox>
+                        </StackPane>
                      </children>
                   </HBox>
                </content>
