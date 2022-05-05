@@ -55,9 +55,9 @@ public class MenuController {
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(fxmlLoader.load());
 
-        /*FileChooser fileChooser = new FileChooser();
+        FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Sequence File...");
-        fileChooser.showOpenDialog(stage);*/
+        fileChooser.showOpenDialog(stage);
 
         EditorController editor = fxmlLoader.getController();
         editor.selectTab(1);

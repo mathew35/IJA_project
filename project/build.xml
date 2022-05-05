@@ -99,6 +99,7 @@
             </manifest>
             <zipgroupfileset dir="lib" includes="**/*.jar"/>
             <fileset file="data/menu.fxml"/>
+            <fileset file="data/message.fxml"/>
             <fileset file="data/class.fxml"/>
             <fileset file="target/diagram.json"/>
         </jar>

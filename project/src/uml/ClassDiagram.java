@@ -1,6 +1,7 @@
 package uml;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.*;
@@ -58,5 +59,10 @@ public class ClassDiagram extends Element{
             nameList.add(classes.get(i).getName());
         }
         return nameList;
+    }
+
+    @JsonIgnore
+    public List<UMLClass> getClasses(){
+        return Collections.unmodifiableList(this.classes);
     }
 }

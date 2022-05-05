@@ -15,6 +15,7 @@
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -126,7 +127,7 @@
                                     <FontAwesomeIconView glyphName="PLUS" />
                                  </graphic>
                               </Button>
-                              <Button fx:id="addMessageButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#addMessage" prefHeight="30.0" prefWidth="30.0">
+                              <Button fx:id="messageCreatorButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#openMessageCreator" prefHeight="30.0" prefWidth="30.0">
                                  <graphic>
                                     <FontAwesomeIconView glyphName="SEND" />
                                  </graphic>
@@ -135,6 +136,11 @@
                         </VBox>
                         <StackPane fx:id="seqEditorBox" maxHeight="486.0" maxWidth="900.0" prefHeight="486.0" prefWidth="900.0">
                            <children>
+                              <VBox fx:id="seqMsgBox" prefHeight="200.0" prefWidth="100.0">
+                                 <children>
+                                    <Region prefHeight="60.0" prefWidth="900.0" />
+                                 </children>
+                              </VBox>
                               <VBox fx:id="addSeqObjFirst" alignment="CENTER" onMouseClicked="#addSeqObj" prefHeight="486.0" prefWidth="332.0">
                                  <children>
                                     <Text fill="#00000081" strokeType="OUTSIDE" strokeWidth="0.0" text="+">

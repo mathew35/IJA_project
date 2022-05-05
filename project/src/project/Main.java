@@ -22,6 +22,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * Incializace celé aplikace a zajišťuje spuštění JavaFX s kombinací souborů typu FXML.
  */
 public class Main extends Application{    
+
+    public static Stage stage;
+
     /**
      * Načtení FXML souboru do scény a určení scény na "jeviště".
      *
@@ -76,9 +79,19 @@ public class Main extends Application{
         UMLClass cls2 = diagram.createClass("Bank");
         UMLClass cls3 = diagram.createClass("Database");
         UMLOperation op1 = UMLOperation.create("method1", diagram.classifierForName("void"));
-        diagram.createMessage(op1, cls, cls2, true);
-        diagram.createMessage(op1, cls, cls3, true);
-        diagram.createMessage(op1, cls2, cls, true);
+
+        UMLAttribute attr1 = new UMLAttribute("count", diagram.classifierForName("int"));
+        UMLAttribute attr2 = new UMLAttribute("id", diagram.classifierForName("certain"));
+        UMLAttribute attr3 = new UMLAttribute("c", diagram.classifierForName("yeah"));
+
+        UMLAttribute attr4 = new UMLAttribute("sucakge", diagram.classifierForName("string"));
+        UMLAttribute attr5 = new UMLAttribute("ye", diagram.classifierForName("volume"));
+        UMLAttribute attr6 = new UMLAttribute("insanity", diagram.classifierForName("sinsiter"));
+
+        cls.addAttribute(attr1);
+        cls.addAttribute(attr2);
+        cls.addAttribute(attr3);
+
         menu.exportSequence(objectMapper, diagram);
         //loadSequence(objectMapper);*/
 
