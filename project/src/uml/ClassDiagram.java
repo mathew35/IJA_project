@@ -20,7 +20,9 @@ public class ClassDiagram extends Element{
         UMLClass search;
         for(int i = 0; i < this.classes.size(); i++){
             search = this.classes.get(i);
+            System.out.println(search.getName() + " : " + name);
             if(search.getName() == name){
+                System.out.println("yes");
                 return null;
             }
         }
