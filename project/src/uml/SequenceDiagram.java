@@ -43,4 +43,22 @@ public class SequenceDiagram extends ClassDiagram{
 
         return newMessage;
     }
+
+    /**
+     * Vloží zprávu do pole zpráv.
+     * 
+     * @param message Operace dané zprávy.
+     */
+    public void addMessage(UMLMessage message)
+    {
+        this.messages.add(message);
+    }
+
+    /**
+     * Navrací počet prvků v poli zpráv objektu.
+     */
+    public int returnMessagesCount()
+    {
+        return this.messages.size();
+    }
 }

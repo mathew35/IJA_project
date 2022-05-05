@@ -222,7 +222,7 @@ public class EditorController implements Initializable
                     sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2).createClass(objField.getText());
 
                     // sequenceDiagrams.get(0).getNameClasses()+ seqDisplay.getChildren().size()
-                    Text objName = new Text(objField.getText() + startObj.getHeight());
+                    Text objName = new Text(objField.getText());
                     objRectangle.getChildren().remove(objField);
                     objRectangle.getChildren().add(objName);
                     //seqGrid.add(objName, objsCount, 0);
@@ -321,11 +321,27 @@ public class EditorController implements Initializable
                 }
             }
 
-            for (int i = 1; i < (seqGridMsgs.getChildren().size()); i = i + 2)
+            for (int i = 0; i < (seqGridMsgs.getChildren().size()); i++)
             {
-                ((UMLArrow)seqGridMsgs.getChildren().get(i)).setEndX(seqEditorBox.getWidth()/seqGrid.getColumnCount());
-                //msgArrow.setEndX(seqEditorBox.getWidth()/seqGrid.getColumnCount());
+                Node nodeMsg = seqGridMsgs.getChildren().get(i);
+                
+                if (nodeMsg instanceof UMLArrow)
+                {
+                    if (((UMLArrow)nodeMsg).getEndX() > 0)
+                    {
+                        ((UMLArrow)nodeMsg).setEndX(seqEditorBox.getWidth()/seqGrid.getColumnCount());
+                    }
+                    else
+                    {
+                        ((UMLArrow)nodeMsg).setEndX(-seqEditorBox.getWidth()/seqGrid.getColumnCount());
+                    }
+                    
+                }
 
+                if (nodeMsg instanceof Line)
+                {
+                    ((Line)nodeMsg).setEndX(seqEditorBox.getWidth()/seqGrid.getColumnCount());
+                }
             }
         }
     }
@@ -347,6 +363,11 @@ public class EditorController implements Initializable
         popUp.setScene(new Scene(root));
         popUp.setResizable(false);
         popUp.showAndWait();
+
+        if (msgController.createdMessage != null)
+        {
+            createMessage(msgController.createdMessage);
+        }
     }
 
     @FXML
@@ -374,6 +395,61 @@ public class EditorController implements Initializable
             seqGrid.add(new Text(nameList.get(i)), i, 0);
             seqGrid.add(new Line(0, 0, 0, seqEditorBox.getHeight() * 0.9), i, 1);
         }
+    }
+
+    @FXML
+    public void createMessage(UMLMessage message)
+    {
+        int msgCount = sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2).returnMessagesCount();
+        int sendIndex = sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2).getClasses().indexOf(message.sender);
+        int recIndex = sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2).getClasses().indexOf(message.receiver);
+
+        seqGridMsgs.getRowConstraints().add(new RowConstraints());
+       
+        UMLArrow arrow = new UMLArrow();
+        arrow.setStartX(0);
+        arrow.setStartY(0);
+
+        double arrowWidth = seqEditorBox.getWidth() / seqGrid.getColumnCount();
+        
+        if (sendIndex > recIndex)
+        {
+            arrowWidth = -arrowWidth;
+        }
+
+        arrow.setEndX(arrowWidth);
+        arrow.setEndY(0);
+
+        if (sendIndex < recIndex)
+        {
+            if (Math.abs(sendIndex - recIndex) != 1)
+            {
+                for (int i = sendIndex + 1; i < recIndex; i++)
+                {
+                    Line newLine = new Line(0, 0, seqEditorBox.getWidth() / seqGrid.getColumnCount(), 0);
+                    seqGridMsgs.add(newLine, i, msgCount);
+                    GridPane.setValignment(newLine, VPos.CENTER); 
+                }
+            }
+            seqGridMsgs.add(arrow, recIndex, msgCount);
+        }
+        else
+        {
+            if (Math.abs(sendIndex - recIndex) != 1)
+            {
+                for (int i = sendIndex; i > recIndex + 1; i--)
+                {
+                    Line newLine = new Line(0, 0, seqEditorBox.getWidth() / seqGrid.getColumnCount(), 0);
+                    seqGridMsgs.add(newLine, i, msgCount);
+                    GridPane.setValignment(newLine, VPos.CENTER); 
+                }
+            }
+            seqGridMsgs.add(arrow, recIndex + 1, msgCount);
+        }
+
+        sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2).addMessage(message);
+        System.out.println("Sender index: " + sendIndex);
+        System.out.println("Receiver index: " + recIndex);
     }
 
     @FXML
@@ -405,12 +481,5 @@ public class EditorController implements Initializable
         seqGridMsgs.getRowConstraints().add(row);
         seqGridMsgs.getColumnConstraints().addAll(columnSpacer, column, columnSpacer);
         seqMsgBox.getChildren().add(seqGridMsgs);
-
-        UMLArrow arrow = new UMLArrow();
-        arrow.setStartX(0);
-        arrow.setStartY(0);
-        arrow.setEndX(seqEditorBox.getWidth() / 2);
-        arrow.setEndY(0);
-        seqGridMsgs.add(arrow, 1, 0);
     }
 }

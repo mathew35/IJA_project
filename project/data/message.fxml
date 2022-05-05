@@ -50,7 +50,7 @@
                   <Insets left="10.0" />
                </HBox.margin>
             </Label>
-            <ComboBox fx:id="dropReceiver" prefHeight="26.0" prefWidth="228.0" />
+            <ComboBox fx:id="dropReceiver" onAction="#loadOperations" prefHeight="26.0" prefWidth="228.0" />
          </children>
       </HBox>
       <HBox alignment="CENTER" prefHeight="0.0" prefWidth="300.0" />
@@ -61,7 +61,7 @@
                   <Insets left="10.0" />
                </HBox.margin>
             </Label>
-            <TextField prefHeight="26.0" prefWidth="39.0" promptText="Last" />
+            <TextField fx:id="fieldPosition" prefHeight="26.0" prefWidth="39.0" promptText="Last" />
          </children>
       </HBox>
       <HBox alignment="CENTER" prefHeight="0.0" prefWidth="300.0">
@@ -91,12 +91,12 @@
       </HBox>
       <HBox alignment="CENTER_RIGHT" prefHeight="53.0" prefWidth="300.0">
          <children>
-            <Button mnemonicParsing="false" text="Cancel">
+            <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeWindow" text="Cancel">
                <HBox.margin>
                   <Insets right="20.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="createMessageButton" mnemonicParsing="false" onAction="#createMessage" text="Create Message">
+            <Button fx:id="createMessageButton" mnemonicParsing="false" onAction="#createMessageData" text="Create Message">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>

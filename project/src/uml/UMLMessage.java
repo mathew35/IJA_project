@@ -14,15 +14,17 @@ import com.fasterxml.jackson.annotation.*;
  */
 public class UMLMessage{
     @JsonProperty("operation")
-    private UMLOperation operation;
+    public UMLOperation operation;
+    @JsonProperty("message")
+    public String message;
     @JsonProperty("sender")
-    private UMLClass sender;
+    public UMLClass sender;
     @JsonProperty("receiver")
-    private UMLClass receiver;
+    public UMLClass receiver;
     @JsonProperty("transmition")
-    private boolean transmition = true; // true = call, false = reply
+    public boolean transmition = true; // true = call, false = reply
     @JsonProperty("order")
-    private int order; // true = call, false = reply
+    public int order; // -1 = last
 
     public UMLMessage(){}
 
@@ -43,10 +45,18 @@ public class UMLMessage{
     }
 
     /**
-     * Metoda na navrácení typu zprávy.
+     * Konstruktor pro vytvoření instance diagramu s udáním typu zprávy.
+     * @param message Operace dané zprávy.
+     * @param sender Odesílatel zprávy.
+     * @param receiver Příjemce zprávy.
+     * @param transmition Typ přenosu (volání, odpověď).
      */
-    public boolean transmition()
+    public UMLMessage(String message, UMLClass sender, UMLClass receiver, boolean transmition, int order)
     {
-        return this.transmition;
+        this.message = message;
+        this.sender = sender;
+        this.receiver = receiver;
+        this.transmition = transmition;
+        this.order = order;
     }
 }
