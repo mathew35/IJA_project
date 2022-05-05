@@ -323,7 +323,7 @@ public class EditorController implements Initializable
 
             for (int i = 1; i < (seqGridMsgs.getChildren().size()); i = i + 2)
             {
-                ((Arrow)seqGridMsgs.getChildren().get(i)).setEndX(seqEditorBox.getWidth()/seqGrid.getColumnCount());
+                ((UMLArrow)seqGridMsgs.getChildren().get(i)).setEndX(seqEditorBox.getWidth()/seqGrid.getColumnCount());
                 //msgArrow.setEndX(seqEditorBox.getWidth()/seqGrid.getColumnCount());
 
             }
@@ -406,7 +406,7 @@ public class EditorController implements Initializable
         seqGridMsgs.getColumnConstraints().addAll(columnSpacer, column, columnSpacer);
         seqMsgBox.getChildren().add(seqGridMsgs);
 
-        Arrow arrow = new Arrow();
+        UMLArrow arrow = new UMLArrow();
         arrow.setStartX(0);
         arrow.setStartY(0);
         arrow.setEndX(seqEditorBox.getWidth() / 2);
