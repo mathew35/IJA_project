@@ -3,6 +3,8 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
@@ -76,36 +78,59 @@
                <content>
                   <HBox id="ClassDiagramTab" prefHeight="100.0" prefWidth="200.0" style="-fx-id: TabClassDiagram;">
                      <children>
-                        <VBox alignment="TOP_CENTER" prefHeight="351.0" prefWidth="87.0">
+                        <VBox alignment="TOP_CENTER" prefHeight="486.0" prefWidth="151.0">
                            <children>
-                              <Button fx:id="AddClassButton" mnemonicParsing="false" onAction="#onAddClassClick" text="Class +">
+                              <TextField fx:id="NewClassName" promptText="New class name">
                                  <VBox.margin>
                                     <Insets left="5.0" right="5.0" top="5.0" />
                                  </VBox.margin>
-                              </Button>
-                              <Button fx:id="AddSubclassButton" mnemonicParsing="false" onAction="#onAddSubclassClick" text="Subclass +">
+                              </TextField>
+                              <ComboBox fx:id="ChoiceParentClass" promptText="Select Parent Class">
                                  <VBox.margin>
                                     <Insets left="5.0" right="5.0" top="5.0" />
                                  </VBox.margin>
-                              </Button>
+                              </ComboBox>
+                              <HBox prefHeight="26.0" prefWidth="151.0">
+                                 <children>
+                                    <Button fx:id="AddClassButton" mnemonicParsing="false" onAction="#onAddClassClick" text="Class +">
+                                       <HBox.margin>
+                                          <Insets right="5.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="AddSubclassButton" mnemonicParsing="false" onAction="#onAddSubclassClick" text="Subclass +">
+                                       <HBox.margin>
+                                          <Insets left="8.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <Label fx:id="ClassErrorLabel" textFill="RED" wrapText="true">
+                                 <padding>
+                                    <Insets left="5.0" right="5.0" top="5.0" />
+                                 </padding>
+                              </Label>
                            </children>
                         </VBox>
-                        <TreeView fx:id="ClassTree" onContextMenuRequested="#selectItem" onMouseClicked="#selectItem" prefHeight="351.0" prefWidth="434.0" />
-                        <SplitPane dividerPositions="0.85" orientation="VERTICAL" prefHeight="351.0" prefWidth="177.0">
+                        <TreeView fx:id="ClassTree" onContextMenuRequested="#selectItem" onMouseClicked="#selectItem" prefHeight="486.0" prefWidth="520.0" />
+                        <SplitPane dividerPositions="0.85" orientation="VERTICAL" prefHeight="486.0" prefWidth="291.0">
                           <items>
-                              <ScrollPane fx:id="ClassScrollPane" prefHeight="263.0" prefWidth="177.0">
+                              <ScrollPane fx:id="ClassScrollPane" prefHeight="408.0" prefWidth="280.0">
                                 <content>
-                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="317.0" prefWidth="155.0">
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="408.0" prefWidth="289.0">
                                        <children>
                                           <TextField fx:id="ClassName" layoutX="-1.0" layoutY="6.0" prefHeight="25.0" prefWidth="172.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+                                          <TreeView layoutX="6.0" layoutY="30.0" prefHeight="367.0" prefWidth="279.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="35.0" />
                                        </children>
                                     </AnchorPane>
                                 </content>
                               </ScrollPane>
                               <AnchorPane prefHeight="48.0" prefWidth="177.0">
                                  <children>
-                                    <Button layoutX="14.0" layoutY="12.0" mnemonicParsing="false" text="Reset" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="95.0" AnchorPane.topAnchor="12.0" />
-                                    <Button layoutX="109.0" layoutY="12.0" mnemonicParsing="false" text="Update" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="95.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="12.0" />
+                                    <Button layoutX="14.0" layoutY="10.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="147.0" text="Reset" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="150.0" AnchorPane.topAnchor="12.0" />
+                                    <Button layoutX="176.0" layoutY="12.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="134.0" text="Update" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="12.0" />
                                  </children>
                               </AnchorPane>
                           </items>
