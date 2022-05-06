@@ -60,7 +60,11 @@ public class MenuController {
         File file = fileChooser.showOpenDialog(stage);
         if(file != null)
         {
+            ObjectMapper objectMapper = new ObjectMapper();
             EditorController editor = fxmlLoader.getController();
+
+            editor.classDiagram.set(0, loadSequence(objectMapper, file));
+
             editor.selectTab(1);
 
             stage.setScene(scene);
