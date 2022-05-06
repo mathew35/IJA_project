@@ -56,14 +56,14 @@ public class MenuController {
         scene = new Scene(fxmlLoader.load());
 
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Class File...");
+        configureFileChooser(fileChooser,"Class");
         File file = fileChooser.showOpenDialog(stage);
         if(file != null)
         {
             ObjectMapper objectMapper = new ObjectMapper();
             EditorController editor = fxmlLoader.getController();
 
-            editor.classDiagram.set(0, loadSequence(objectMapper, file));
+            editor.classDiagram = loadSequence(objectMapper, file);
 
             editor.selectTab(1);
 
@@ -81,7 +81,7 @@ public class MenuController {
 
         FileChooser fileChooser = new FileChooser();
 
-        configureFileChooser(fileChooser);
+        configureFileChooser(fileChooser,"Sequence");
         File file = fileChooser.showOpenDialog(stage);
         if (file != null) 
         {
@@ -101,9 +101,9 @@ public class MenuController {
         }
     }
 
-    private static void configureFileChooser(final FileChooser fileChooser) 
+    private static void configureFileChooser(final FileChooser fileChooser, String type) 
     {      
-        fileChooser.setTitle("Open Sequence File...");                
+        fileChooser.setTitle("Open " + type + " File...");                
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON", "*.json"));
     }
 
