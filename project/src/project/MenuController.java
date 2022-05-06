@@ -56,15 +56,17 @@ public class MenuController {
         scene = new Scene(fxmlLoader.load());
 
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Sequence File...");
-        fileChooser.showOpenDialog(stage);
+        fileChooser.setTitle("Open Class File...");
+        File file = fileChooser.showOpenDialog(stage);
+        if(file != null)
+        {
+            EditorController editor = fxmlLoader.getController();
+            editor.selectTab(1);
 
-        EditorController editor = fxmlLoader.getController();
-        editor.selectTab(1);
-
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+        }
     }
 
     public void openSequence(ActionEvent event) throws IOException
