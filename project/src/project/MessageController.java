@@ -91,8 +91,7 @@ public class MessageController {
             {
                 if (className.getName().equals(dropSender.getValue().getName())) 
                 {
-                    //dropOperation.getItems().addAll(className.getAttributes());
-                    //return customer;
+                    dropOperation.getItems().addAll(((UMLOperation)className.getOperations()));
                 }
             }
             sequenceDiagram.findClassifier(dropSender.getValue().getName());
