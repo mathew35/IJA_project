@@ -76,6 +76,7 @@ public class MessageController {
     {
         sequenceDiagram = diagram;
         dropSender.getItems().addAll(sequenceDiagram.getClasses());
+        //System.out.println(sequenceDiagram.getClasses().get(0).getOperations());
         dropReceiver.getItems().addAll(sequenceDiagram.getClasses());
     }
 
@@ -85,13 +86,17 @@ public class MessageController {
     {
         if (!dropSender.getSelectionModel().isEmpty() && msgType == true)
         {
-            dropOperation.setDisable(false);
-
             for (UMLClass className : sequenceDiagram.getClasses()) 
             {
+                System.out.println(sequenceDiagram.getClasses().get(0).getOperations());
+                System.out.println(className.getName());
+                System.out.println(dropSender.getValue());
+                System.out.println(className.getName().equals(dropSender.getValue().getName()));
+                System.out.println(className.getName() == (dropSender.getValue().getName()));
+
                 if (className.getName().equals(dropSender.getValue().getName())) 
                 {
-                    dropOperation.getItems().addAll(((UMLOperation)className.getOperations()));
+                    dropOperation.getItems().addAll((className.getOperations()));
                 }
             }
             sequenceDiagram.findClassifier(dropSender.getValue().getName());

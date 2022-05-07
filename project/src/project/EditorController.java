@@ -46,7 +46,7 @@ import uml.*;
 public class EditorController implements Initializable
 {
     ClassDiagram classDiagram = new ClassDiagram("genereted");
-    ArrayList<SequenceDiagram> sequenceDiagrams = new ArrayList<SequenceDiagram>();
+    public ArrayList<SequenceDiagram> sequenceDiagrams = new ArrayList<SequenceDiagram>();
     GridPane seqGrid = new GridPane();
     GridPane seqGridMsgs = new GridPane();
     double msgWidth;
@@ -109,6 +109,7 @@ public class EditorController implements Initializable
         ClassName.setPromptText("Class Name");
 
     }
+
     /**
     * Detekuje selekci třídy v ClassDiagram tabu a zobrazí informace o této tříde
     */
@@ -469,6 +470,7 @@ public class EditorController implements Initializable
         Parent root = (Parent)loader.load();
 
         MessageController msgController = loader.getController();
+        //System.out.println(sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2).getClasses().get(0).getOperations());
         msgController.loadData(sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2));
 
         Stage popUp = new Stage();
@@ -551,7 +553,7 @@ public class EditorController implements Initializable
             rectangle.setStroke(Color.BLACK);
             rectangle.setFill(Color.TRANSPARENT);
 
-            sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2).createClass(nameList.get(i));
+            //sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2).createClass(nameList.get(i));
 
             objRectangle.getChildren().add(rectangle);
 

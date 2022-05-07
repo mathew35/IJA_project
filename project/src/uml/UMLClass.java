@@ -1,7 +1,6 @@
 package uml;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.*;
 
 public class UMLClass  extends UMLClassifier{

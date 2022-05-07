@@ -88,6 +88,8 @@ public class MenuController {
             ObjectMapper objectMapper = new ObjectMapper();
             EditorController editor = fxmlLoader.getController();
 
+            editor.sequenceDiagrams.set(0, loadSequence(objectMapper, file));
+
             editor.selectTab(2);
     
             stage.setScene(scene);

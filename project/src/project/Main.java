@@ -78,7 +78,7 @@ public class Main extends Application{
         UMLClass cls = diagram.createClass("ATM");
         UMLClass cls2 = diagram.createClass("Bank");
         UMLClass cls3 = diagram.createClass("Database");
-        //UMLOperation op1 = UMLOperation.create("method1", diagram.classifierForName("void"));
+        UMLOperation op1 = UMLOperation.create("method1", diagram.classifierForName("void"));
 
         UMLAttribute attr1 = new UMLAttribute("count", diagram.classifierForName("int"));
         UMLAttribute attr2 = new UMLAttribute("id", diagram.classifierForName("certain"));
@@ -88,10 +88,10 @@ public class Main extends Application{
         UMLAttribute attr5 = new UMLAttribute("ye", diagram.classifierForName("volume"));
         UMLAttribute attr6 = new UMLAttribute("insanity", diagram.classifierForName("sinsiter"));
 
-        cls.addAttribute(attr1);
+        /*cls.addAttribute(attr1);
         cls.addAttribute(attr2);
-        cls.addAttribute(attr3);
-        //cls.addAttribute(op1);
+        cls.addAttribute(attr3);*/
+        cls.addOperation(op1);
 
         menu.exportSequence(objectMapper, diagram);
         //loadSequence(objectMapper);
