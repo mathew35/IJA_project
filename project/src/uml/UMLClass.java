@@ -21,9 +21,6 @@ public class UMLClass  extends UMLClassifier{
         this.isAbstract = isAbstract;
     }
     public boolean addAttribute(UMLAttribute attr){
-        if (attr.getType().equals("UMLOperation")){
-            return addOperation(attr);
-        }
         int pos = getAttrPosition(attr);
         if(pos == -1){
             this.attributes.add(attr);
