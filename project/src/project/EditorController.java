@@ -56,6 +56,15 @@ public class EditorController implements Initializable
 
     @FXML
     private TextField ClassName;
+    
+    @FXML
+    private TextField NewClassName;
+
+    @FXML
+    private Label ClassErrorLabel;
+
+    @FXML
+    private ComboBox<String> ChoiceParentClass;
 
     @FXML
     private TabPane tabPane;
@@ -83,16 +92,23 @@ public class EditorController implements Initializable
      */
     @Override
     public void initialize(URL arg0, ResourceBundle arg1){
-        //ClassDiagram cd = new ClassDiagram("Diagram");
+        this.setClassDiagram(classDiagram);
+        Tab deleted = tabPane.getSelectionModel().getSelectedItem();
+        tabPane.getTabs().remove(deleted);
+    }
+    
+    public void setClassDiagram(ClassDiagram diag){
+        classDiagram = diag;
         TreeItem<String> rootItem = new TreeItem<>(classDiagram.getName());
+        for(UMLClass i:classDiagram.getClasses()){
+            TreeItem<String> newClass = new TreeItem<>(i.getName());
+            rootItem.getChildren().add(newClass);
+        }
         ClassTree.setShowRoot(false);
         ClassTree.setRoot(rootItem);
         ClassName.setPromptText("Class Name");
 
-        Tab deleted = tabPane.getSelectionModel().getSelectedItem();
-        tabPane.getTabs().remove(deleted);
     }
-
     /**
     * Detekuje selekci třídy v ClassDiagram tabu a zobrazí informace o této tříde
     */
@@ -113,19 +129,59 @@ public class EditorController implements Initializable
     */
     public void onAddClassClick(){
         TreeItem<String> rootItem = ClassTree.getRoot();
-        String text = ClassName.getText();
+        String text = NewClassName.getText();
+        ClassErrorLabel.setText(null);
         if (text.isEmpty()) {
-            ClassName.setPromptText("Zadaj nazov novej triedy");
-            ClassName.setStyle("-fx-prompt-text-fill: red");
+            ClassErrorLabel.setText("Zadaj nazov novej triedy");
             return;
         }
-        rootItem.getChildren().add(new TreeItem<>(text));
-        ClassName.setText("");
+        UMLClass res = classDiagram.createClass(text);
+        if (res == null){
+            ClassErrorLabel.setText("Trieda uz existuje!");
+            return;
+        }
+        ChoiceParentClass.getItems().add(text);
+        TreeItem<String> newClass = new TreeItem<>(text);
+        newClass.setExpanded(true);
+        rootItem.getChildren().add(newClass);
+        NewClassName.setText("");
     }
     /**
     * Přidání podtřídy ke vybrané tříde v diagramu tříd
     */
-    public void onAddSubclassClick(){}
+    public void onAddSubclassClick(){        
+        TreeItem<String> rootItem = ClassTree.getRoot();
+        String text = NewClassName.getText();
+        String parentClass = ChoiceParentClass.getSelectionModel().getSelectedItem();
+        ClassErrorLabel.setText(null);
+        ChoiceParentClass.getSelectionModel().clearSelection();
+        if (text.isEmpty()) {
+            ClassErrorLabel.setText("Zadaj nazov novej triedy");
+            return;
+        }
+        if (parentClass == null){
+            ClassErrorLabel.setText("Vyber rodicovsku triedu");
+            return;
+        }
+        UMLClass res = classDiagram.createClass(text);
+        if (res == null){
+            ClassErrorLabel.setText("Trieda uz existuje!");
+            return;
+        }
+        TreeItem<String> parent = null;
+        for(TreeItem i:rootItem.getChildren()){
+            if (i.getValue().equals(parentClass)) {
+                parent = i;
+                break;
+            }
+        }
+        if (parent == null){
+            ClassErrorLabel.setText("Parent Class not found (subclasses not checked)");
+            return;
+        }
+        parent.getChildren().add(new TreeItem<>(text));
+        NewClassName.setText("");
+    }
 
     /**
     * Přidání karty do panelu karet 

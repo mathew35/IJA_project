@@ -63,7 +63,7 @@ public class MenuController {
             ObjectMapper objectMapper = new ObjectMapper();
             EditorController editor = fxmlLoader.getController();
 
-            editor.classDiagram = loadSequence(objectMapper, file);
+            editor.setClassDiagram(loadClass(objectMapper, file));
 
             editor.selectTab(1);
 
@@ -138,7 +138,6 @@ public class MenuController {
     {
         try {
             ClassDiagram diagram = objectMapper.readValue(file, ClassDiagram.class);
-    
             return diagram;
         } catch (StreamReadException e) {
             e.printStackTrace();
