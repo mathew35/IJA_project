@@ -413,18 +413,6 @@ public class EditorController implements Initializable
         updateGridMsg();
     }
 
-    /*@FXML
-    public void addMessage()
-    {
-        seqGridMsgs.getRowConstraints().add(new RowConstraints(20));
-        /*Arrow arrow = new Arrow();
-        arrow.setStartX(0);
-        arrow.setStartY(0);
-        arrow.setEndX(seqEditorBox.getWidth() / 2);
-        arrow.setEndY(0);
-        seqGridMsgs.add(arrow, 1, seqGridMsgs.getRowCount());
-    }*/
-
     @FXML
     public void updateGridMsg()
     {
@@ -503,6 +491,9 @@ public class EditorController implements Initializable
     {
         if (addSeqObjFirst != null)
         {
+            seqEditorBox.getChildren().remove(addSeqObjFirst);
+            addSeqObjFirst = null;
+
             initGrid();
             initGridState();
         }
@@ -510,18 +501,78 @@ public class EditorController implements Initializable
         ArrayList<String> nameList = new ArrayList<String>();
 
         nameList = diagram.getNameClasses();
-
+       
         for (int i = 0; i < nameList.size(); i++)
         {
+            VBox startObj = new VBox();
+            Line startLine = new Line(0, 0, 0, seqEditorBox.getHeight() * 0.01);
+            StackPane objRectangle = new StackPane();
+            Rectangle rectangle = new Rectangle(150, 50);
+            Effect effect = new DropShadow(BlurType.GAUSSIAN, Color.DODGERBLUE, 5, 0.75, 0, 0);
+
+            rectangle.setOnMouseClicked((MouseEvent event) -> 
+            {
+                rectangle.requestFocus();
+                Node clickedNode = event.getPickResult().getIntersectedNode();
+                System.out.println(clickedNode);
+                if (clickedNode != seqGrid) 
+                {
+                    // click on descendant node
+                    Node parent = clickedNode.getParent();
+                    while (parent != seqGrid) 
+                    {
+                        clickedNode = parent;
+                        parent = clickedNode.getParent();
+                    }
+                    Integer colIndex = GridPane.getColumnIndex(clickedNode);
+                    Integer rowIndex = GridPane.getRowIndex(clickedNode);
+                    System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
+
+                    rectangle.setStroke(Color.DODGERBLUE);
+                    rectangle.setEffect(rectangle.getEffect() == null ? effect : null);
+                }
+            });
+
+            rectangle.focusedProperty().addListener(new ChangeListener<Boolean>()
+            {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue)
+                {
+                    if (!newPropertyValue)
+                    {
+                        rectangle.setStroke(Color.BLACK);
+                        rectangle.setEffect(null);
+                    }
+                }
+            });
+
+            startObj.setAlignment(Pos.CENTER);
+
+            rectangle.setStroke(Color.BLACK);
+            rectangle.setFill(Color.TRANSPARENT);
+
+            sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2).createClass(nameList.get(i));
+
+            objRectangle.getChildren().add(rectangle);
+
             seqGrid.getColumnConstraints().add(new ColumnConstraints(-1, -1, -1, Priority.ALWAYS, HPos.CENTER, false));
             if (i == 0)
             {
                 seqGrid.getRowConstraints().add(new RowConstraints(-1, -1, -1, Priority.ALWAYS, VPos.CENTER, false));
                 seqGrid.getRowConstraints().add(new RowConstraints(-1, -1, -1, Priority.ALWAYS, VPos.CENTER, false));
             }
-        
-            seqGrid.add(new Text(nameList.get(i)), i, 0);
-            seqGrid.add(new Line(0, 0, 0, seqEditorBox.getHeight() * 0.9), i, 1);
+            
+            objRectangle.getChildren().add(new Text(nameList.get(i)));
+
+            startObj.getChildren().addAll(objRectangle, startLine);
+
+            seqGrid.add(startObj, i, 0);
+
+            Line timeAxis = new Line(0, 0, 0, seqEditorBox.getHeight() * 0.85);
+            timeAxis.getStrokeDashArray().addAll(25d, 10d);
+
+            seqGrid.add(timeAxis, i, 1);
+            updateGridMsg();
         }
     }
 

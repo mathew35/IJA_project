@@ -74,11 +74,11 @@ public class Main extends Application{
         
         menu.exportClass(objectMapper, d);*/
 
-        /*SequenceDiagram diagram = new SequenceDiagram("Sequence");
+        SequenceDiagram diagram = new SequenceDiagram("Sequence");
         UMLClass cls = diagram.createClass("ATM");
         UMLClass cls2 = diagram.createClass("Bank");
         UMLClass cls3 = diagram.createClass("Database");
-        UMLOperation op1 = UMLOperation.create("method1", diagram.classifierForName("void"));
+        //UMLOperation op1 = UMLOperation.create("method1", diagram.classifierForName("void"));
 
         UMLAttribute attr1 = new UMLAttribute("count", diagram.classifierForName("int"));
         UMLAttribute attr2 = new UMLAttribute("id", diagram.classifierForName("certain"));
@@ -91,9 +91,10 @@ public class Main extends Application{
         cls.addAttribute(attr1);
         cls.addAttribute(attr2);
         cls.addAttribute(attr3);
+        //cls.addAttribute(op1);
 
         menu.exportSequence(objectMapper, diagram);
-        //loadSequence(objectMapper);*/
+        //loadSequence(objectMapper);
 
         launch();
     }

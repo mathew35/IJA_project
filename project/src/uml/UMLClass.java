@@ -56,6 +56,7 @@ public class UMLClass  extends UMLClassifier{
     public List<UMLAttribute> getAttributes(){
         return Collections.unmodifiableList(this.attributes);
     }
+
     public List<UMLAttribute> getOperations(){
         return Collections.unmodifiableList(this.attributes.stream().filter(a->a.getType().equals("UMLOperation")).collect(Collectors.toList()));
     }
