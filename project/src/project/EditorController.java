@@ -470,7 +470,6 @@ public class EditorController implements Initializable
         Parent root = (Parent)loader.load();
 
         MessageController msgController = loader.getController();
-        //System.out.println(sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2).getClasses().get(0).getOperations());
         msgController.loadData(sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2));
 
         Stage popUp = new Stage();
@@ -584,8 +583,21 @@ public class EditorController implements Initializable
         int msgCount = sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2).returnMessagesCount();
         int sendIndex = sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2).getClasses().indexOf(message.sender);
         int recIndex = sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2).getClasses().indexOf(message.receiver);
+        Label messageLabel = new Label();
 
-        seqGridMsgs.getRowConstraints().add(new RowConstraints());
+        GridPane.setValignment(messageLabel, VPos.TOP);
+        GridPane.setHalignment(messageLabel, HPos.CENTER);
+
+        if (message.operation != null)
+        {
+            messageLabel.setText(message.operation.toString());
+        }
+        else
+        {
+            messageLabel.setText(message.message);
+        }
+
+        seqGridMsgs.getRowConstraints().add(new RowConstraints(30));
        
         UMLArrow arrow = new UMLArrow();
         arrow.setStartX(0);
@@ -613,6 +625,7 @@ public class EditorController implements Initializable
                 }
             }
             seqGridMsgs.add(arrow, recIndex, msgCount);
+            seqGridMsgs.add(messageLabel, recIndex, msgCount);
         }
         else
         {
@@ -626,6 +639,7 @@ public class EditorController implements Initializable
                 }
             }
             seqGridMsgs.add(arrow, recIndex + 1, msgCount);
+            seqGridMsgs.add(messageLabel, recIndex + 1, msgCount);
         }
 
         sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2).addMessage(message);
@@ -658,8 +672,8 @@ public class EditorController implements Initializable
 
         ColumnConstraints columnSpacer = new ColumnConstraints(msgWidth / 2);
         ColumnConstraints column = new ColumnConstraints(msgWidth);
-        RowConstraints row = new RowConstraints(20);
-        seqGridMsgs.getRowConstraints().add(row);
+        //RowConstraints row = new RowConstraints(30);
+        //seqGridMsgs.getRowConstraints().add(row);
         seqGridMsgs.getColumnConstraints().addAll(columnSpacer, column, columnSpacer);
         seqMsgBox.getChildren().add(seqGridMsgs);
     }

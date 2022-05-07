@@ -34,6 +34,7 @@ public class UMLMessage{
      * @param sender Odesílatel zprávy.
      * @param receiver Příjemce zprávy.
      * @param transmition Typ přenosu (volání, odpověď).
+     * @param order Pořadí zprávy.
      */
     public UMLMessage(UMLOperation operation, UMLClass sender, UMLClass receiver, boolean transmition, int order)
     {
@@ -50,6 +51,7 @@ public class UMLMessage{
      * @param sender Odesílatel zprávy.
      * @param receiver Příjemce zprávy.
      * @param transmition Typ přenosu (volání, odpověď).
+     * @param order Pořadí zprávy.
      */
     public UMLMessage(String message, UMLClass sender, UMLClass receiver, boolean transmition, int order)
     {

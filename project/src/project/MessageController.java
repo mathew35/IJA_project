@@ -84,16 +84,14 @@ public class MessageController {
     @FXML
     public void loadOperations()
     {
+        getMsgType();
+
         if (!dropSender.getSelectionModel().isEmpty() && msgType == true)
         {
+            dropOperation.getItems().clear();
+
             for (UMLClass className : sequenceDiagram.getClasses()) 
             {
-                System.out.println(sequenceDiagram.getClasses().get(0).getOperations());
-                System.out.println(className.getName());
-                System.out.println(dropSender.getValue());
-                System.out.println(className.getName().equals(dropSender.getValue().getName()));
-                System.out.println(className.getName() == (dropSender.getValue().getName()));
-
                 if (className.getName().equals(dropSender.getValue().getName())) 
                 {
                     dropOperation.getItems().addAll((className.getOperations()));
@@ -110,7 +108,7 @@ public class MessageController {
     }
 
     @FXML
-    public void getMsgType(ActionEvent event)
+    public void getMsgType()
     {
         if (rCall.isSelected())
         {
@@ -125,6 +123,24 @@ public class MessageController {
         {
             msgType = false;
             fieldReply.setDisable(false);
+            dropOperation.setDisable(true);
+        }
+
+        if (!dropSender.getSelectionModel().isEmpty() && msgType == true)
+        {
+            dropOperation.getItems().clear();
+
+            for (UMLClass className : sequenceDiagram.getClasses()) 
+            {
+                if (className.getName().equals(dropSender.getValue().getName())) 
+                {
+                    dropOperation.getItems().addAll((className.getOperations()));
+                }
+            }
+            sequenceDiagram.findClassifier(dropSender.getValue().getName());
+        }
+        else
+        {
             dropOperation.setDisable(true);
         }
 
@@ -156,7 +172,15 @@ public class MessageController {
             position = Integer.parseInt(fieldPosition.getText());
         }
 
-        createdMessage = new UMLMessage(fieldPosition.getText(), dropSender.getValue(), dropReceiver.getValue(), msgType, position);
+        if (!dropOperation.getSelectionModel().isEmpty())
+        {
+            createdMessage = new UMLMessage(dropOperation.getValue(), dropSender.getValue(), dropReceiver.getValue(), msgType, position);
+        }
+        else
+        {
+            System.out.println("Yes");
+            createdMessage = new UMLMessage(fieldReply.getText(), dropSender.getValue(), dropReceiver.getValue(), msgType, position);
+        }
 
         closeWindow();
     }
