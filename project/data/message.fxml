@@ -11,24 +11,42 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="352.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.MessageController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="391.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.MessageController">
    <children>
       <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="310.0">
          <children>
             <Label prefHeight="18.0" prefWidth="72.0" text="Type:" />
             <RadioButton fx:id="rCall" mnemonicParsing="false" onAction="#getMsgType" text="Call">
                <HBox.margin>
-                  <Insets right="50.0" />
+                  <Insets right="74.0" />
                </HBox.margin>
                <toggleGroup>
-                  <ToggleGroup fx:id="msgType" />
+                  <ToggleGroup fx:id="msgType1" />
                </toggleGroup>
             </RadioButton>
-            <RadioButton fx:id="rReply" mnemonicParsing="false" onAction="#getMsgType" text="Reply" toggleGroup="$msgType" />
+            <RadioButton fx:id="rReply" mnemonicParsing="false" onAction="#getMsgType" text="Reply" toggleGroup="$msgType1" />
          </children>
          <VBox.margin>
             <Insets left="10.0" top="10.0" />
          </VBox.margin>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="310.0">
+         <children>
+            <Label prefHeight="18.0" prefWidth="72.0">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </Label>
+            <RadioButton fx:id="rSync" mnemonicParsing="false" onAction="#getMsgType" text="Synchrounous">
+               <HBox.margin>
+                  <Insets right="20.0" />
+               </HBox.margin>
+               <toggleGroup>
+                  <ToggleGroup fx:id="msgType2" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="rAsync" mnemonicParsing="false" onAction="#getMsgType" text="Asynchrounous" toggleGroup="$msgType2" />
+         </children>
       </HBox>
       <HBox alignment="CENTER_LEFT" prefHeight="53.0" prefWidth="300.0">
          <children>

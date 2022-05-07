@@ -24,6 +24,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
 
 
@@ -31,7 +32,7 @@ import javafx.stage.Stage;
  * Řadič, který je vytvořen pomocí FXML a používá se k inicializaci prvků uživatelského rozhraní v úvodní scéně aplikace.
  */
 public class MessageController {
-    private boolean msgType;
+    private boolean msgType, msgTypeOcc;
     private SequenceDiagram sequenceDiagram;
     public UMLMessage createdMessage;
 
@@ -39,7 +40,10 @@ public class MessageController {
     private Button closeButton;
 
     @FXML
-    private RadioButton rCall, rReply;
+    private RadioButton rCall, rReply, rSync, rAsync;
+
+    @FXML
+    private ToggleGroup msgType1, msgType2;
 
     @FXML
     private ComboBox<UMLClass> dropSender, dropReceiver;
@@ -113,17 +117,23 @@ public class MessageController {
         if (rCall.isSelected())
         {
             msgType = true;
-            //fieldReply.setDisable(true);
-            if (!dropSender.getSelectionModel().isEmpty())
-            {
-                dropOperation.setDisable(false);
-            }
+            dropOperation.setDisable(false);
+
         }
         else if (rReply.isSelected())
         {
             msgType = false;
             fieldReply.setDisable(false);
             dropOperation.setDisable(true);
+        }
+        
+        if (rSync.isSelected())
+        {
+            msgTypeOcc = true;
+        }
+        else if (rAsync.isSelected())
+        {
+            msgTypeOcc = false;
         }
 
         if (!dropSender.getSelectionModel().isEmpty() && msgType == true)
@@ -149,12 +159,9 @@ public class MessageController {
 
     public void enableMessage()
     {
-        if (!dropSender.getSelectionModel().isEmpty() && !dropReceiver.getSelectionModel().isEmpty())
+        if (!dropSender.getSelectionModel().isEmpty() && !dropReceiver.getSelectionModel().isEmpty() && msgType1.getSelectedToggle() != null && msgType2.getSelectedToggle() != null)
         {
-            if (rCall.isSelected() || rReply.isSelected())
-            {
-                createMessageButton.setDisable(false);
-            }
+            createMessageButton.setDisable(false);
         }
         else
         {
@@ -174,12 +181,11 @@ public class MessageController {
 
         if (!dropOperation.getSelectionModel().isEmpty())
         {
-            createdMessage = new UMLMessage(dropOperation.getValue(), dropSender.getValue(), dropReceiver.getValue(), msgType, position);
+            createdMessage = new UMLMessage(dropOperation.getValue(), dropSender.getValue(), dropReceiver.getValue(), msgType, msgTypeOcc, position);
         }
         else
         {
-            System.out.println("Yes");
-            createdMessage = new UMLMessage(fieldReply.getText(), dropSender.getValue(), dropReceiver.getValue(), msgType, position);
+            createdMessage = new UMLMessage(fieldReply.getText(), dropSender.getValue(), dropReceiver.getValue(), msgType, msgTypeOcc, position);
         }
 
         closeWindow();

@@ -455,6 +455,19 @@ public class EditorController implements Initializable
                     
                 }
 
+                if (nodeMsg instanceof UMLArrowReply)
+                {
+                    if (((UMLArrowReply)nodeMsg).getEndX() > 0)
+                    {
+                        ((UMLArrowReply)nodeMsg).setEndX(seqEditorBox.getWidth()/seqGrid.getColumnCount());
+                    }
+                    else
+                    {
+                        ((UMLArrowReply)nodeMsg).setEndX(-seqEditorBox.getWidth()/seqGrid.getColumnCount());
+                    }
+                    
+                }
+
                 if (nodeMsg instanceof Line)
                 {
                     ((Line)nodeMsg).setEndX(seqEditorBox.getWidth()/seqGrid.getColumnCount());
@@ -597,22 +610,15 @@ public class EditorController implements Initializable
             messageLabel.setText(message.message);
         }
 
-        seqGridMsgs.getRowConstraints().add(new RowConstraints(30));
-       
-        UMLArrow arrow = new UMLArrow();
-        arrow.setStartX(0);
-        arrow.setStartY(0);
-
         double arrowWidth = seqEditorBox.getWidth() / seqGrid.getColumnCount();
-        
+                
         if (sendIndex > recIndex)
         {
             arrowWidth = -arrowWidth;
         }
 
-        arrow.setEndX(arrowWidth);
-        arrow.setEndY(0);
-
+        seqGridMsgs.getRowConstraints().add(new RowConstraints(30));
+        
         if (sendIndex < recIndex)
         {
             if (Math.abs(sendIndex - recIndex) != 1)
@@ -620,11 +626,36 @@ public class EditorController implements Initializable
                 for (int i = sendIndex + 1; i < recIndex; i++)
                 {
                     Line newLine = new Line(0, 0, seqEditorBox.getWidth() / seqGrid.getColumnCount(), 0);
+                    if (message.transmition == false)
+                    {
+                        newLine.getStrokeDashArray().addAll(25d, 10d);
+                    }
                     seqGridMsgs.add(newLine, i, msgCount);
                     GridPane.setValignment(newLine, VPos.CENTER); 
                 }
             }
-            seqGridMsgs.add(arrow, recIndex, msgCount);
+
+            if (message.transmition == true)
+            {
+                UMLArrow arrow = new UMLArrow();
+                arrow.setStartX(0);
+                arrow.setStartY(0);
+
+                arrow.setEndX(arrowWidth);
+                arrow.setEndY(0);
+                seqGridMsgs.add(arrow, recIndex, msgCount);
+            }
+            else
+            {
+                UMLArrowReply arrow = new UMLArrowReply();
+                arrow.setStartX(0);
+                arrow.setStartY(0);
+
+                arrow.setEndX(arrowWidth);
+                arrow.setEndY(0);
+                seqGridMsgs.add(arrow, recIndex, msgCount);
+            }
+            
             seqGridMsgs.add(messageLabel, recIndex, msgCount);
         }
         else
@@ -638,7 +669,26 @@ public class EditorController implements Initializable
                     GridPane.setValignment(newLine, VPos.CENTER); 
                 }
             }
-            seqGridMsgs.add(arrow, recIndex + 1, msgCount);
+            if (message.transmition == true)
+            {
+                UMLArrow arrow = new UMLArrow();
+                arrow.setStartX(0);
+                arrow.setStartY(0);
+
+                arrow.setEndX(arrowWidth);
+                arrow.setEndY(0);
+                seqGridMsgs.add(arrow, recIndex + 1, msgCount);
+            }
+            else
+            {
+                UMLArrowReply arrow = new UMLArrowReply();
+                arrow.setStartX(0);
+                arrow.setStartY(0);
+
+                arrow.setEndX(arrowWidth);
+                arrow.setEndY(0);
+                seqGridMsgs.add(arrow, recIndex + 1, msgCount);
+            }
             seqGridMsgs.add(messageLabel, recIndex + 1, msgCount);
         }
 

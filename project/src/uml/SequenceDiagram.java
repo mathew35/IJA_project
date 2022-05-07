@@ -36,9 +36,25 @@ public class SequenceDiagram extends ClassDiagram{
      * @param receiver Příjemce zprávy.
      * @param transmition Typ přenosu (synchroní, asynchroní).
      */
-    public UMLMessage createMessage(UMLOperation operation, UMLClass sender, UMLClass receiver, boolean transmition, int order)
+    public UMLMessage createMessage(UMLOperation operation, UMLClass sender, UMLClass receiver, boolean transmition, boolean occurence, int order)
     {
-        UMLMessage newMessage = new UMLMessage(operation, sender, receiver, transmition, order);
+        UMLMessage newMessage = new UMLMessage(operation, sender, receiver, transmition, occurence, order);
+        this.messages.add(newMessage);
+
+        return newMessage;
+    }
+
+    /**
+     * Vytvoří instanci UML zprávy a vloží ji do diagramu.
+     * 
+     * @param operation Operace dané zprávy.
+     * @param sender Odesílatel zprávy.
+     * @param receiver Příjemce zprávy.
+     * @param transmition Typ přenosu (synchroní, asynchroní).
+     */
+    public UMLMessage createMessage(String message, UMLClass sender, UMLClass receiver, boolean transmition, boolean occurence, int order)
+    {
+        UMLMessage newMessage = new UMLMessage(message, sender, receiver, transmition, occurence, order);
         this.messages.add(newMessage);
 
         return newMessage;
