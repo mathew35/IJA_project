@@ -12,6 +12,7 @@ package project;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.io.IOException;
+import java.lang.instrument.UnmodifiableClassException;
 import java.net.URL;
 import javafx.fxml.*;
 import javafx.geometry.HPos;
@@ -55,6 +56,9 @@ public class EditorController implements Initializable
     private TreeView<String> ClassTree;
 
     @FXML
+    private TreeView<String> AttributesTree;
+
+    @FXML
     private TextField ClassName;
     
     @FXML
@@ -66,6 +70,9 @@ public class EditorController implements Initializable
     @FXML
     private ComboBox<String> ChoiceParentClass;
 
+    @FXML
+    private ComboBox<String> ChoiceChildClass;
+    
     @FXML
     private TabPane tabPane;
 
@@ -95,8 +102,46 @@ public class EditorController implements Initializable
         this.setClassDiagram(classDiagram);
         Tab deleted = tabPane.getSelectionModel().getSelectedItem();
         tabPane.getTabs().remove(deleted);
+        updateClassTab();
     }
-    
+    public void updateClassTab(){
+        //TreeView
+        TreeItem<String> rootItem = ClassTree.getRoot();
+        rootItem.getChildren().removeAll(rootItem.getChildren());
+        for(UMLClass i:classDiagram.getClasses()){
+            TreeItem<String> newItem = new TreeItem<String> (i.getName());
+            newItem.setExpanded(true);
+            rootItem.getChildren().add(newItem);
+        }
+        for(UMLClass i:classDiagram.getClasses()){
+            if(i.getParent() != null){
+                TreeItem<String> parent = searchTreeView(i.getParent().getName(), rootItem);
+                TreeItem<String> child = searchTreeView(i.getName(), rootItem);
+                ChangeParent(parent,child);
+            }
+        }
+        //ComboBoxes
+        String selectedP = ChoiceParentClass.getSelectionModel().getSelectedItem();
+        String selectedCH = ChoiceChildClass.getSelectionModel().getSelectedItem();
+        ChoiceParentClass.getItems().removeAll(ChoiceParentClass.getItems());
+        ChoiceChildClass.getItems().removeAll(ChoiceChildClass.getItems());
+        for(UMLClass i:classDiagram.getClasses()){
+            ChoiceParentClass.getItems().add(i.getName());
+            ChoiceChildClass.getItems().add(i.getName());
+        }
+        ChoiceParentClass.getSelectionModel().select(selectedP);
+        ChoiceChildClass.getSelectionModel().select(selectedCH);
+        selectedP = ChoiceParentClass.getSelectionModel().getSelectedItem();
+        if(selectedP == null){
+            ChoiceParentClass.getSelectionModel().clearSelection();
+        }
+        System.out.println(selectedP);
+        ChoiceParentClass.setPromptText("Select Parent Class");
+        ChoiceChildClass.setPromptText("Select Child Class");
+        ChoiceParentClass.getSelectionModel().clearSelection();
+        //TextField
+        NewClassName.setText("");
+    }
     public void setClassDiagram(ClassDiagram diag){
         classDiagram = diag;
         TreeItem<String> rootItem = new TreeItem<>(classDiagram.getName());
@@ -107,7 +152,7 @@ public class EditorController implements Initializable
         ClassTree.setShowRoot(false);
         ClassTree.setRoot(rootItem);
         ClassName.setPromptText("Class Name");
-
+        updateClassTab();
     }
 
     /**
@@ -117,6 +162,27 @@ public class EditorController implements Initializable
         TreeItem<String> item = ClassTree.getSelectionModel().getSelectedItem();
         if (item != null){
             ClassName.setText(item.getValue());
+            UMLClass itemClass = null;
+            for(UMLClass i:classDiagram.getClasses()){
+                if(i.getName()==item.getValue()){
+                    itemClass = i;
+                }
+            }
+            TreeItem<String> rootItem = new TreeItem<String>(item.getValue());
+            AttributesTree.setShowRoot(false);
+            AttributesTree.setRoot(rootItem);
+            TreeItem<String> attr = new TreeItem<String>("Attributes");
+            TreeItem<String> func = new TreeItem<String>("Functions");
+            TreeItem<String> oper = new TreeItem<String>("Operations");
+            for(UMLOperation i:itemClass.getOperations()){
+                oper.getChildren().add(new TreeItem<String>(i.getName()));
+            }
+            for(UMLAttribute i:itemClass.getAttributes()){
+                attr.getChildren().add(new TreeItem<String>(i.getName()));
+            }
+            rootItem.getChildren().add(attr);
+            rootItem.getChildren().add(func);
+            rootItem.getChildren().add(oper);
         }
     }
     /**
@@ -142,23 +208,61 @@ public class EditorController implements Initializable
     /**
      * TODO
      */
-    public TreeItem<String> getParent(TreeItem<String> child,TreeItem<String> Origin){
-        TreeItem<String> res = null;
+    public TreeItem<String> getTreeParent(TreeItem<String> child,TreeItem<String> Origin){
+        TreeItem<String> res = ClassTree.getRoot();
         for(TreeItem<String> i:Origin.getChildren()){
             if (i.getChildren().contains(child)){
                 res = i;
             }
-            if (res == null){
-                res = getParent(child, i);
+            if (res == ClassTree.getRoot()){
+                res = getTreeParent(child, i);
             }
         }
         return res;
     }
     /**
+     * TODO
+     */
+    public void removeTreeBranch(TreeItem<String> branch,TreeItem<String> Origin){
+        TreeItem<String> parent = getTreeParent(branch,Origin);
+        parent.getChildren().remove(parent.getChildren().indexOf(branch));
+    }
+    /**
+     * TODO
+     */
+    public void removeTreeItem(TreeItem<String> rmItem,TreeItem<String> Origin){
+        TreeItem<String> parent = getTreeParent(rmItem,Origin);
+        for(TreeItem<String> i:rmItem.getChildren()){
+            parent.getChildren().add(i);
+        }
+        parent.getChildren().remove(parent.getChildren().indexOf(rmItem));
+    }
+    /**
+     * TODO
+     */
+    public void ChangeParent(TreeItem<String> newParent,TreeItem<String> newChild){
+        TreeItem<String> chParent = getTreeParent(newChild, ClassTree.getRoot());
+        // if(searchTreeView(newParent.getValue(), newChild) != null){
+        //     removeTreeBranch(newParent, ClassTree.getRoot());
+        //     newChild = searchTreeView(newChild.getValue(), ClassTree.getRoot());
+        //     removeTreeBranch(newChild, chParent);
+        //     newParent.getChildren().add(newChild);
+        //     chParent.getChildren().add(newParent);
+        //     return;
+        // }
+        // if(searchTreeView(newChild.getValue(), newParent) != null){
+        //     removeTreeBranch(newChild, newParent);
+        //     newParent = searchTreeView(newParent.getValue(), ClassTree.getRoot());
+        //     newParent.getChildren().add(newChild);
+        //     return;
+        // }
+        removeTreeBranch(newChild, chParent);
+        newParent.getChildren().add(newChild);
+    }
+    /**
     * Přidání třídy do diagramu tříd
     */
     public void onAddClassClick(){
-        TreeItem<String> rootItem = ClassTree.getRoot();
         String text = NewClassName.getText();
         ClassErrorLabel.setText(null);
         if (text.isEmpty()) {
@@ -170,11 +274,7 @@ public class EditorController implements Initializable
             ClassErrorLabel.setText("Trieda uz existuje!");
             return;
         }
-        ChoiceParentClass.getItems().add(text);
-        TreeItem<String> newClass = new TreeItem<>(text);
-        newClass.setExpanded(true);
-        rootItem.getChildren().add(newClass);
-        NewClassName.setText("");
+        updateClassTab();
     }
     /**
     * Přidání podtřídy ke vybrané tříde v diagramu tříd
@@ -197,23 +297,13 @@ public class EditorController implements Initializable
             ClassErrorLabel.setText("Trieda uz existuje!");
             return;
         }
-        TreeItem<String> parent = null;
-        parent = searchTreeView(parentClass,rootItem);
-        // for(TreeItem i:rootItem.getChildren()){
-        //     if (i.getValue().equals(parentClass)) {
-        //         parent = i;
-        //         break;
-        //     }
-        // }
-        if (parent == null){
-            ClassErrorLabel.setText("Parent Class not found (subclasses not checked)");
-            return;
+        for(UMLClass i:classDiagram.getClasses()){
+            if(i.getName().equals(parentClass)){
+                res.setParent(i);
+                break;
+            }
         }
-        TreeItem<String> newClass = new TreeItem<>(text);
-        newClass.setExpanded(true);
-        parent.getChildren().add(newClass);
-        ChoiceParentClass.getItems().add(text);
-        NewClassName.setText("");
+        updateClassTab();
     }
 
     /**
@@ -229,33 +319,63 @@ public class EditorController implements Initializable
         }
         TreeItem<String> deleteClass = null;
         deleteClass = searchTreeView(deleteClassName,rootItem);
-        // for(TreeItem i:rootItem.getChildren()){
-        //     if (i.getValue().equals(parentClass)) {
-        //         parent = i;
-        //         break;
-        //     }
-        // }
         if (deleteClass == null){
             ClassErrorLabel.setText("Class not found");
             return;
         }
-        TreeItem<String> parent = getParent(deleteClass,rootItem);
-        // classDiagram.removeClass(deleteClass);
-        // update();
-        if(parent == null){
-            parent = rootItem;
-        }
-        if (!deleteClass.getChildren().isEmpty()){
-            for(TreeItem<String> i:deleteClass.getChildren()){
-                parent.getChildren().add(i);
+        TreeItem<String> parent = getTreeParent(deleteClass,rootItem);
+        UMLClass parentClass = null;
+        for(UMLClass i:classDiagram.getClasses()){
+            if(i.getName() == parent.getValue()){
+                parentClass = i;
+                break;
             }
         }
-        parent.getChildren().remove(parent.getChildren().indexOf(deleteClass));
-        ChoiceParentClass.getItems().remove(deleteClassName);
+        for(TreeItem<String> i:deleteClass.getChildren()){
+            for(UMLClass j:classDiagram.getClasses()){
+                if(i.getValue()==j.getName()){
+                    j.setParent(parentClass);
+                }
+            }
+        }
         classDiagram.removeClass(deleteClassName);
-        NewClassName.setText("");
+        updateClassTab();
     }
 
+    /**
+     * TOOD
+     */
+    public void onChangeParentClick(){
+        TreeItem<String> rootItem = ClassTree.getRoot();
+        String newParentName = ChoiceParentClass.getSelectionModel().getSelectedItem();
+        String ChildName = ChoiceChildClass.getSelectionModel().getSelectedItem();
+        ClassErrorLabel.setText(null);
+        if (ChildName == null){
+            ClassErrorLabel.setText("Vyber child class");
+            return;
+        }
+        if (newParentName == null){
+            ClassErrorLabel.setText("Vyber rodicovsku triedu");
+            return;
+        }
+        UMLClass newParentClass = null;
+        UMLClass ChildClass = null;
+        for(UMLClass i:classDiagram.getClasses()){
+            if(i.getName()==newParentName){
+                newParentClass = i;    
+            }
+            if(i.getName()==ChildName){
+                ChildClass = i;    
+            }
+        }
+        if (newParentName == ChildName){
+            newParentClass.setParent(null);
+            return;
+        }
+        ChildClass.setParent(newParentClass);
+        updateClassTab();
+
+    }
     /**
     * Přidání karty do panelu karet 
     */

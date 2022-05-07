@@ -78,7 +78,7 @@
                <content>
                   <HBox id="ClassDiagramTab" prefHeight="100.0" prefWidth="200.0" style="-fx-id: TabClassDiagram;">
                      <children>
-                        <VBox alignment="TOP_CENTER" prefHeight="486.0" prefWidth="151.0">
+                        <VBox alignment="TOP_CENTER" prefHeight="486.0" prefWidth="152.0">
                            <children>
                               <TextField fx:id="NewClassName" promptText="New class name">
                                  <VBox.margin>
@@ -92,14 +92,14 @@
                               </ComboBox>
                               <HBox prefHeight="26.0" prefWidth="151.0">
                                  <children>
-                                    <Button fx:id="AddClassButton" mnemonicParsing="false" onAction="#onAddClassClick" text="Class +">
+                                    <Button fx:id="AddClassButton" mnemonicParsing="false" onAction="#onAddClassClick" prefWidth="60.0" text="Class +">
                                        <HBox.margin>
                                           <Insets right="5.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button fx:id="AddSubclassButton" mnemonicParsing="false" onAction="#onAddSubclassClick" text="Subclass +">
+                                    <Button fx:id="AddSubclassButton" mnemonicParsing="false" onAction="#onAddSubclassClick" prefWidth="80.0" text="Subclass +">
                                        <HBox.margin>
-                                          <Insets left="8.0" />
+                                          <Insets />
                                        </HBox.margin>
                                     </Button>
                                  </children>
@@ -112,10 +112,23 @@
                                     <Insets left="5.0" right="5.0" top="5.0" />
                                  </VBox.margin>
                               </Button>
+                              <ComboBox fx:id="ChoiceChildClass" prefWidth="200.0" promptText="Select Child Class">
+                                 <VBox.margin>
+                                    <Insets left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                              </ComboBox>
+                              <Button fx:id="ChangeParentButton" mnemonicParsing="false" onAction="#onChangeParentClick" prefWidth="200.0" text="Change Parent">
+                                 <VBox.margin>
+                                    <Insets left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                              </Button>
                               <Label fx:id="ClassErrorLabel" textFill="RED" wrapText="true">
                                  <padding>
                                     <Insets left="5.0" right="5.0" top="5.0" />
                                  </padding>
+                                 <VBox.margin>
+                                    <Insets left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
                               </Label>
                            </children>
                         </VBox>

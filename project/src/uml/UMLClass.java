@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.*;
 
 public class UMLClass  extends UMLClassifier{
     private boolean isAbstract = false;
+    @JsonProperty("parent")
+    private UMLClass parent = null;
     @JsonProperty("attributes")
     private List<UMLAttribute> attributes = new ArrayList<UMLAttribute>();
     @JsonProperty("operations")
@@ -12,6 +14,12 @@ public class UMLClass  extends UMLClassifier{
     public UMLClass(){}
     public UMLClass(String name){
         super(name,true);
+    }
+    public void setParent(UMLClass parent){
+        this.parent = parent;
+    }
+    public UMLClass getParent(){
+        return this.parent;
     }
     public boolean isAbstract(){
         return this.isAbstract;
