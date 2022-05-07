@@ -9,7 +9,7 @@ public class UMLClass  extends UMLClassifier{
     @JsonProperty("attributes")
     private List<UMLAttribute> attributes = new ArrayList<UMLAttribute>();
     @JsonProperty("operations")
-    private List<UMLAttribute> operations = new ArrayList<UMLAttribute>();
+    private List<UMLOperation> operations = new ArrayList<UMLOperation>();
     public UMLClass(){}
     public UMLClass(String name){
         super(name,true);
@@ -28,7 +28,7 @@ public class UMLClass  extends UMLClassifier{
         }
         return false;
     }
-    public boolean addOperation(UMLAttribute oper){
+    public boolean addOperation(UMLOperation oper){
         int pos = getOperPosition(oper);
         if(pos == -1){
             this.operations.add(oper);
@@ -39,7 +39,7 @@ public class UMLClass  extends UMLClassifier{
     public int getAttrPosition(UMLAttribute attr){
         return this.attributes.indexOf(attr);
     }
-    public int getOperPosition(UMLAttribute oper){
+    public int getOperPosition(UMLOperation oper){
         return this.operations.indexOf(oper);
     }
     public int moveAttrAtPosition(UMLAttribute attr, int pos){
@@ -70,7 +70,7 @@ public class UMLClass  extends UMLClassifier{
         return Collections.unmodifiableList(this.attributes);
     }
 
-    public List<UMLAttribute> getOperations(){
+    public List<UMLOperation> getOperations(){
         return Collections.unmodifiableList(this.operations);
     }
 }
