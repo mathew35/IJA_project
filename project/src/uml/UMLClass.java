@@ -31,10 +31,10 @@ public class UMLClass  extends UMLClassifier{
         }
         return false;
     }
-    public boolean addOperation(UMLOperation oper){
-        int pos = getOperationPosition(oper);
+    public boolean addOperation(UMLAttribute oper){
+        int pos = getOperPosition(oper);
         if(pos == -1){
-            this.operations.add(attr);
+            this.operations.add(oper);
             return true;
         }
         return false;
@@ -42,7 +42,7 @@ public class UMLClass  extends UMLClassifier{
     public int getAttrPosition(UMLAttribute attr){
         return this.attributes.indexOf(attr);
     }
-    public int getOperPosition(UMLOperation oper){
+    public int getOperPosition(UMLAttribute oper){
         return this.operations.indexOf(oper);
     }
     public int moveAttrAtPosition(UMLAttribute attr, int pos){
