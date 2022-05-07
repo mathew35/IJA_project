@@ -45,7 +45,7 @@ import uml.*;
  */
 public class EditorController implements Initializable
 {
-    ClassDiagram classDiagram = new ClassDiagram();
+    ClassDiagram classDiagram = new ClassDiagram("genereted");
     ArrayList<SequenceDiagram> sequenceDiagrams = new ArrayList<SequenceDiagram>();
     GridPane seqGrid = new GridPane();
     GridPane seqGridMsgs = new GridPane();
@@ -123,7 +123,36 @@ public class EditorController implements Initializable
      */
     public void SelectClass() {
     }
-
+    /**
+     * TODO
+     */
+    public TreeItem<String> searchTreeView(String find, TreeItem<String> list){
+        TreeItem<String> res = null;
+        for(TreeItem<String> i:list.getChildren()){
+            if (i.getValue().equals(find)){
+                res = i;
+            }
+            if (res == null){
+                res = searchTreeView(find, i);
+            }
+        }
+        return res;
+    }
+    /**
+     * TODO
+     */
+    public TreeItem<String> getParent(TreeItem<String> child,TreeItem<String> Origin){
+        TreeItem<String> res = null;
+        for(TreeItem<String> i:Origin.getChildren()){
+            if (i.getChildren().contains(child)){
+                res = i;
+            }
+            if (res == null){
+                res = getParent(child, i);
+            }
+        }
+        return res;
+    }
     /**
     * Přidání třídy do diagramu tříd
     */
@@ -154,7 +183,6 @@ public class EditorController implements Initializable
         String text = NewClassName.getText();
         String parentClass = ChoiceParentClass.getSelectionModel().getSelectedItem();
         ClassErrorLabel.setText(null);
-        ChoiceParentClass.getSelectionModel().clearSelection();
         if (text.isEmpty()) {
             ClassErrorLabel.setText("Zadaj nazov novej triedy");
             return;
@@ -169,17 +197,61 @@ public class EditorController implements Initializable
             return;
         }
         TreeItem<String> parent = null;
-        for(TreeItem i:rootItem.getChildren()){
-            if (i.getValue().equals(parentClass)) {
-                parent = i;
-                break;
-            }
-        }
+        parent = searchTreeView(parentClass,rootItem);
+        // for(TreeItem i:rootItem.getChildren()){
+        //     if (i.getValue().equals(parentClass)) {
+        //         parent = i;
+        //         break;
+        //     }
+        // }
         if (parent == null){
             ClassErrorLabel.setText("Parent Class not found (subclasses not checked)");
             return;
         }
-        parent.getChildren().add(new TreeItem<>(text));
+        TreeItem<String> newClass = new TreeItem<>(text);
+        newClass.setExpanded(true);
+        parent.getChildren().add(newClass);
+        ChoiceParentClass.getItems().add(text);
+        NewClassName.setText("");
+    }
+
+    /**
+     * TODO
+     */
+    public void onRemoveClassClick(){
+        TreeItem<String> rootItem = ClassTree.getRoot();
+        String deleteClassName = ChoiceParentClass.getSelectionModel().getSelectedItem();
+        ClassErrorLabel.setText(null);
+        if (deleteClassName == null){
+            ClassErrorLabel.setText("Vyber triedu na zmazanie");
+            return;
+        }
+        TreeItem<String> deleteClass = null;
+        deleteClass = searchTreeView(deleteClassName,rootItem);
+        // for(TreeItem i:rootItem.getChildren()){
+        //     if (i.getValue().equals(parentClass)) {
+        //         parent = i;
+        //         break;
+        //     }
+        // }
+        if (deleteClass == null){
+            ClassErrorLabel.setText("Class not found");
+            return;
+        }
+        TreeItem<String> parent = getParent(deleteClass,rootItem);
+        // classDiagram.removeClass(deleteClass);
+        // update();
+        if(parent == null){
+            parent = rootItem;
+        }
+        if (!deleteClass.getChildren().isEmpty()){
+            for(TreeItem<String> i:deleteClass.getChildren()){
+                parent.getChildren().add(i);
+            }
+        }
+        parent.getChildren().remove(parent.getChildren().indexOf(deleteClass));
+        ChoiceParentClass.getItems().remove(deleteClassName);
+        classDiagram.removeClass(deleteClassName);
         NewClassName.setText("");
     }
 

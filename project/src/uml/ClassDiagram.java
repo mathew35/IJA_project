@@ -31,6 +31,16 @@ public class ClassDiagram extends Element{
         return newClass;
         
     }
+    public void removeClass(String name){
+        UMLClass search;
+        for(int i = 0; i < this.classes.size(); i++){
+            search = this.classes.get(i);
+            if(search.getName().equals(name)){
+                this.classes.remove(search);
+            }
+        }
+        
+    }
     public UMLClassifier classifierForName(String name){
         UMLClassifier classifier =  findClassifier(name);
         if(classifier == null){

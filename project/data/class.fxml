@@ -107,6 +107,11 @@
                                     <Insets left="5.0" right="5.0" top="5.0" />
                                  </VBox.margin>
                               </HBox>
+                              <Button fx:id="RemoveClassButton" mnemonicParsing="false" onAction="#onRemoveClassClick" prefWidth="200.0" text="Remove Class -">
+                                 <VBox.margin>
+                                    <Insets left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                              </Button>
                               <Label fx:id="ClassErrorLabel" textFill="RED" wrapText="true">
                                  <padding>
                                     <Insets left="5.0" right="5.0" top="5.0" />
@@ -122,7 +127,7 @@
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="408.0" prefWidth="289.0">
                                        <children>
                                           <TextField fx:id="ClassName" layoutX="-1.0" layoutY="6.0" prefHeight="25.0" prefWidth="172.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
-                                          <TreeView layoutX="6.0" layoutY="30.0" prefHeight="367.0" prefWidth="279.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="35.0" />
+                                          <TreeView fx:id="AtributesTree" layoutX="6.0" layoutY="30.0" prefHeight="367.0" prefWidth="279.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="35.0" />
                                        </children>
                                     </AnchorPane>
                                 </content>
