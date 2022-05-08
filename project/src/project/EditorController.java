@@ -238,39 +238,39 @@ public class EditorController implements Initializable
             func.setExpanded(true);
             oper.setExpanded(true);
 
-            TreeItem<String> oldRoot = AttributesTree.getRoot();
-            ArrayList<String> groups = new ArrayList<>();
-            groups.add("Attributes","Functions","Operations");
-            if(oldRoot != null){
-                for(TreeItem<String>i:oldRoot.getChildren()){
-                    for(TreeItem<String>j:i.getChildren()){
-                        groups(i.getName()).add(j.getName());
-                    }
-                }
-            }
+            // TreeItem<String> oldRoot = AttributesTree.getRoot();
+            // ArrayList<String> groups = new ArrayList<>();
+            // groups.add("Attributes","Functions","Operations");
+            // if(oldRoot != null){
+            //     for(TreeItem<String>i:oldRoot.getChildren()){
+            //         for(TreeItem<String>j:i.getChildren()){
+            //             groups(i.getName()).add(j.getName());
+            //         }
+            //     }
+            // }
 
-            //AttributesTree
-            for(UMLOperation i:itemClass.getOperations()){
-                oper.getChildren().add(new TreeItem<String>(i.getName()));
-            }
-            for(UMLAttribute i:itemClass.getAttributes()){
-                attr.getChildren().add(new TreeItem<String>(i.getName()));
-            }
-            rootItemAttr.getChildren().add(attr);
-            rootItemAttr.getChildren().add(func);
-            rootItemAttr.getChildren().add(oper);
-            rootItemAttr.setExpanded(true);
+            // //AttributesTree
+            // for(UMLOperation i:itemClass.getOperations()){
+            //     oper.getChildren().add(new TreeItem<String>(i.getName()));
+            // }
+            // for(UMLAttribute i:itemClass.getAttributes()){
+            //     attr.getChildren().add(new TreeItem<String>(i.getName()));
+            // }
+            // rootItemAttr.getChildren().add(attr);
+            // rootItemAttr.getChildren().add(func);
+            // rootItemAttr.getChildren().add(oper);
+            // rootItemAttr.setExpanded(true);
 
-            AttributesTree.setShowRoot(false);
-            AttributesTree.setRoot(rootItemAttr);
-            TreeItem<String> rootItem = AttributesTree.getRoot();
-            AttributesTree.setEditable(true);
-            AttributesTree.setCellFactory(new Callback<TreeView<String>,TreeCell<String>>(){
-                @Override
-                public TreeCell<String> call(TreeView<String> p) {
-                    return new TextFieldTreeCellImpl();
-                }
-            });
+            // AttributesTree.setShowRoot(false);
+            // AttributesTree.setRoot(rootItemAttr);
+            // TreeItem<String> rootItem = AttributesTree.getRoot();
+            // AttributesTree.setEditable(true);
+            // AttributesTree.setCellFactory(new Callback<TreeView<String>,TreeCell<String>>(){
+            //     @Override
+            //     public TreeCell<String> call(TreeView<String> p) {
+            //         return new TextFieldTreeCellImpl();
+            //     }
+            // });
             // parent.getChildren().remove(parent.getChildren().indexOf(empty));    
             // for(TreeItem<String> i:rootItem.getChildren().get(0).getChildren()){
             //     if(i.getValue()==""){
