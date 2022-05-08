@@ -32,6 +32,9 @@ import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 
+import javafx.event.Event;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 
 import uml.*;
 
@@ -159,8 +162,18 @@ public class EditorController implements Initializable
     private final class TextFieldTreeCellImpl extends TreeCell<String> {
  
         private TextField textField;
+        private ContextMenu addMenu = new ContextMenu();
  
         public TextFieldTreeCellImpl() {
+            MenuItem addMenuItem = new MenuItem("New Item");
+            addMenu.getItems().add(addMenuItem);
+            addMenuItem.setOnAction(new EventHandler() {
+                public void handle(Event t) {
+                    TreeItem newEmployee = 
+                        new TreeItem<String>("New Item");
+                            getTreeItem().getChildren().add(newEmployee);
+                }
+            });
         }
  
         @Override
@@ -199,6 +212,11 @@ public class EditorController implements Initializable
                 } else {
                     setText(getString());
                     setGraphic(getTreeItem().getGraphic());
+                    if (
+                        !getTreeItem().isLeaf()&&getTreeItem().getParent()!= null
+                    ){
+                        setContextMenu(addMenu);
+                    }
                 }
             }
         }
@@ -234,6 +252,11 @@ public class EditorController implements Initializable
                     itemClass = i;
                 }
             }
+            if(itemClass == null){
+                AttributesTree.setRoot(null);
+                ClassName.setText(null);
+                return;
+            }
             //AttributesTree
             TreeItem<String> rootItem = new TreeItem<String>(ClassName.getText());
             TreeItem<String> attr = new TreeItem<String>("Attributes");
@@ -248,6 +271,15 @@ public class EditorController implements Initializable
             }
             for(UMLOperation i:itemClass.getOperations()){
                 oper.getChildren().add(new TreeItem<String>(i.getName()));
+            }
+            if(attr.getChildren().isEmpty()){
+                attr.getChildren().add(new TreeItem<String>(""));
+            }
+            if(func.getChildren().isEmpty()){
+                func.getChildren().add(new TreeItem<String>(""));
+            }
+            if(oper.getChildren().isEmpty()){
+                oper.getChildren().add(new TreeItem<String>(""));
             }
             rootItem.getChildren().add(attr);
             rootItem.getChildren().add(func);
@@ -296,13 +328,19 @@ public class EditorController implements Initializable
             ArrayList<String> Functions = new ArrayList<String>();
             ArrayList<String> Operations = new ArrayList<String>();
             for(TreeItem<String>i:oldRoot.getChildren().get(0).getChildren()){
-                Attributes.add(i.getValue());
+                if(!i.getValue().equals("")){
+                    Attributes.add(i.getValue());
+                }
             }
             for(TreeItem<String>i:oldRoot.getChildren().get(1).getChildren()){
-                Functions.add(i.getValue());
+                if(!i.getValue().equals("")){
+                    Functions.add(i.getValue());
+                }
             }
             for(TreeItem<String>i:oldRoot.getChildren().get(2).getChildren()){
-                Operations.add(i.getValue());
+                if(!i.getValue().equals("")){
+                    Operations.add(i.getValue());
+                }
             }
             ArrayList<UMLAttribute> newAttributes = new ArrayList<UMLAttribute>();
             ArrayList<UMLOperation> newOperations= new ArrayList<UMLOperation>();
@@ -394,21 +432,7 @@ public class EditorController implements Initializable
      */
     public void ChangeParent(TreeItem<String> newParent,TreeItem<String> newChild){
         TreeItem<String> chParent = getTreeParent(newChild, ClassTree.getRoot());
-        // if(searchTreeView(newParent.getValue(), newChild) != null){
-        //     removeTreeBranch(newParent, ClassTree.getRoot());
-        //     newChild = searchTreeView(newChild.getValue(), ClassTree.getRoot());
-        //     removeTreeBranch(newChild, chParent);
-        //     newParent.getChildren().add(newChild);
-        //     chParent.getChildren().add(newParent);
-        //     return;
-        // }
-        // if(searchTreeView(newChild.getValue(), newParent) != null){
-        //     removeTreeBranch(newChild, newParent);
-        //     newParent = searchTreeView(newParent.getValue(), ClassTree.getRoot());
-        //     newParent.getChildren().add(newChild);
-        //     return;
-        // }
-        removeTreeBranch(newChild, chParent);
+            removeTreeBranch(newChild, chParent);
         newParent.getChildren().add(newChild);
     }
     /**
