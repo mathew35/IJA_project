@@ -10,12 +10,15 @@
 package project;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.w3c.dom.Attr;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.temporal.UnsupportedTemporalTypeException;
+
 import javafx.fxml.*;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -148,8 +151,10 @@ public class EditorController implements Initializable
     */
     public void selectItem(){
         TreeItem<String> item = ClassTree.getSelectionModel().getSelectedItem();
-        ClassName.setText(item.getValue());
-        updateAttrTree();
+        if(item != null){
+            ClassName.setText(item.getValue());
+            updateAttrTree();
+        }
     }
     //source: https://docs.oracle.com/javafx/2/ui_controls/tree-view.htm
     private final class TextFieldTreeCellImpl extends TreeCell<String> {
@@ -226,11 +231,12 @@ public class EditorController implements Initializable
         if (ClassName.getText() != null){
             UMLClass itemClass = null;
             for(UMLClass i:classDiagram.getClasses()){
-                if(i.getName()==ClassName.getText()){
+                if(i.getName().equals(ClassName.getText())){
                     itemClass = i;
                 }
             }
-            TreeItem<String> rootItemAttr = new TreeItem<String>(ClassName.getText());
+            //AttributesTree
+            TreeItem<String> rootItem = new TreeItem<String>(ClassName.getText());
             TreeItem<String> attr = new TreeItem<String>("Attributes");
             TreeItem<String> func = new TreeItem<String>("Functions");
             TreeItem<String> oper = new TreeItem<String>("Operations");
@@ -238,56 +244,99 @@ public class EditorController implements Initializable
             func.setExpanded(true);
             oper.setExpanded(true);
 
-            // TreeItem<String> oldRoot = AttributesTree.getRoot();
-            // ArrayList<String> groups = new ArrayList<>();
-            // groups.add("Attributes","Functions","Operations");
-            // if(oldRoot != null){
-            //     for(TreeItem<String>i:oldRoot.getChildren()){
-            //         for(TreeItem<String>j:i.getChildren()){
-            //             groups(i.getName()).add(j.getName());
-            //         }
-            //     }
-            // }
+            for(UMLAttribute i:itemClass.getAttributes()){
+                attr.getChildren().add(new TreeItem<String>(i.getName()));
+            }
+            for(UMLOperation i:itemClass.getOperations()){
+                oper.getChildren().add(new TreeItem<String>(i.getName()));
+            }
+            rootItem.getChildren().add(attr);
+            rootItem.getChildren().add(func);
+            rootItem.getChildren().add(oper);
+            rootItem.setExpanded(true);
 
-            // //AttributesTree
-            // for(UMLOperation i:itemClass.getOperations()){
-            //     oper.getChildren().add(new TreeItem<String>(i.getName()));
-            // }
-            // for(UMLAttribute i:itemClass.getAttributes()){
-            //     attr.getChildren().add(new TreeItem<String>(i.getName()));
-            // }
-            // rootItemAttr.getChildren().add(attr);
-            // rootItemAttr.getChildren().add(func);
-            // rootItemAttr.getChildren().add(oper);
-            // rootItemAttr.setExpanded(true);
-
-            // AttributesTree.setShowRoot(false);
-            // AttributesTree.setRoot(rootItemAttr);
-            // TreeItem<String> rootItem = AttributesTree.getRoot();
-            // AttributesTree.setEditable(true);
-            // AttributesTree.setCellFactory(new Callback<TreeView<String>,TreeCell<String>>(){
-            //     @Override
-            //     public TreeCell<String> call(TreeView<String> p) {
-            //         return new TextFieldTreeCellImpl();
-            //     }
-            // });
-            // parent.getChildren().remove(parent.getChildren().indexOf(empty));    
-            // for(TreeItem<String> i:rootItem.getChildren().get(0).getChildren()){
-            //     if(i.getValue()==""){
-            //         rootItem.getChildren().get(0).getChildren().remove(rootItem.getChildren().get(0).getChildren().indexOf(i));
-            //     }
-            // }
+            AttributesTree.setShowRoot(false);
+            AttributesTree.setRoot(rootItem);
+            AttributesTree.setEditable(true);
+            AttributesTree.setCellFactory(new Callback<TreeView<String>,TreeCell<String>>(){
+                @Override
+                public TreeCell<String> call(TreeView<String> p) {
+                    return new TextFieldTreeCellImpl();
+                }
+            });
         }
     }
     /**
      * TODO
      */
     public void onResetClick() {
+        updateAttrTree();
     }
     /**
      * TODO
      */
     public void onUpdateClick() {
+        if (!ClassName.getText().isEmpty()){
+            UMLClass itemClass = null;
+            for(UMLClass i:classDiagram.getClasses()){
+                if(i.getName().equals(ClassName.getText())){
+                    itemClass = i;
+                }
+            }
+            if(itemClass == null){
+                String name = ClassTree.getSelectionModel().getSelectedItem().getValue();
+                for(UMLClass i:classDiagram.getClasses()){
+                    if(i.getName().equals(name)){
+                        itemClass = i;
+                    }
+                }
+                itemClass.rename(ClassName.getText());                
+            }
+            TreeItem<String> oldRoot = AttributesTree.getRoot();
+            ArrayList<String> Attributes = new ArrayList<String>();
+            ArrayList<String> Functions = new ArrayList<String>();
+            ArrayList<String> Operations = new ArrayList<String>();
+            for(TreeItem<String>i:oldRoot.getChildren().get(0).getChildren()){
+                Attributes.add(i.getValue());
+            }
+            for(TreeItem<String>i:oldRoot.getChildren().get(1).getChildren()){
+                Functions.add(i.getValue());
+            }
+            for(TreeItem<String>i:oldRoot.getChildren().get(2).getChildren()){
+                Operations.add(i.getValue());
+            }
+            ArrayList<UMLAttribute> newAttributes = new ArrayList<UMLAttribute>();
+            ArrayList<UMLOperation> newOperations= new ArrayList<UMLOperation>();
+            for(String i:Attributes){
+                newAttributes.add(new UMLAttribute(i,null));
+            }
+            for(String i:Operations){
+                newOperations.add(new UMLOperation(i,null));
+            }
+
+            List<String> toRemove = new ArrayList<String>();
+            for(UMLAttribute i:itemClass.getAttributes()){
+                toRemove.add(i.getName());
+            }
+            for(String i:toRemove){
+                itemClass.removeAttrOper(i);
+            }
+            toRemove.removeAll(toRemove);
+            for(UMLOperation i:itemClass.getOperations()){
+                toRemove.add(i.getName());
+            }
+            for(String i:toRemove){
+                itemClass.removeAttrOper(i);
+            }
+            for(UMLAttribute i:newAttributes){
+                itemClass.addAttribute(i);
+            }
+            for(UMLOperation i:newOperations){
+                itemClass.addOperation(i);
+            }
+            updateClassTab();
+            updateAttrTree();
+        }
     }
     /**
      * TODO

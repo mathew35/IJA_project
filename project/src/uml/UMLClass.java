@@ -53,12 +53,12 @@ public class UMLClass  extends UMLClassifier{
     public void removeAttrOper(String name){
         UMLAttribute foundA = null;
         UMLOperation foundO = null;
-        for(UMLAttribute i:this.getAttributes()){
+        for(UMLAttribute i:this.attributes){
             if(name==i.getName()){
                 foundA = i;
             }
         }
-        for(UMLOperation i:this.getOperations()){
+        for(UMLOperation i:this.operations){
             if(name==i.getName()){
                 foundO = i;
             }
