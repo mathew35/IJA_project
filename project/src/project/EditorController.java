@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.w3c.dom.Attr;
 
 import java.io.IOException;
@@ -22,8 +24,10 @@ import java.time.temporal.UnsupportedTemporalTypeException;
 import javafx.fxml.*;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.*;
 import javafx.scene.input.KeyCode;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
@@ -42,6 +46,8 @@ public class EditorController implements Initializable
     GridPane seqGrid = new GridPane();
     GridPane seqGridMsgs = new GridPane();
     double msgWidth;
+
+    ArrayList<SequenceController> sequenceControllers = new ArrayList<SequenceController>();
 
     @FXML
     private TreeView<String> ClassTree;
@@ -82,16 +88,6 @@ public class EditorController implements Initializable
     @FXML
     private VBox seqMsgBox;
 
-
-    public void setSequenceDiagram(SequenceDiagram newSequenceDiagram) 
-    {
-        this.sequenceDiagram = newSequenceDiagram;
-
-        SequenceController sequenceController = new SequenceController();
-
-        sequenceController.sequenceDiagram = sequenceDiagram;
-    }
-
     /**
      * Po načtení scény provede prvně tyto úkony pro správné zobrazení a pracování aplikace.
      *
@@ -103,6 +99,7 @@ public class EditorController implements Initializable
         this.setClassDiagram(classDiagram);
         Tab deleted = tabPane.getSelectionModel().getSelectedItem();
         tabPane.getTabs().remove(deleted);
+
         updateClassTab();
     }
     public void updateClassTab(){
@@ -533,15 +530,39 @@ public class EditorController implements Initializable
     * Přidání karty do panelu karet 
      * @throws IOException
     */
-    @FXML
-    private void addTab() throws IOException {
+    @FXML 
+    public void addTab() throws IOException {
         int numTabs = tabPane.getTabs().size();
         Tab tab = new Tab("Sequence Diagram "+(numTabs-1));
 
-        tab.setContent((Node) FXMLLoader.load(Main.class.getClassLoader().getResource("sequence.fxml")));
+        FXMLLoader loader = new FXMLLoader(Main.class.getClassLoader().getResource("sequence.fxml"));
+        tab.setContent(loader.load());
+
+        SequenceController controller = loader.getController();
+
+        sequenceControllers.add(controller);
+
+        tab.setOnCloseRequest(e -> {
+            
+            Alert alert = new Alert(AlertType.CONFIRMATION, "Do you want to save sequence diagram?",  ButtonType.NO, ButtonType.YES);
+            alert.showAndWait();
+
+            if (alert.getResult() == ButtonType.YES) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                controller.exportSequence(objectMapper);
+            }
+        });
+
+        tab.setClosable(true);
 
         tabPane.getTabs().add(tab);
         tabPane.getSelectionModel().selectLast();
+    }
+
+    @FXML
+    public void requestSequenceSave()
+    {
+
     }
 
     @FXML

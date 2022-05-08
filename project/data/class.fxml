@@ -60,7 +60,7 @@
         </Menu>
       </menus>
     </MenuBar>
-      <TabPane fx:id="tabPane" prefHeight="540.0" prefWidth="700.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE">
+      <TabPane fx:id="tabPane" prefHeight="540.0" prefWidth="700.0" side="BOTTOM">
         <tabs>
         <Tab fx:id="addTaber" onSelectionChanged="#addTab">
                <content>
@@ -152,7 +152,6 @@
                      </children></HBox>
                </content>
           </Tab>
-           <Tab text="Sequence Diagram" />
         </tabs>
       </TabPane>
   </children>

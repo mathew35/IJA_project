@@ -1,9 +1,16 @@
 package project;
 
+import java.io.File;
 import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.core.exc.StreamWriteException;
+import com.fasterxml.jackson.databind.DatabindException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
 import java.net.URL;
 import javafx.fxml.*;
@@ -22,13 +29,16 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
 import uml.*;
@@ -59,11 +69,107 @@ public class SequenceController
     private VBox seqMsgBox;
 
     @FXML
+    private VBox loadSeqFirst;
+
+    @FXML
+    private HBox optionSeqBox;
+
+    @FXML 
+    private HBox seqEditorBack;
+
+    private static void configureFileChooser(final FileChooser fileChooser, String type) 
+    {      
+        fileChooser.setTitle("Open " + type + " File...");                
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON", "*.json"));
+    }
+
+   /**
+     * Metoda, která načítá z JSON souboru sekvenční diagram do aplikace.
+     *
+     * @param objectMapper Objekt třídy, která poskytuje funkce pro čtení a zápis JSON.
+     */
+    SequenceDiagram loadSequence(ObjectMapper objectMapper, File file)
+    {
+        try {
+            //SequenceDiagram diagram = objectMapper.readValue(new File("data/sequence.json"), SequenceDiagram.class);
+            SequenceDiagram diagram = objectMapper.readValue(file, SequenceDiagram.class);
+    
+            return diagram;
+        } catch (StreamReadException e) {
+            e.printStackTrace();
+        } catch (DatabindException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /**
+     * Metoda, která exportuje diagram tříd v aplikaci do souboru.
+     *
+     * @param objectMapper Objekt třídy, která poskytuje funkce pro čtení a zápis JSON.
+     */
+    void exportSequence(ObjectMapper objectMapper)
+    {
+        Window stage = Stage.getWindows().stream().filter(Window::isShowing).findFirst().orElse(null);
+        //Stage stage = (Stage)((Node) event.getSource()).getScene().getWindow();
+        FileChooser fileChooser = new FileChooser();
+ 
+        //Set extension filter for text files
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        //Show save file dialog
+        File file = fileChooser.showSaveDialog(stage);
+
+        if (file != null) {
+            try {
+                objectMapper.writeValue(file, sequenceDiagram);
+            } catch (StreamWriteException e) {
+                e.printStackTrace();
+            } catch (DatabindException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @FXML
+    private void loadSeqDiagram()
+    {
+        FileChooser fileChooser = new FileChooser();
+
+        Stage stage = (Stage) seqEditorBack.getScene().getWindow();
+
+        configureFileChooser(fileChooser,"Sequence");
+        File file = fileChooser.showOpenDialog(stage);
+        if (file != null) 
+        {
+            if (addSeqObjFirst != null)
+            {
+                seqEditorBox.getChildren().remove(optionSeqBox);
+                addSeqObjFirst = null;
+    
+                initGridState();
+                initGrid();
+            };
+
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            this.sequenceDiagram = loadSequence(objectMapper, file);
+            displaySequence(sequenceDiagram);
+        }
+    }
+
+    @FXML
     private void addSeqObj()
     {
         if (addSeqObjFirst != null)
         {
-            seqEditorBox.getChildren().remove(addSeqObjFirst);
+            seqEditorBox.getChildren().remove(optionSeqBox);
             addSeqObjFirst = null;
 
             initGridState();

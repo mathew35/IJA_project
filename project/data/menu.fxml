@@ -9,7 +9,7 @@
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="405.0" prefWidth="698.0" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.MenuController">
+<VBox prefHeight="405.0" prefWidth="698.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.MenuController">
   <children>
     <MenuBar prefWidth="694.0" VBox.vgrow="NEVER">
       <menus>
@@ -68,7 +68,7 @@
                   <Insets bottom="20.0" />
                </VBox.margin>
             </Button>
-            <Button alignment="CENTER" mnemonicParsing="false" onAction="#openSequence" prefHeight="38.0" prefWidth="302.0" text="Open Sequence Diagram...">
+            <Button alignment="CENTER" disable="true" mnemonicParsing="false" onAction="#openSequence" prefHeight="38.0" prefWidth="302.0" text="Open Sequence Diagram...">
                <graphic>
                   <FontAwesomeIconView fill="#0d00ff" glyphName="EJECT" />
                </graphic>

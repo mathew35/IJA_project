@@ -103,7 +103,6 @@ public class MessageController {
     {
         sequenceDiagram = diagram;
         dropSender.getItems().addAll(sequenceDiagram.getClasses());
-        //System.out.println(sequenceDiagram.getClasses().get(0).getOperations());
         dropReceiver.getItems().addAll(sequenceDiagram.getClasses());
     }
 

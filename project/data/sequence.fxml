@@ -10,7 +10,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<HBox prefHeight="273.0" prefWidth="361.0" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.SequenceController">
+<HBox fx:id="seqEditorBack" prefHeight="389.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.SequenceController">
    <children>
       <VBox alignment="TOP_CENTER" prefHeight="486.0" prefWidth="60.0">
          <children>
@@ -36,16 +36,33 @@
                   <Region prefHeight="60.0" prefWidth="900.0" />
                </children>
             </VBox>
-            <VBox fx:id="addSeqObjFirst" alignment="CENTER" onMouseClicked="#addSeqObj" prefHeight="486.0" prefWidth="332.0">
+            <HBox fx:id="optionSeqBox" alignment="CENTER" prefHeight="100.0" prefWidth="900.0">
                <children>
-                  <Text fill="#00000081" strokeType="OUTSIDE" strokeWidth="0.0" text="+">
-                     <font>
-                        <Font size="70.0" />
-                     </font>
-                  </Text>
-                  <Text fill="#0000007f" strokeType="OUTSIDE" strokeWidth="0.0" text="Add Object..." wrappingWidth="69.08398818969727" />
+                  <VBox fx:id="addSeqObjFirst" alignment="CENTER" onMouseClicked="#addSeqObj" prefHeight="486.0" prefWidth="332.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Text fill="#00000081" strokeType="OUTSIDE" strokeWidth="0.0" text="+">
+                           <font>
+                              <Font size="70.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#0000007f" strokeType="OUTSIDE" strokeWidth="0.0" text="Add Object..." wrappingWidth="69.08398818969727" />
+                     </children>
+                  </VBox>
+                  <VBox fx:id="loadSeqFirst" alignment="CENTER" onMouseClicked="#loadSeqDiagram" prefHeight="486.0" prefWidth="338.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <FontAwesomeIconView fill="#757576" glyphName="EJECT" size="40" wrappingWidth="37.499104499816895">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="20.0" top="35.0" />
+                           </VBox.margin>
+                        </FontAwesomeIconView>
+                        <Text fill="#0000007f" strokeType="OUTSIDE" strokeWidth="0.0" text="Load Sequence..." wrappingWidth="89.08398818969727" />
+                     </children>
+                  </VBox>
                </children>
-            </VBox>
+            </HBox>
          </children>
       </StackPane>
    </children>
