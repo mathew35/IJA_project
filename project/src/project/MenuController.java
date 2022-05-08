@@ -50,9 +50,8 @@ public class MenuController {
         scene = new Scene(fxmlLoader.load());
 
         EditorController editor = fxmlLoader.getController();
-        editor.selectTab(1);
-
         editor.addTab();
+        editor.selectTab(1);
 
         stage.setScene(scene);
         stage.show();

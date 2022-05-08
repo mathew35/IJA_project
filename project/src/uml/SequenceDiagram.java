@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.*;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "name")
 public class SequenceDiagram extends ClassDiagram{
     @JsonProperty("messages")
-    private List<UMLMessage> messages = new ArrayList<UMLMessage>();
+    public List<UMLMessage> messages = new ArrayList<UMLMessage>();
         
     public SequenceDiagram(){}
 

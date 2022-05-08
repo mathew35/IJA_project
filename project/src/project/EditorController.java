@@ -102,8 +102,8 @@ public class EditorController implements Initializable
         this.setClassDiagram(classDiagram);
         Tab deleted = tabPane.getSelectionModel().getSelectedItem();
         tabPane.getTabs().remove(deleted);
-
         tabPane.getTabs().get(1).setClosable(false);
+        selectTab(1);
 
         updateClassTab();
     }

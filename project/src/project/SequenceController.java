@@ -401,6 +401,7 @@ public class SequenceController
         }
 
         ArrayList<String> nameList = new ArrayList<String>();
+        ArrayList<UMLMessage> messageLint = new ArrayList<UMLMessage>();
 
         nameList = diagram.getNameClasses();
        
@@ -489,6 +490,76 @@ public class SequenceController
         GridPane.setValignment(messageLabel, VPos.TOP);
         GridPane.setHalignment(messageLabel, HPos.CENTER);
 
+        messageLabel.setOnMouseClicked((MouseEvent event) -> 
+        {
+            messageLabel.requestFocus();
+            System.out.println("Textfield on focus");
+            Effect effect = new DropShadow(BlurType.GAUSSIAN, Color.DODGERBLUE, 5, 0.75, 0, 0);
+            Rectangle selectRec = new Rectangle(messageLabel.getWidth() + 5, messageLabel.getHeight() + 1);
+            GridPane.setValignment(selectRec, VPos.TOP);
+            GridPane.setHalignment(selectRec, HPos.CENTER);
+            selectRec.setStroke(Color.DODGERBLUE);
+            selectRec.setFill(Color.TRANSPARENT);
+            selectRec.setEffect(selectRec.getEffect() == null ? effect : null);
+            
+            Node clickedNode = event.getPickResult().getIntersectedNode();
+            if (clickedNode != seqGridMsgs) 
+            {
+                // click on descendant node
+                Node parent = clickedNode.getParent();
+                while (parent != seqGridMsgs) 
+                {
+                    clickedNode = parent;
+                    parent = clickedNode.getParent();
+                }
+                Integer colIndex = GridPane.getColumnIndex(clickedNode);
+                Integer rowIndex = GridPane.getRowIndex(clickedNode);
+                System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
+
+                seqGridMsgs.add(selectRec, colIndex, rowIndex);
+            }
+        });
+
+        messageLabel.focusedProperty().addListener(new ChangeListener<Boolean>()
+        {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue)
+            {
+                if (newPropertyValue)
+                {
+                    messageLabel.setOnKeyPressed(new EventHandler<KeyEvent>() 
+                    {
+                        @Override
+                        public void handle(KeyEvent ke) 
+                        {
+                            if (ke.getCode().equals(KeyCode.DELETE)) 
+                            {
+                                removeRow(seqGridMsgs, msgCount);
+                                // Find message by name
+                                // And remove it
+                                // TODO
+                                sequenceDiagram.messages.remove(msgCount);
+                            }
+                        }
+                    });
+
+                }
+                else
+                {
+                    System.out.println("Textfield out focus");
+                    for (int i = 0; i < (seqGridMsgs.getChildren().size()); i++)
+                    {
+                        Node nodeMsg = seqGridMsgs.getChildren().get(i);
+                        
+                        if (nodeMsg instanceof Rectangle)
+                        {
+                            seqGridMsgs.getChildren().remove(i);
+                        }
+                    }
+                }
+            }
+        });
+
         if (message.operation != null)
         {    
             messageLabel.setText(message.operation.getAlltoString());
@@ -553,6 +624,10 @@ public class SequenceController
                 for (int i = sendIndex; i > recIndex + 1; i--)
                 {
                     Line newLine = new Line(0, 0, seqEditorBox.getWidth() / seqGrid.getColumnCount(), 0);
+                    if (message.transmition == false)
+                    {
+                        newLine.getStrokeDashArray().addAll(25d, 10d);
+                    }
                     seqGridMsgs.add(newLine, i, msgCount);
                     GridPane.setValignment(newLine, VPos.CENTER); 
                 }
@@ -594,6 +669,7 @@ public class SequenceController
         seqGrid.setMaxHeight(460);
         seqGrid.setAlignment(Pos.CENTER);
         //seqGrid.setGridLinesVisible(true);
+        seqGrid.setPickOnBounds(false);
         seqEditorBox.getChildren().add(seqGrid);
     }
 
@@ -614,5 +690,42 @@ public class SequenceController
         //seqGridMsgs.getRowConstraints().add(row);
         seqGridMsgs.getColumnConstraints().addAll(columnSpacer, column, columnSpacer);
         seqMsgBox.getChildren().add(seqGridMsgs);
+    }
+
+    /**
+     * Gets row index constrain for given node, forcefully as integer: 0 as null.
+     * @param node Node to look up the constraint for.
+     * @return The row index as primitive integer.
+     */
+    public static int getRowIndexAsInteger(Node node) {
+        final var a = GridPane.getRowIndex(node);
+        if (a == null) {
+            return 0;
+        }
+        return a;
+    }
+
+    /**
+     * Removes row from grid pane by index.
+     * Note: Might not work correctly if row spans are used.
+     * @param grid Grid pane to be affected.
+     * @param targetRowIndexIntegerObject Target row index to be removed. Integer object type, because for some reason `getRowIndex` returns null for children at 0th row.
+     */
+    public static void removeRow(GridPane grid, Integer targetRowIndexIntegerObject) {
+        final int targetRowIndex = targetRowIndexIntegerObject == null ? 0 : targetRowIndexIntegerObject;
+
+        // Remove children from row
+        grid.getChildren().removeIf(node -> getRowIndexAsInteger(node) == targetRowIndex);
+
+        // Update indexes for elements in further rows
+        grid.getChildren().forEach(node -> {
+            final int rowIndex = getRowIndexAsInteger(node);
+            if (targetRowIndex < rowIndex) {
+                GridPane.setRowIndex(node, rowIndex - 1);
+            }
+        });
+
+        // Remove row constraints
+        grid.getRowConstraints().remove(targetRowIndex);
     }
 }
