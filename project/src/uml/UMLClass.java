@@ -1,5 +1,6 @@
 package uml;
 
+import java.time.temporal.UnsupportedTemporalTypeException;
 import java.util.*;
 import com.fasterxml.jackson.annotation.*;
 
@@ -14,6 +15,12 @@ public class UMLClass  extends UMLClassifier{
     public UMLClass(){}
     public UMLClass(String name){
         super(name,true);
+    }
+    public UMLClass(UMLClass another){
+        super(another.getName(),another.userDefined());
+        this.parent = another.parent;
+        this.attributes = another.attributes;
+        this.operations = another.operations;
     }
     public void setParent(UMLClass parent){
         this.parent = parent;
@@ -42,6 +49,46 @@ public class UMLClass  extends UMLClassifier{
             return true;
         }
         return false;
+    }
+    public void removeAttrOper(String name){
+        UMLAttribute foundA = null;
+        UMLOperation foundO = null;
+        for(UMLAttribute i:this.getAttributes()){
+            if(name==i.getName()){
+                foundA = i;
+            }
+        }
+        for(UMLOperation i:this.getOperations()){
+            if(name==i.getName()){
+                foundO = i;
+            }
+        }
+        if(foundA != null){
+            this.attributes.remove(foundA);
+        }
+        if(foundO != null){
+            this.operations.remove(foundO);
+        }
+    }
+    public void renameAttrOper(String name,String newName){
+        UMLAttribute foundA = null;
+        UMLOperation foundO = null;
+        for(UMLAttribute i:this.getAttributes()){
+            if(name==i.getName()){
+                foundA = i;
+            }
+        }
+        for(UMLOperation i:this.getOperations()){
+            if(name==i.getName()){
+                foundO = i;
+            }
+        }
+        if(foundA != null){
+            this.attributes.get(this.attributes.indexOf(foundA)).rename(newName);
+        }
+        if(foundO != null){
+            this.operations.get(this.operations.indexOf(foundO)).rename(newName);
+        }
     }
     public int getAttrPosition(UMLAttribute attr){
         return this.attributes.indexOf(attr);
