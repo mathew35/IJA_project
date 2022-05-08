@@ -19,6 +19,7 @@ public class UMLClassifier extends Element{
     public boolean userDefined(){
         return this.userDefined;
     }
+
     public String toString(){
         String name = this.getName() + "(" + this.userDefined() + ")";
         return name;

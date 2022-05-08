@@ -22,10 +22,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 
 /**
@@ -56,6 +59,26 @@ public class MessageController {
 
     @FXML
     private Button createMessageButton;
+
+    Callback<ListView<UMLOperation>, ListCell<UMLOperation>> cellFactory = new Callback<ListView<UMLOperation>, ListCell<UMLOperation>>() {
+
+        @Override
+        public ListCell<UMLOperation> call(ListView<UMLOperation> l) {
+            return new ListCell<UMLOperation>() {
+    
+                @Override
+                protected void updateItem(UMLOperation item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty) {
+                        setGraphic(null);
+                    } else {
+                        setText(item.getAlltoString());
+                    }
+                }
+            } ;
+        }
+    };
+
 
     // TODO remove
     @FXML
@@ -89,6 +112,8 @@ public class MessageController {
     public void loadOperations()
     {
         getMsgType();
+        dropOperation.setButtonCell(cellFactory.call(null));
+        dropOperation.setCellFactory(cellFactory);
 
         if (!dropSender.getSelectionModel().isEmpty() && msgType == true)
         {

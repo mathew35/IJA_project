@@ -28,4 +28,25 @@ public class UMLOperation extends UMLAttribute{
     public final List<UMLAttribute> getArguments(){
         return this.arguments;
     }
+
+    @JsonIgnore
+    public final String getAlltoString()
+    {
+        String argumentsString = "";
+
+        argumentsString = argumentsString + this.getName() + "(";
+        
+        for (int i = 0; i < this.arguments.size(); i++)
+        {
+            if (i > 0)
+            {
+                argumentsString = argumentsString + ", ";
+            }
+
+            argumentsString = argumentsString + this.arguments.get(i).getName();
+        }
+        argumentsString = argumentsString + ") : " + this.getTypeString();
+        
+        return argumentsString;
+    }
 }

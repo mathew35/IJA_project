@@ -13,6 +13,14 @@ public class UMLAttribute extends Element{
     public UMLClassifier getType(){
         return this.type;
     }
+
+    @JsonIgnore
+    public String getTypeString()
+    {
+        String type = this.type.getName();
+        return type;
+    }
+
     public String toString(){
         String nametype = this.getName() + ":" + this.type;
         return nametype;

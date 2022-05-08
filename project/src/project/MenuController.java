@@ -9,6 +9,7 @@ package project;
 
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import uml.ClassDiagram;
 import uml.SequenceDiagram;
 
@@ -21,6 +22,9 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.*;
 
@@ -44,6 +48,9 @@ public class MenuController {
 
         EditorController editor = fxmlLoader.getController();
         editor.selectTab(1);
+
+        FXMLLoader fxmlLoaderSeq = new FXMLLoader(Main.class.getClassLoader().getResource("sequence.fxml"));
+        editor.tabPane.getTabs().get(2).setContent((Node)fxmlLoaderSeq.load());
 
         stage.setScene(scene);
         stage.show();
@@ -88,16 +95,20 @@ public class MenuController {
             ObjectMapper objectMapper = new ObjectMapper();
             EditorController editor = fxmlLoader.getController();
 
-            editor.sequenceDiagrams.set(0, loadSequence(objectMapper, file));
+            // Udělat to přes již vytvořený diagram
+            FXMLLoader fxmlLoaderSeq = new FXMLLoader(Main.class.getClassLoader().getResource("sequence.fxml"));
+            SequenceController controller = fxmlLoaderSeq.getController();
+            editor.tabPane.getTabs().get(2).setContent((Node)fxmlLoaderSeq.load());
+
+            controller.sequenceDiagram = loadSequence(objectMapper, file);
 
             editor.selectTab(2);
     
             stage.setScene(scene);
             stage.setResizable(false);
-            stage.show();
 
-            // After show otherwise bad values for lines
-            editor.displaySequence(loadSequence(objectMapper, file));
+            stage.show();
+            
         }
     }
 

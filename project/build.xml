@@ -101,6 +101,7 @@
             <fileset file="data/menu.fxml"/>
             <fileset file="data/message.fxml"/>
             <fileset file="data/class.fxml"/>
+            <fileset file="data/sequence.fxml"/>
             <fileset file="target/diagram.json"/>
         </jar>
         <javadoc destdir="doc" encoding="UTF-8" docencoding="UTF-8">
