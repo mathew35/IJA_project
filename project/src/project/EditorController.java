@@ -432,7 +432,21 @@ public class EditorController implements Initializable
      */
     public void ChangeParent(TreeItem<String> newParent,TreeItem<String> newChild){
         TreeItem<String> chParent = getTreeParent(newChild, ClassTree.getRoot());
-            removeTreeBranch(newChild, chParent);
+        // if(searchTreeView(newParent.getValue(), newChild) != null){
+        //     removeTreeBranch(newParent, ClassTree.getRoot());
+        //     newChild = searchTreeView(newChild.getValue(), ClassTree.getRoot());
+        //     removeTreeBranch(newChild, chParent);
+        //     newParent.getChildren().add(newChild);
+        //     chParent.getChildren().add(newParent);
+        //     return;
+        // }
+        // if(searchTreeView(newChild.getValue(), newParent) != null){
+        //     removeTreeBranch(newChild, newParent);
+        //     newParent = searchTreeView(newParent.getValue(), ClassTree.getRoot());
+        //     newParent.getChildren().add(newChild);
+        //     return;
+        // }
+        removeTreeBranch(newChild, chParent);
         newParent.getChildren().add(newChild);
     }
     /**
@@ -544,9 +558,32 @@ public class EditorController implements Initializable
                 ChildClass = i;    
             }
         }
-        if (newParentName == ChildName){
-            newParentClass.setParent(null);
+        if(newParentName == ChildName){
+            ChildClass.setParent(null);
+            updateClassTab();
             return;
+        }
+        UMLClass commonParent = null;
+        UMLClass pPar = newParentClass;
+        UMLClass chPar = ChildClass;
+        while(commonParent == null){
+            if(chPar == null){
+                if(pPar == null){
+                    commonParent = chPar;
+                    break;
+                }
+                pPar = pPar.getParent();                
+                chPar = ChildClass;
+            }
+            if(pPar == chPar){
+                commonParent = chPar;
+            }
+            else{
+                chPar = chPar.getParent();
+            }
+        }        
+        if(commonParent == ChildClass){
+            newParentClass.setParent(ChildClass.getParent());      
         }
         ChildClass.setParent(newParentClass);
         updateClassTab();
