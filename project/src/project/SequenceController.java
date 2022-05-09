@@ -611,14 +611,22 @@ public class SequenceController
             arrowWidth = -arrowWidth;
         }
 
-        if (message.order == -1)
+        if (message.order == -1 || msgCount == 0)
         {
             seqGridMsgs.getRowConstraints().add(new RowConstraints(30));
         }
         else
         {
-            seqGridMsgs.addRow(message.order);
-            //seqGridMsgs.getRowConstraints().add(message.order, new RowConstraints(30));
+            seqGridMsgs.getRowConstraints().add(sequenceDiagram.messages.size(), new RowConstraints(30));
+            for (Node child : seqGridMsgs.getChildren()) 
+            {
+                if (GridPane.getRowIndex(child) != null && GridPane.getRowIndex(child) >= message.order)
+                {
+                    Integer rowIndex = GridPane.getRowIndex(child);
+                    GridPane.setRowIndex(child, rowIndex == null ? 1 : 1 + rowIndex);
+                }
+            }
+              
             msgCount = message.order;
         }
         
@@ -701,7 +709,6 @@ public class SequenceController
         }
 
         sequenceDiagram.messages.add(msgCount, message);
-
         //System.out.println("Sender index: " + sendIndex);
         //System.out.println("Receiver index: " + recIndex);
     }
@@ -799,5 +806,14 @@ public class SequenceController
 
         // Remove row constraints
         grid.getColumnConstraints().remove(targetColumnIndex);
+    }
+
+    private void insertRows(int count, GridPane grid) 
+    {
+        for (Node child : grid.getChildren()) 
+        {
+            Integer rowIndex = GridPane.getRowIndex(child);
+            GridPane.setRowIndex(child, rowIndex == null ? count : count + rowIndex);
+        }
     }
 }
