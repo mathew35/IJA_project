@@ -41,6 +41,14 @@ public class ClassDiagram extends Element{
         }
         
     }
+
+    public void removeClassByIndex(int index)
+    {
+        if (index <= this.classes.size())
+        {
+            this.classes.remove(index);
+        }
+    }
     public UMLClassifier classifierForName(String name){
         UMLClassifier classifier =  findClassifier(name);
         if(classifier == null){

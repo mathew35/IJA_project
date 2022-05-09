@@ -77,4 +77,19 @@ public class SequenceDiagram extends ClassDiagram{
     {
         return this.messages.size();
     }
+
+    @JsonIgnore
+    public String getMessagesText()
+    {
+        String lineup = "";
+        if (messages.size() != 0)
+        {
+            for (int i = 0; i < messages.size(); i++)
+            {
+                lineup = lineup + " " + messages.get(i).message;
+            }
+        }
+
+        return lineup;
+    }
 }

@@ -50,6 +50,8 @@ public class SequenceController
     GridPane seqGridMsgs = new GridPane();
     double msgWidth;
 
+    int colFocus, rowFocus;
+
     @FXML
     private TabPane tabPane;
 
@@ -114,7 +116,6 @@ public class SequenceController
     void exportSequence(ObjectMapper objectMapper)
     {
         Window stage = Stage.getWindows().stream().filter(Window::isShowing).findFirst().orElse(null);
-        //Stage stage = (Stage)((Node) event.getSource()).getScene().getWindow();
         FileChooser fileChooser = new FileChooser();
  
         //Set extension filter for text files
@@ -199,9 +200,9 @@ public class SequenceController
                     clickedNode = parent;
                     parent = clickedNode.getParent();
                 }
-                Integer colIndex = GridPane.getColumnIndex(clickedNode);
-                Integer rowIndex = GridPane.getRowIndex(clickedNode);
-                System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
+                colFocus = GridPane.getColumnIndex(clickedNode);
+                rowFocus = GridPane.getRowIndex(clickedNode);
+                System.out.println("Mouse clicked cell: " + colFocus + " And: " + rowFocus);
 
                 rectangle.setStroke(Color.DODGERBLUE);
                 rectangle.setEffect(rectangle.getEffect() == null ? effect : null);
@@ -217,6 +218,36 @@ public class SequenceController
                 {
                     rectangle.setStroke(Color.BLACK);
                     rectangle.setEffect(null);
+                }
+                else
+                {
+                    rectangle.setOnKeyPressed(new EventHandler<KeyEvent>() 
+                    {
+                        @Override
+                        public void handle(KeyEvent ke) 
+                        {
+                            if (ke.getCode().equals(KeyCode.DELETE)) 
+                            {
+                                UMLClass clsRemove = sequenceDiagram.getClasses().get(colFocus);
+
+                                for (int i = 0; i < sequenceDiagram.messages.size(); i++)
+                                {
+                                    if (clsRemove.getName() == sequenceDiagram.messages.get(i).sender.getName() || clsRemove.getName() == sequenceDiagram.messages.get(i).receiver.getName())
+                                    {
+                                        System.out.println("Removed: " + clsRemove.getName() + " " + sequenceDiagram.messages.get(i).sender.getName() + " " + sequenceDiagram.messages.get(i).receiver.getName());
+                                        removeRow(seqGridMsgs, i);
+                                        sequenceDiagram.messages.remove(i);
+                                    }
+                                }
+
+                                sequenceDiagram.removeClassByIndex(colFocus);
+                                removeColumn(seqGrid, colFocus);
+                                System.out.println(sequenceDiagram.getNameClasses());
+
+                                updateGridMsg();
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -238,11 +269,9 @@ public class SequenceController
                 {
                     sequenceDiagram.createClass(objField.getText());
 
-                    // sequenceDiagrams.get(0).getNameClasses()+ seqDisplay.getChildren().size()
                     Text objName = new Text(objField.getText());
                     objRectangle.getChildren().remove(objField);
                     objRectangle.getChildren().add(objName);
-                    //seqGrid.add(objName, objsCount, 0);
 
                     if (seqGrid.getColumnCount() >= 5)
                     {
@@ -255,31 +284,6 @@ public class SequenceController
                 }
             }
         });
-
-        /*objField.focusedProperty().addListener(new ChangeListener<Boolean>()
-        {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue)
-            {
-                if (!newPropertyValue)
-                {
-                    if (objField.getText() == "" && objsCount != 0)
-                    {
-                        seqGrid.getChildren().remove(startObj);
-                        seqGrid.getColumnConstraints().remove(objsCount);
-                    }
-                    /*else
-                    {
-                        sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2).createClass(objField.getText());
-
-                        Text objName = new Text(objField.getText());
-                        seqGrid.getChildren().remove(objField);
-                        seqGrid.add(objName, objsCount, 0);
-                    }
-                    addSeqObjButton.setDisable(false);
-                }
-            }
-        });*/
 
         seqGrid.getColumnConstraints().add(new ColumnConstraints(-1, -1, -1, Priority.ALWAYS, HPos.CENTER, false));
         if (colCount == 0)
@@ -305,14 +309,14 @@ public class SequenceController
     @FXML
     public void updateGridMsg()
     {
+        // TODO Posouvání vyřešit aby zůstal na místě (Možná to jebnout do Vboxu)
         if (seqGrid.getColumnCount() > 2)
         {
             ColumnConstraints updateColumn = new ColumnConstraints(seqEditorBox.getWidth()/seqGrid.getColumnCount());
             ColumnConstraints updateSpacerColumn = new ColumnConstraints((seqEditorBox.getWidth()/seqGrid.getColumnCount())/2);
 
+            System.out.println(seqGrid.getColumnCount());
             seqGridMsgs.getColumnConstraints().add(seqGridMsgs.getColumnCount()-2, updateColumn);
-
-            // TODO if seqGridMsgs.getColumnCount() != seqGridgetColumnCount()
 
             for (int i = 0; i < seqGridMsgs.getColumnCount(); i++)
             {
@@ -427,9 +431,11 @@ public class SequenceController
                         clickedNode = parent;
                         parent = clickedNode.getParent();
                     }
-                    Integer colIndex = GridPane.getColumnIndex(clickedNode);
-                    Integer rowIndex = GridPane.getRowIndex(clickedNode);
-                    System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
+
+                    colFocus = GridPane.getColumnIndex(clickedNode);
+                    rowFocus = GridPane.getRowIndex(clickedNode);
+
+                    System.out.println("Mouse clicked cell: " + colFocus + " And: " + rowFocus);
 
                     rectangle.setStroke(Color.DODGERBLUE);
                     rectangle.setEffect(rectangle.getEffect() == null ? effect : null);
@@ -445,6 +451,35 @@ public class SequenceController
                     {
                         rectangle.setStroke(Color.BLACK);
                         rectangle.setEffect(null);
+                    }
+                    else
+                    {
+                        rectangle.setOnKeyPressed(new EventHandler<KeyEvent>() 
+                        {
+                            @Override
+                            public void handle(KeyEvent ke) 
+                            {
+                                if (ke.getCode().equals(KeyCode.DELETE)) 
+                                {
+                                    UMLClass clsRemove = sequenceDiagram.getClasses().get(colFocus);
+
+                                    for (int i = 0; i < sequenceDiagram.messages.size(); i++)
+                                    {
+                                        if (clsRemove.getName() == sequenceDiagram.messages.get(i).sender.getName() || clsRemove.getName() == sequenceDiagram.messages.get(i).receiver.getName())
+                                        {
+                                            removeRow(seqGridMsgs, i);
+                                            sequenceDiagram.messages.remove(i);
+                                        }
+                                    }
+
+                                    sequenceDiagram.removeClassByIndex(colFocus);
+                                    removeColumn(seqGrid, colFocus);
+                                    System.out.println(sequenceDiagram.getNameClasses());
+
+                                    updateGridMsg();
+                                }
+                            }
+                        });
                     }
                 }
             });
@@ -516,6 +551,9 @@ public class SequenceController
                 Integer rowIndex = GridPane.getRowIndex(clickedNode);
                 System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
 
+                colFocus = colIndex;
+                rowFocus = rowIndex;
+
                 seqGridMsgs.add(selectRec, colIndex, rowIndex);
             }
         });
@@ -534,15 +572,12 @@ public class SequenceController
                         {
                             if (ke.getCode().equals(KeyCode.DELETE)) 
                             {
-                                removeRow(seqGridMsgs, msgCount);
-                                // Find message by name
-                                // And remove it
-                                // TODO
-                                sequenceDiagram.messages.remove(msgCount);
+                                removeRow(seqGridMsgs, rowFocus);
+                                sequenceDiagram.messages.remove(rowFocus);
+                                System.out.println(sequenceDiagram.getMessagesText());
                             }
                         }
                     });
-
                 }
                 else
                 {
@@ -576,7 +611,17 @@ public class SequenceController
             arrowWidth = -arrowWidth;
         }
 
-        seqGridMsgs.getRowConstraints().add(new RowConstraints(30));
+        if (message.order == -1)
+        {
+            seqGridMsgs.getRowConstraints().add(new RowConstraints(30));
+        }
+        else
+        {
+            seqGridMsgs.addRow(message.order);
+            //seqGridMsgs.getRowConstraints().add(message.order, new RowConstraints(30));
+            msgCount = message.order;
+        }
+        
         
         if (sendIndex < recIndex)
         {
@@ -655,9 +700,10 @@ public class SequenceController
             seqGridMsgs.add(messageLabel, recIndex + 1, msgCount);
         }
 
-        sequenceDiagram.addMessage(message);
-        System.out.println("Sender index: " + sendIndex);
-        System.out.println("Receiver index: " + recIndex);
+        sequenceDiagram.messages.add(msgCount, message);
+
+        //System.out.println("Sender index: " + sendIndex);
+        //System.out.println("Receiver index: " + recIndex);
     }
 
     @FXML
@@ -668,7 +714,7 @@ public class SequenceController
         seqGrid.setMaxWidth(900);
         seqGrid.setMaxHeight(460);
         seqGrid.setAlignment(Pos.CENTER);
-        //seqGrid.setGridLinesVisible(true);
+        seqGrid.setGridLinesVisible(true);
         seqGrid.setPickOnBounds(false);
         seqEditorBox.getChildren().add(seqGrid);
     }
@@ -705,6 +751,14 @@ public class SequenceController
         return a;
     }
 
+    public static int getColumnIndexAsInteger(Node node) {
+        final var a = GridPane.getColumnIndex(node);
+        if (a == null) {
+            return 0;
+        }
+        return a;
+    }
+
     /**
      * Removes row from grid pane by index.
      * Note: Might not work correctly if row spans are used.
@@ -727,5 +781,23 @@ public class SequenceController
 
         // Remove row constraints
         grid.getRowConstraints().remove(targetRowIndex);
+    }
+
+    public static void removeColumn(GridPane grid, Integer targetColumnIndexIntegerObject) {
+        final int targetColumnIndex = targetColumnIndexIntegerObject == null ? 0 : targetColumnIndexIntegerObject;
+
+        // Remove children from row
+        grid.getChildren().removeIf(node -> getColumnIndexAsInteger(node) == targetColumnIndex);
+
+        // Update indexes for elements in further rows
+        grid.getChildren().forEach(node -> {
+            final int rowIndex = getColumnIndexAsInteger(node);
+            if (targetColumnIndex < rowIndex) {
+                GridPane.setColumnIndex(node, rowIndex - 1);
+            }
+        });
+
+        // Remove row constraints
+        grid.getColumnConstraints().remove(targetColumnIndex);
     }
 }
