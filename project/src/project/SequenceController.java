@@ -68,10 +68,7 @@ public class SequenceController
     private StackPane seqEditorBox;
 
     @FXML
-    private VBox seqMsgBox;
-
-    @FXML
-    private VBox loadSeqFirst;
+    private VBox seqMsgBox, seqObjBox;
 
     @FXML
     private HBox optionSeqBox;
@@ -309,6 +306,8 @@ public class SequenceController
     @FXML
     public void updateGridMsg()
     {
+
+        System.out.println(seqEditorBox.getWidth()); 
         // TODO Posouvání vyřešit aby zůstal na místě (Možná to jebnout do Vboxu)
         if (seqGrid.getColumnCount() > 2)
         {
@@ -723,7 +722,7 @@ public class SequenceController
         seqGrid.setAlignment(Pos.CENTER);
         seqGrid.setGridLinesVisible(true);
         seqGrid.setPickOnBounds(false);
-        seqEditorBox.getChildren().add(seqGrid);
+        seqObjBox.getChildren().add(seqGrid);
     }
 
     @FXML
@@ -731,7 +730,7 @@ public class SequenceController
     {
         //seqGridState.setMinWidth(900);
         //seqGridState.setMinHeight(460);
-        seqEditorBox.setMaxWidth(900);
+        seqGridMsgs.setMaxWidth(900);
         seqGridMsgs.setAlignment(Pos.TOP_CENTER);
         seqGridMsgs.setGridLinesVisible(true);
 
