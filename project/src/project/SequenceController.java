@@ -241,7 +241,14 @@ public class SequenceController
                                 removeColumn(seqGrid, colFocus);
                                 System.out.println(sequenceDiagram.getNameClasses());
 
-                                updateGridMsg();
+                                addSeqObjFirst = new VBox();
+                                seqObjBox.getChildren().remove(seqGrid);
+                                seqGrid = new GridPane();
+
+                                seqMsgBox.getChildren().remove(seqGridMsgs);
+                                seqGridMsgs = new GridPane();
+
+                                displaySequence(sequenceDiagram);
                             }
                         }
                     });
@@ -306,8 +313,6 @@ public class SequenceController
     @FXML
     public void updateGridMsg()
     {
-
-        //System.out.println(seqEditorBox.getWidth()); 
         if (seqGrid.getColumnCount() > 2)
         {
             ColumnConstraints updateColumn = new ColumnConstraints(seqEditorBox.getWidth()/seqGrid.getColumnCount());
@@ -471,12 +476,20 @@ public class SequenceController
                                             i--;
                                         }
                                     }
-
+                                    
                                     sequenceDiagram.removeClassByIndex(colFocus);
                                     removeColumn(seqGrid, colFocus);
                                     System.out.println(sequenceDiagram.getNameClasses());
 
-                                    updateGridMsg();
+                                    //updateGridMsg();
+                                    addSeqObjFirst = new VBox();
+                                    seqObjBox.getChildren().remove(seqGrid);
+                                    seqGrid = new GridPane();
+
+                                    seqMsgBox.getChildren().remove(seqGridMsgs);
+                                    seqGridMsgs = new GridPane();
+
+                                    displaySequence(sequenceDiagram);
                                 }
                             }
                         });
@@ -510,8 +523,6 @@ public class SequenceController
             seqGrid.add(timeAxis, i, 1);
             updateGridMsg();
         }
-
-        //updateGridMsg();
 
         for (int i = 0; i < sequenceDiagram.messages.size(); i++)
         {
