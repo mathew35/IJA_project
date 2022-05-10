@@ -83,4 +83,18 @@ public class ClassDiagram extends Element{
     public List<UMLClass> getClasses(){
         return Collections.unmodifiableList(this.classes);
     }
+
+    @JsonIgnore
+    public int getClassIndexByName(String name)
+    {
+        for (int i = 0; i < this.classes.size(); i++)
+        {
+            if (this.classes.get(i).getName().equals(name))
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
 }

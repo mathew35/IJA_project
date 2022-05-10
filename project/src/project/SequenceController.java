@@ -307,14 +307,13 @@ public class SequenceController
     public void updateGridMsg()
     {
 
-        System.out.println(seqEditorBox.getWidth()); 
-        // TODO Posouvání vyřešit aby zůstal na místě (Možná to jebnout do Vboxu)
+        //System.out.println(seqEditorBox.getWidth()); 
         if (seqGrid.getColumnCount() > 2)
         {
             ColumnConstraints updateColumn = new ColumnConstraints(seqEditorBox.getWidth()/seqGrid.getColumnCount());
             ColumnConstraints updateSpacerColumn = new ColumnConstraints((seqEditorBox.getWidth()/seqGrid.getColumnCount())/2);
 
-            System.out.println(seqGrid.getColumnCount());
+            //System.out.println(seqGrid.getColumnCount());
             seqGridMsgs.getColumnConstraints().add(seqGridMsgs.getColumnCount()-2, updateColumn);
 
             for (int i = 0; i < seqGridMsgs.getColumnCount(); i++)
@@ -404,7 +403,6 @@ public class SequenceController
         }
 
         ArrayList<String> nameList = new ArrayList<String>();
-        ArrayList<UMLMessage> messageLint = new ArrayList<UMLMessage>();
 
         nameList = diagram.getNameClasses();
        
@@ -488,8 +486,6 @@ public class SequenceController
             rectangle.setStroke(Color.BLACK);
             rectangle.setFill(Color.TRANSPARENT);
 
-            //sequenceDiagrams.get(tabPane.getSelectionModel().getSelectedIndex()-2).createClass(nameList.get(i));
-
             objRectangle.getChildren().add(rectangle);
 
             seqGrid.getColumnConstraints().add(new ColumnConstraints(-1, -1, -1, Priority.ALWAYS, HPos.CENTER, false));
@@ -510,6 +506,208 @@ public class SequenceController
 
             seqGrid.add(timeAxis, i, 1);
             updateGridMsg();
+        }
+
+        //updateGridMsg();
+
+        for (int i = 0; i < sequenceDiagram.messages.size(); i++)
+        {
+            UMLMessage message = sequenceDiagram.messages.get(i);
+            int msgCount = sequenceDiagram.messages.indexOf(message);
+            int sendIndex = sequenceDiagram.getClassIndexByName(message.sender.getName());
+            int recIndex = sequenceDiagram.getClassIndexByName(message.receiver.getName());
+            System.out.println(sequenceDiagram.getNameClasses());
+            System.out.println("Sender Name: "  + message.sender.getName() + ", Receiver Name: " + message.receiver.getName());
+            System.out.println("Sender Index: "  + sendIndex + ", Receiver Index: " + recIndex);
+            Label messageLabel = new Label();
+
+            GridPane.setValignment(messageLabel, VPos.TOP);
+            GridPane.setHalignment(messageLabel, HPos.CENTER);
+
+            messageLabel.setOnMouseClicked((MouseEvent event) -> 
+            {
+                messageLabel.requestFocus();
+                System.out.println("Textfield on focus");
+                Effect effect = new DropShadow(BlurType.GAUSSIAN, Color.DODGERBLUE, 5, 0.75, 0, 0);
+                Rectangle selectRec = new Rectangle(messageLabel.getWidth() + 5, messageLabel.getHeight() + 1);
+                GridPane.setValignment(selectRec, VPos.TOP);
+                GridPane.setHalignment(selectRec, HPos.CENTER);
+                selectRec.setStroke(Color.DODGERBLUE);
+                selectRec.setFill(Color.TRANSPARENT);
+                selectRec.setEffect(selectRec.getEffect() == null ? effect : null);
+                
+                Node clickedNode = event.getPickResult().getIntersectedNode();
+                if (clickedNode != seqGridMsgs) 
+                {
+                    // click on descendant node
+                    Node parent = clickedNode.getParent();
+                    while (parent != seqGridMsgs) 
+                    {
+                        clickedNode = parent;
+                        parent = clickedNode.getParent();
+                    }
+                    Integer colIndex = GridPane.getColumnIndex(clickedNode);
+                    Integer rowIndex = GridPane.getRowIndex(clickedNode);
+                    System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
+
+                    colFocus = colIndex;
+                    rowFocus = rowIndex;
+
+                    seqGridMsgs.add(selectRec, colIndex, rowIndex);
+                }
+            });
+
+            messageLabel.focusedProperty().addListener(new ChangeListener<Boolean>()
+            {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue)
+                {
+                    if (newPropertyValue)
+                    {
+                        messageLabel.setOnKeyPressed(new EventHandler<KeyEvent>() 
+                        {
+                            @Override
+                            public void handle(KeyEvent ke) 
+                            {
+                                if (ke.getCode().equals(KeyCode.DELETE)) 
+                                {
+                                    removeRow(seqGridMsgs, rowFocus);
+                                    sequenceDiagram.messages.remove(rowFocus);
+                                    System.out.println(sequenceDiagram.getMessagesText());
+                                }
+                            }
+                        });
+                    }
+                    else
+                    {
+                        System.out.println("Textfield out focus");
+                        for (int j = 0; j < (seqGridMsgs.getChildren().size()); j++)
+                        {
+                            Node nodeMsg = seqGridMsgs.getChildren().get(j);
+                            
+                            if (nodeMsg instanceof Rectangle)
+                            {
+                                seqGridMsgs.getChildren().remove(j);
+                            }
+                        }
+                    }
+                }
+            });
+
+            if (message.operation != null)
+            {    
+                messageLabel.setText(message.operation.getAlltoString());
+            }
+            else
+            {
+                messageLabel.setText(message.message);
+            }
+
+            double arrowWidth = seqEditorBox.getWidth() / seqGrid.getColumnCount();
+                    
+            if (sendIndex > recIndex)
+            {
+                arrowWidth = -arrowWidth;
+            }
+
+            if (message.order == -1 || msgCount == 0)
+            {
+                seqGridMsgs.getRowConstraints().add(new RowConstraints(30));
+            }
+            else
+            {
+                seqGridMsgs.getRowConstraints().add(sequenceDiagram.messages.size(), new RowConstraints(30));
+                for (Node child : seqGridMsgs.getChildren()) 
+                {
+                    if (GridPane.getRowIndex(child) != null && GridPane.getRowIndex(child) >= message.order)
+                    {
+                        Integer rowIndex = GridPane.getRowIndex(child);
+                        GridPane.setRowIndex(child, rowIndex == null ? 1 : 1 + rowIndex);
+                    }
+                }
+                
+                msgCount = message.order;
+            }
+            
+            
+            if (sendIndex < recIndex)
+            {
+                if (Math.abs(sendIndex - recIndex) != 1)
+                {
+                    for (int j = sendIndex + 1; j < recIndex; j++)
+                    {
+                        Line newLine = new Line(0, 0, seqEditorBox.getWidth() / seqGrid.getColumnCount(), 0);
+                        if (message.transmition == false)
+                        {
+                            newLine.getStrokeDashArray().addAll(25d, 10d);
+                        }
+                        seqGridMsgs.add(newLine, j, msgCount);
+                        GridPane.setValignment(newLine, VPos.CENTER); 
+                    }
+                }
+
+                if (message.transmition == true)
+                {
+                    UMLArrow arrow = new UMLArrow();
+                    arrow.setStartX(0);
+                    arrow.setStartY(0);
+
+                    arrow.setEndX(arrowWidth);
+                    arrow.setEndY(0);
+                    seqGridMsgs.add(arrow, recIndex, msgCount);
+                }
+                else
+                {
+                    UMLArrowReply arrow = new UMLArrowReply();
+                    arrow.setStartX(0);
+                    arrow.setStartY(0);
+
+                    arrow.setEndX(arrowWidth);
+                    arrow.setEndY(0);
+                    seqGridMsgs.add(arrow, recIndex, msgCount);
+                }
+                
+                seqGridMsgs.add(messageLabel, recIndex, msgCount);
+            }
+            else
+            {
+                if (Math.abs(sendIndex - recIndex) != 1)
+                {
+                    for (int j = sendIndex; j > recIndex + 1; j--)
+                    {
+                        Line newLine = new Line(0, 0, seqEditorBox.getWidth() / seqGrid.getColumnCount(), 0);
+                        if (message.transmition == false)
+                        {
+                            newLine.getStrokeDashArray().addAll(25d, 10d);
+                        }
+                        seqGridMsgs.add(newLine, j, msgCount);
+                        GridPane.setValignment(newLine, VPos.CENTER); 
+                    }
+                }
+                if (message.transmition == true)
+                {
+                    UMLArrow arrow = new UMLArrow();
+                    arrow.setStartX(0);
+                    arrow.setStartY(0);
+
+                    arrow.setEndX(arrowWidth);
+                    arrow.setEndY(0);
+                    seqGridMsgs.add(arrow, recIndex + 1, msgCount);
+                }
+                else
+                {
+                    UMLArrowReply arrow = new UMLArrowReply();
+                    arrow.setStartX(0);
+                    arrow.setStartY(0);
+
+                    arrow.setEndX(arrowWidth);
+                    arrow.setEndY(0);
+                    seqGridMsgs.add(arrow, recIndex + 1, msgCount);
+                }
+                seqGridMsgs.add(messageLabel, recIndex + 1, msgCount);
+            }
+
+            //sequenceDiagram.messages.add(msgCount, message);
         }
     }
 
