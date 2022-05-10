@@ -38,13 +38,11 @@ import javafx.scene.control.MenuItem;
 
 import uml.*;
 
- 
 /**
  * Řadič, který řeší přiřazení a logiku metod k prvků UI ve scéně UML editoru.
  */
-public class EditorController implements Initializable
+public class EditorController extends MenuBarController implements Initializable
 {
-    ClassDiagram classDiagram = new ClassDiagram("genereted");
     public SequenceDiagram sequenceDiagram = new SequenceDiagram();
     GridPane seqGrid = new GridPane();
     GridPane seqGridMsgs = new GridPane();
@@ -169,23 +167,27 @@ public class EditorController implements Initializable
             addMenu.getItems().add(addMenuItem);
             addMenuItem.setOnAction(new EventHandler() {
                 public void handle(Event t) {
-                    TreeItem newEmployee = 
-                        new TreeItem<String>("New Item");
-                            getTreeItem().getChildren().add(newEmployee);
+                    TreeItem newItem = 
+                    new TreeItem<String>("New Item");
+                        getTreeItem().getChildren().add(newItem);
                 }
             });
         }
  
         @Override
-        public void startEdit() {
-            super.startEdit();
- 
-            if (textField == null) {
-                createTextField();
+        public void startEdit() { 
+            if(getTreeItem().getValue() == "Attributes" || getTreeItem().getValue() == "Operations"){
+                cancelEdit();
             }
-            setText(null);
-            setGraphic(textField);
-            textField.selectAll();
+            else{
+                super.startEdit();
+                if (textField == null) {
+                    createTextField();
+                }
+                setText(null);
+                setGraphic(textField);
+                textField.selectAll();
+            }
         }
  
         @Override
@@ -260,10 +262,8 @@ public class EditorController implements Initializable
             //AttributesTree
             TreeItem<String> rootItem = new TreeItem<String>(ClassName.getText());
             TreeItem<String> attr = new TreeItem<String>("Attributes");
-            TreeItem<String> func = new TreeItem<String>("Functions");
             TreeItem<String> oper = new TreeItem<String>("Operations");
             attr.setExpanded(true);
-            func.setExpanded(true);
             oper.setExpanded(true);
 
             for(UMLAttribute i:itemClass.getAttributes()){
@@ -275,14 +275,10 @@ public class EditorController implements Initializable
             if(attr.getChildren().isEmpty()){
                 attr.getChildren().add(new TreeItem<String>(""));
             }
-            if(func.getChildren().isEmpty()){
-                func.getChildren().add(new TreeItem<String>(""));
-            }
             if(oper.getChildren().isEmpty()){
                 oper.getChildren().add(new TreeItem<String>(""));
             }
             rootItem.getChildren().add(attr);
-            rootItem.getChildren().add(func);
             rootItem.getChildren().add(oper);
             rootItem.setExpanded(true);
 
@@ -333,11 +329,6 @@ public class EditorController implements Initializable
                 }
             }
             for(TreeItem<String>i:oldRoot.getChildren().get(1).getChildren()){
-                if(!i.getValue().equals("")){
-                    Functions.add(i.getValue());
-                }
-            }
-            for(TreeItem<String>i:oldRoot.getChildren().get(2).getChildren()){
                 if(!i.getValue().equals("")){
                     Operations.add(i.getValue());
                 }
