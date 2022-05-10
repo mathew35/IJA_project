@@ -229,7 +229,7 @@ public class SequenceController
 
                                 for (int i = 0; i < sequenceDiagram.messages.size(); i++)
                                 {
-                                    if (clsRemove.getName() == sequenceDiagram.messages.get(i).sender.getName() || clsRemove.getName() == sequenceDiagram.messages.get(i).receiver.getName())
+                                    if (sequenceDiagram.messages.get(i).sender.getName().equals(clsRemove.getName()) || sequenceDiagram.messages.get(i).receiver.getName().equals(clsRemove.getName()))
                                     {
                                         System.out.println("Removed: " + clsRemove.getName() + " " + sequenceDiagram.messages.get(i).sender.getName() + " " + sequenceDiagram.messages.get(i).receiver.getName());
                                         removeRow(seqGridMsgs, i);
@@ -462,10 +462,13 @@ public class SequenceController
 
                                     for (int i = 0; i < sequenceDiagram.messages.size(); i++)
                                     {
-                                        if (clsRemove.getName() == sequenceDiagram.messages.get(i).sender.getName() || clsRemove.getName() == sequenceDiagram.messages.get(i).receiver.getName())
+                                        System.out.println("Seeing " + sequenceDiagram.messages.get(i).message + ": " + clsRemove.getName() + " " + sequenceDiagram.messages.get(i).sender.getName() + " " + sequenceDiagram.messages.get(i).receiver.getName());
+                                        if (sequenceDiagram.messages.get(i).sender.getName().equals(clsRemove.getName()) || sequenceDiagram.messages.get(i).receiver.getName().equals(clsRemove.getName()))
                                         {
+                                            System.out.println("Removed " + sequenceDiagram.messages.get(i).message + ": " + clsRemove.getName() + " " + sequenceDiagram.messages.get(i).sender.getName() + " " + sequenceDiagram.messages.get(i).receiver.getName());
                                             removeRow(seqGridMsgs, i);
                                             sequenceDiagram.messages.remove(i);
+                                            i--;
                                         }
                                     }
 
