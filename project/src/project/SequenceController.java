@@ -2,44 +2,30 @@ package project;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.util.ArrayList;
-import java.util.ResourceBundle;
 
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.core.exc.StreamWriteException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
-import java.net.URL;
 import javafx.fxml.*;
-import javafx.geometry.HPos;
-import javafx.geometry.Pos;
-import javafx.geometry.VPos;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.geometry.*;
+import javafx.scene.*;
 import javafx.scene.control.*;
-import javafx.scene.effect.BlurType;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Effect;
+import javafx.scene.effect.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.Window;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.stage.*;
+import javafx.scene.input.*;
+
+import javafx.event.EventHandler;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 
 import uml.*;
 
@@ -56,9 +42,6 @@ public class SequenceController
     private TabPane tabPane;
 
     @FXML
-    private VBox addSeqObjFirst;
-
-    @FXML
     private Button addSeqObjButton;
 
     @FXML
@@ -68,13 +51,10 @@ public class SequenceController
     private StackPane seqEditorBox;
 
     @FXML
-    private VBox seqMsgBox, seqObjBox;
+    private VBox seqMsgBox, seqObjBox, addSeqObjFirst;
 
     @FXML
-    private HBox optionSeqBox;
-
-    @FXML 
-    private HBox seqEditorBack;
+    private HBox optionSeqBox, seqEditorBack;
 
     private static void configureFileChooser(final FileChooser fileChooser, String type) 
     {      
@@ -159,6 +139,15 @@ public class SequenceController
 
             this.sequenceDiagram = loadSequence(objectMapper, file);
             displaySequence(sequenceDiagram);
+
+            addSeqObjFirst = new VBox();
+            seqObjBox.getChildren().remove(seqGrid);
+            seqGrid = new GridPane();
+
+            seqMsgBox.getChildren().remove(seqGridMsgs);
+            seqGridMsgs = new GridPane();
+
+            displaySequence(sequenceDiagram);
         }
     }
 
@@ -239,7 +228,6 @@ public class SequenceController
 
                                 sequenceDiagram.removeClassByIndex(colFocus);
                                 removeColumn(seqGrid, colFocus);
-                                System.out.println(sequenceDiagram.getNameClasses());
 
                                 addSeqObjFirst = new VBox();
                                 seqObjBox.getChildren().remove(seqGrid);
@@ -401,6 +389,7 @@ public class SequenceController
         if (addSeqObjFirst != null)
         {
             seqEditorBox.getChildren().remove(addSeqObjFirst);
+            seqObjBox.setPickOnBounds(false);
             addSeqObjFirst = null;
 
             initGrid();
@@ -530,83 +519,10 @@ public class SequenceController
             int msgCount = sequenceDiagram.messages.indexOf(message);
             int sendIndex = sequenceDiagram.getClassIndexByName(message.sender.getName());
             int recIndex = sequenceDiagram.getClassIndexByName(message.receiver.getName());
-            System.out.println(sequenceDiagram.getNameClasses());
-            System.out.println("Sender Name: "  + message.sender.getName() + ", Receiver Name: " + message.receiver.getName());
-            System.out.println("Sender Index: "  + sendIndex + ", Receiver Index: " + recIndex);
             Label messageLabel = new Label();
 
             GridPane.setValignment(messageLabel, VPos.TOP);
             GridPane.setHalignment(messageLabel, HPos.CENTER);
-
-            messageLabel.setOnMouseClicked((MouseEvent event) -> 
-            {
-                messageLabel.requestFocus();
-                System.out.println("Textfield on focus");
-                Effect effect = new DropShadow(BlurType.GAUSSIAN, Color.DODGERBLUE, 5, 0.75, 0, 0);
-                Rectangle selectRec = new Rectangle(messageLabel.getWidth() + 5, messageLabel.getHeight() + 1);
-                GridPane.setValignment(selectRec, VPos.TOP);
-                GridPane.setHalignment(selectRec, HPos.CENTER);
-                selectRec.setStroke(Color.DODGERBLUE);
-                selectRec.setFill(Color.TRANSPARENT);
-                selectRec.setEffect(selectRec.getEffect() == null ? effect : null);
-                
-                Node clickedNode = event.getPickResult().getIntersectedNode();
-                if (clickedNode != seqGridMsgs) 
-                {
-                    // click on descendant node
-                    Node parent = clickedNode.getParent();
-                    while (parent != seqGridMsgs) 
-                    {
-                        clickedNode = parent;
-                        parent = clickedNode.getParent();
-                    }
-                    Integer colIndex = GridPane.getColumnIndex(clickedNode);
-                    Integer rowIndex = GridPane.getRowIndex(clickedNode);
-                    System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
-
-                    colFocus = colIndex;
-                    rowFocus = rowIndex;
-
-                    seqGridMsgs.add(selectRec, colIndex, rowIndex);
-                }
-            });
-
-            messageLabel.focusedProperty().addListener(new ChangeListener<Boolean>()
-            {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue)
-                {
-                    if (newPropertyValue)
-                    {
-                        messageLabel.setOnKeyPressed(new EventHandler<KeyEvent>() 
-                        {
-                            @Override
-                            public void handle(KeyEvent ke) 
-                            {
-                                if (ke.getCode().equals(KeyCode.DELETE)) 
-                                {
-                                    removeRow(seqGridMsgs, rowFocus);
-                                    sequenceDiagram.messages.remove(rowFocus);
-                                    System.out.println(sequenceDiagram.getMessagesText());
-                                }
-                            }
-                        });
-                    }
-                    else
-                    {
-                        System.out.println("Textfield out focus");
-                        for (int j = 0; j < (seqGridMsgs.getChildren().size()); j++)
-                        {
-                            Node nodeMsg = seqGridMsgs.getChildren().get(j);
-                            
-                            if (nodeMsg instanceof Rectangle)
-                            {
-                                seqGridMsgs.getChildren().remove(j);
-                            }
-                        }
-                    }
-                }
-            });
 
             if (message.operation != null)
             {    
@@ -720,6 +636,77 @@ public class SequenceController
                 }
                 seqGridMsgs.add(messageLabel, recIndex + 1, msgCount);
             }
+
+            messageLabel.setOnMouseClicked((MouseEvent event) -> 
+            {
+                Effect effect = new DropShadow(BlurType.GAUSSIAN, Color.DODGERBLUE, 5, 0.75, 0, 0);
+                Rectangle selectRec = new Rectangle(messageLabel.getWidth() + 5, messageLabel.getHeight() + 1);
+                GridPane.setValignment(selectRec, VPos.TOP);
+                GridPane.setHalignment(selectRec, HPos.CENTER);
+
+                messageLabel.requestFocus();
+                System.out.println("Textfield on focus");
+                selectRec.setStroke(Color.DODGERBLUE);
+                selectRec.setFill(Color.TRANSPARENT);
+                selectRec.setEffect(selectRec.getEffect() == null ? effect : null);
+                
+                Node clickedNode = event.getPickResult().getIntersectedNode();
+                if (clickedNode != seqGridMsgs) 
+                {
+                    // click on descendant node
+                    Node parent = clickedNode.getParent();
+                    while (parent != seqGridMsgs) 
+                    {
+                        clickedNode = parent;
+                        parent = clickedNode.getParent();
+                    }
+                    Integer colIndex = GridPane.getColumnIndex(clickedNode);
+                    Integer rowIndex = GridPane.getRowIndex(clickedNode);
+                    System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
+
+                    colFocus = colIndex;
+                    rowFocus = rowIndex;
+
+                    seqGridMsgs.add(selectRec, colIndex, rowIndex);
+                }
+            });
+
+            messageLabel.focusedProperty().addListener(new ChangeListener<Boolean>()
+            {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue)
+                {
+                    if (newPropertyValue)
+                    {
+                        messageLabel.setOnKeyPressed(new EventHandler<KeyEvent>() 
+                        {
+                            @Override
+                            public void handle(KeyEvent ke) 
+                            {
+                                if (ke.getCode().equals(KeyCode.DELETE)) 
+                                {
+                                    removeRow(seqGridMsgs, rowFocus);
+                                    sequenceDiagram.messages.remove(rowFocus);
+                                    System.out.println(sequenceDiagram.getMessagesText());
+                                }
+                            }
+                        });
+                    }
+                    else
+                    {
+                        System.out.println("Textfield out focus");
+                        for (int j = 0; j < (seqGridMsgs.getChildren().size()); j++)
+                        {
+                            Node nodeMsg = seqGridMsgs.getChildren().get(j);
+                            
+                            if (nodeMsg instanceof Rectangle)
+                            {
+                                seqGridMsgs.getChildren().remove(j);
+                            }
+                        }
+                    }
+                }
+            });
 
             //sequenceDiagram.messages.add(msgCount, message);
         }
