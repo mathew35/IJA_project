@@ -41,10 +41,6 @@ public class MenuBarController {
             classDiagram = snapshots.get(snapshotPos).deepCopy();
             refresh();
         }
-        System.out.print(snapshots.size());
-        System.out.print(snapshotPos);
-        System.out.println(classDiagram);
-        System.out.println("undo");
     }
 
     public void onRedoClick(){
@@ -53,24 +49,13 @@ public class MenuBarController {
             classDiagram = snapshots.get(snapshotPos).deepCopy();
             refresh();
         }
-        System.out.print(snapshots.size());
-        System.out.print(snapshotPos);
-        System.out.println(classDiagram);
-        System.out.println("redo");
     }
     public void createSnapshot(ClassDiagram diag){
-        System.out.print(snapshots.size());
-        System.out.print(snapshotPos);
-        System.out.println(classDiagram);
-        System.out.println("createsnapshot");
         while(snapshots.size()>snapshotPos+1){
             snapshots.remove(snapshotPos+1);
         }
         snapshotPos++;
         snapshots.add(diag.deepCopy());
-        System.out.println(diag.getClasses().get(0).getAttributes());
-        System.out.println(diag.deepCopy().getClasses().get(0).getAttributes());
-        System.out.println("diag test");
     }
     public void refresh(){
         //to be implemented inside controllers
