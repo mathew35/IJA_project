@@ -13,11 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.security.auth.login.CredentialException;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.w3c.dom.Attr;
 
 import java.io.IOException;
+import java.lang.management.ClassLoadingMXBean;
 import java.net.URL;
 import java.time.temporal.UnsupportedTemporalTypeException;
 
@@ -97,13 +100,12 @@ public class EditorController extends MenuBarController implements Initializable
      */
     @Override
     public void initialize(URL arg0, ResourceBundle arg1){
-        this.setClassDiagram(classDiagram);
         Tab deleted = tabPane.getSelectionModel().getSelectedItem();
         tabPane.getTabs().remove(deleted);
         tabPane.getTabs().get(1).setClosable(false);
         selectTab(1);
-
-        updateClassTab();
+        //this.setClassDiagram(classDiagram);
+        // updateClassTab();
     }
     public void updateClassTab(){
         //ClassTreeView
@@ -144,7 +146,8 @@ public class EditorController extends MenuBarController implements Initializable
         ClassTree.setRoot(rootItem);
         ClassName.setPromptText("Class Name");
         updateClassTab();
-    }
+        createSnapshot(classDiagram);
+    }   
 
     /**
     * Detekuje selekci třídy v ClassDiagram tabu a zobrazí informace o této tříde
@@ -310,6 +313,7 @@ public class EditorController extends MenuBarController implements Initializable
                     itemClass = i;
                 }
             }
+            boolean change = false;
             if(itemClass == null){
                 String name = ClassTree.getSelectionModel().getSelectedItem().getValue();
                 for(UMLClass i:classDiagram.getClasses()){
@@ -317,11 +321,11 @@ public class EditorController extends MenuBarController implements Initializable
                         itemClass = i;
                     }
                 }
-                itemClass.rename(ClassName.getText());                
+                itemClass.rename(ClassName.getText());   
+                change = true;             
             }
             TreeItem<String> oldRoot = AttributesTree.getRoot();
             ArrayList<String> Attributes = new ArrayList<String>();
-            ArrayList<String> Functions = new ArrayList<String>();
             ArrayList<String> Operations = new ArrayList<String>();
             for(TreeItem<String>i:oldRoot.getChildren().get(0).getChildren()){
                 if(!i.getValue().equals("")){
@@ -340,6 +344,36 @@ public class EditorController extends MenuBarController implements Initializable
             }
             for(String i:Operations){
                 newOperations.add(new UMLOperation(i,null));
+            }
+            if(Attributes.size() == itemClass.getAttributes().size()){
+                for(String s:Attributes){
+                    boolean found = false;
+                    for(UMLAttribute a: itemClass.getAttributes()){
+                        if(s.equals(a.getName())){
+                            found = true;
+                            break;
+                        }
+                    }
+                    if(!found){
+                        change = true;
+                        break;
+                    }
+                }
+            }
+            if(Operations.size() == itemClass.getOperations().size()){
+                for(String s:Operations){
+                    boolean found = false;
+                    for(UMLAttribute a: itemClass.getOperations()){
+                        if(s.equals(a.getName())){
+                            found = true;
+                            break;
+                        }
+                    }
+                    if(!found){
+                        change = true;
+                        break;
+                    }
+                }
             }
 
             List<String> toRemove = new ArrayList<String>();
@@ -364,12 +398,22 @@ public class EditorController extends MenuBarController implements Initializable
             }
             updateClassTab();
             updateAttrTree();
+            if(change){
+                createSnapshot(classDiagram);
+            }
         }
     }
     /**
      * TODO
      */
     public void SelectClass() {
+    }
+    /**
+     * TODO
+     */
+    public void refresh(){
+        updateClassTab();
+        updateAttrTree();
     }
     /**
      * TODO
@@ -456,6 +500,7 @@ public class EditorController extends MenuBarController implements Initializable
             return;
         }
         updateClassTab();
+        createSnapshot(classDiagram);
     }
     /**
     * Přidání podtřídy ke vybrané tříde v diagramu tříd
@@ -485,6 +530,7 @@ public class EditorController extends MenuBarController implements Initializable
             }
         }
         updateClassTab();
+        createSnapshot(classDiagram);
     }
 
     /**
@@ -521,6 +567,7 @@ public class EditorController extends MenuBarController implements Initializable
         }
         classDiagram.removeClass(deleteClassName);
         updateClassTab();
+        createSnapshot(classDiagram);
     }
 
     /**
@@ -578,7 +625,7 @@ public class EditorController extends MenuBarController implements Initializable
         }
         ChildClass.setParent(newParentClass);
         updateClassTab();
-
+        createSnapshot(classDiagram);
     }
     /**
     * Přidání karty do panelu karet 

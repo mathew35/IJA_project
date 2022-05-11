@@ -99,4 +99,22 @@ public class ClassDiagram extends Element{
 
         return -1;
     }
+
+    public ClassDiagram deepCopy(){
+        ClassDiagram retDiag = new ClassDiagram(this.getName());
+        for(String diagClassName:this.getNameClasses()){
+            retDiag.createClass(diagClassName);
+        }
+        for(UMLClass diagClass:this.classes){
+            for(UMLClass retClass:retDiag.classes){
+                if(retClass.getName().equals(diagClass.getName())){
+                    retClass.deepCopyClass(diagClass);
+                }
+            }
+        }
+        for(UMLClassifier diagClassifier:this.classifiers){
+            retDiag.classifierForName(diagClassifier.getName());
+        }
+        return retDiag;
+    }
 }
