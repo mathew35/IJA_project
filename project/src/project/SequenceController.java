@@ -376,6 +376,8 @@ public class SequenceController
         popUp.setResizable(false);
         popUp.showAndWait();
 
+        System.out.print("closed");
+
         if (msgController.createdMessage != null)
         {
             createMessage(msgController.createdMessage);
@@ -400,13 +402,63 @@ public class SequenceController
         popUp.setResizable(false);
         popUp.showAndWait();
 
-
-        /*
-        if (msgController.createdMessage != null)
+        if (actController.createdAct != null)
         {
-            createMessage(msgController.createdMessage);
-        }*/
+            sequenceDiagram.getClasses().get(actController.indexOfClass).addActivation(actController.createdAct);
+            refreshActs();
+        }
     }
+
+    @FXML
+    public void refreshActs() throws IOException
+    {
+        Integer messageCounter = 0;
+        Integer inCount = 0;
+        Integer outCount = 0;
+        while (messageCounter < seqGridAct.getRowCount())
+        {
+            for (int j = 0; j < sequenceDiagram.getClasses().get(j).getActivations().size(); j++)
+            {
+                Integer fromIndex = sequenceDiagram.getClasses().get(0).getActivations().get(j).getStart();
+                Integer toIndex = sequenceDiagram.getClasses().get(0).getActivations().get(j).getEnd();
+
+                if (fromIndex <= messageCounter && toIndex >= messageCounter)
+                {
+                    inCount++;
+                    System.out.println("Going thorugh message " + messageCounter + ": (" + fromIndex + ", " + toIndex+") In Counter: " + inCount + " Out Counter: " + outCount);
+
+                    if (outCount > 0 || messageCounter == sequenceDiagram.messages.size() - 1)
+                    {
+                        Line line = new Line(0, 0, 0, 30 * outCount - 1);
+                        line.setStroke(Color.RED);
+                        System.out.println("1");
+                        seqGridAct.add(line, 0, 0);
+
+                        outCount = 0;
+                    }
+                }
+                else
+                {
+                    outCount++;
+                    System.out.println("Going thorugh message " + messageCounter + ": (" + fromIndex + ", " + toIndex+") In Counter: " + inCount + " Out Counter: " + outCount);
+
+                    if (inCount > 0 || messageCounter == sequenceDiagram.messages.size() - 1)
+                    {
+                        Rectangle rectangle = new Rectangle(20, 30 * inCount - 1);
+                        rectangle.setFill(Color.GRAY);
+                        System.out.println("2");
+                        seqGridAct.add(rectangle, 0, 0);
+
+                        inCount = 0;
+                    }
+                }
+            }
+            messageCounter++;
+        }
+
+        return;
+    }
+    
 
     @FXML
     public void displaySequence(SequenceDiagram diagram)
@@ -737,7 +789,8 @@ public class SequenceController
                 }
             });
 
-            //sequenceDiagram.messages.add(msgCount, message);
+            System.out.println("ys");
+            seqGridAct.getRowConstraints().add(new RowConstraints(30));
         }
     }
 
@@ -936,8 +989,8 @@ public class SequenceController
         }
 
         sequenceDiagram.messages.add(msgCount, message);
-        //System.out.println("Sender index: " + sendIndex);
-        //System.out.println("Receiver index: " + recIndex);
+
+        seqGridAct.getRowConstraints().add(new RowConstraints(30));
     }
 
     @FXML
@@ -972,7 +1025,6 @@ public class SequenceController
         seqGridAct.setAlignment(Pos.TOP_CENTER);
         seqGridAct.setGridLinesVisible(true);
         seqGridAct.setPickOnBounds(false);
-        seqGridAct.getRowConstraints().add(new RowConstraints(30));
         seqActBox.getChildren().add(seqGridAct);
     }
 

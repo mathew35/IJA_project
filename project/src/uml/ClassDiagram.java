@@ -12,8 +12,6 @@ public class ClassDiagram extends Element{
     private List<UMLClass> classes = new ArrayList<UMLClass>();
     @JsonProperty("classifiers")
     private List<UMLClassifier> classifiers = new ArrayList<UMLClassifier>();
-    @JsonProperty("activations")
-    private List<UMLActivation> activations = new ArrayList<UMLActivation>();
     public ClassDiagram(){}
     public ClassDiagram(String name){
         super(name);
