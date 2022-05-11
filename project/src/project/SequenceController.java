@@ -943,10 +943,7 @@ public class SequenceController
     @FXML
     public void initGrid()
     {
-        seqGrid.setMinWidth(900);
-        seqGrid.setMinHeight(460);
-        seqGrid.setMaxWidth(900);
-        seqGrid.setMaxHeight(460);
+        seqGrid.setMaxWidth(1220);
         seqGrid.setAlignment(Pos.CENTER);
         //seqGrid.setGridLinesVisible(true);
         seqGrid.setPickOnBounds(false);
@@ -956,7 +953,7 @@ public class SequenceController
     @FXML
     public void initGridMsg()
     {
-        seqGridMsgs.setMaxWidth(900);
+        seqGridMsgs.setMaxWidth(1220);
         seqGridMsgs.setAlignment(Pos.TOP_CENTER);
         //seqGridMsgs.setGridLinesVisible(true);
 
@@ -971,7 +968,7 @@ public class SequenceController
     @FXML
     public void initGridAct()
     {
-        seqGridAct.setMaxWidth(900);
+        seqGridAct.setMaxWidth(1220);
         seqGridAct.setAlignment(Pos.TOP_CENTER);
         seqGridAct.setGridLinesVisible(true);
         seqGridAct.setPickOnBounds(false);
