@@ -4,10 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.fasterxml.jackson.core.exc.StreamReadException;
-import com.fasterxml.jackson.core.exc.StreamWriteException;
-import com.fasterxml.jackson.databind.DatabindException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.exc.*;
+import com.fasterxml.jackson.databind.*;
+import javafx.beans.value.*;
 
 import javafx.fxml.*;
 import javafx.geometry.*;
@@ -15,17 +14,13 @@ import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.effect.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
 import javafx.stage.*;
 import javafx.scene.input.*;
 
+import javafx.scene.paint.Color;
 import javafx.event.EventHandler;
-
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 
 import uml.*;
 
@@ -388,6 +383,32 @@ public class SequenceController
     }
 
     @FXML
+    public void openActCreator() throws IOException
+    {
+        FXMLLoader loader = new FXMLLoader(Main.class.getClassLoader().getResource("activation.fxml"));
+        Parent root = (Parent)loader.load();
+
+        ActivationController actController = loader.getController();
+        actController.loadData(sequenceDiagram);
+
+        Stage popUp = new Stage();
+
+        popUp.initModality(Modality.APPLICATION_MODAL);
+        popUp.initOwner(Main.stage);
+        popUp.setTitle("Create New Activation...");
+        popUp.setScene(new Scene(root));
+        popUp.setResizable(false);
+        popUp.showAndWait();
+
+
+        /*
+        if (msgController.createdMessage != null)
+        {
+            createMessage(msgController.createdMessage);
+        }*/
+    }
+
+    @FXML
     public void displaySequence(SequenceDiagram diagram)
     {
         if (addSeqObjFirst != null)
@@ -505,36 +526,8 @@ public class SequenceController
 
             // TODO TODO TODO Mark Activation
             seqGridAct.getColumnConstraints().add(new ColumnConstraints(-1, -1, -1, Priority.ALWAYS, HPos.CENTER, false));
-            Rectangle actRectangle = new Rectangle(20, 30);
 
-            seqGridAct.setMinWidth(seqEditorBox.getWidth());
-
-            actRectangle.setStroke(Color.BLACK);
-            actRectangle.setFill(Color.TRANSPARENT);
-            
-            if (i == 0)
-            {
-                Region rect = new Region();
-                rect.setStyle("-fx-border-color: black; -fx-min-width: 20; -fx-min-height:30; -fx-max-width:20; -fx-border-style: solid solid hidden solid;");
-
-                Region rect2 = new Region();
-                rect2.setStyle("-fx-border-color: red; -fx-min-width: 20; -fx-min-height:30; -fx-max-width:20; -fx-border-style: hidden solid solid solid;");
-                seqGridAct.add(rect, 0, 0);
-                seqGridAct.add(rect2, 0, 1);
-            }
-
-            seqGridAct.add(actRectangle, i, 0);
-
-            for (int j = 0; j < (seqGridAct.getChildren().size()); j++)
-            {
-                Node nodeMsg = seqGridAct.getChildren().get(j);
-                System.out.println(nodeMsg);
-                /*if (nodeMsg instanceof Rectangle)
-                {
-                    seqGridMsgs.getChildren().remove(j);
-                }*/
-            }
-
+            //seqGridAct.setMinWidth(seqEditorBox.getWidth());
             
             objRectangle.getChildren().add(new Text(nameList.get(i)));
 
@@ -980,9 +973,8 @@ public class SequenceController
     {
         seqGridAct.setMaxWidth(900);
         seqGridAct.setAlignment(Pos.TOP_CENTER);
-        //seqGridAct.setGridLinesVisible(true);
+        seqGridAct.setGridLinesVisible(true);
         seqGridAct.setPickOnBounds(false);
-        seqGridAct.getRowConstraints().add(new RowConstraints(30));
         seqGridAct.getRowConstraints().add(new RowConstraints(30));
         seqActBox.getChildren().add(seqGridAct);
     }
