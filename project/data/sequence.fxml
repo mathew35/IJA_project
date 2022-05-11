@@ -27,10 +27,23 @@
                   <FontAwesomeIconView glyphName="SEND" />
                </graphic>
             </Button>
+            <Button fx:id="actCreatorButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#openMessageCreator" prefHeight="30.0" prefWidth="30.0">
+               <graphic>
+                  <FontAwesomeIconView glyphName="PLAY" wrappingWidth="8.628583908081055" />
+               </graphic>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Button>
          </children>
       </VBox>
       <StackPane fx:id="seqEditorBox" maxHeight="486.0" maxWidth="900.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="486.0" prefWidth="900.0">
          <children>
+            <VBox fx:id="seqActBox" prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Region prefHeight="60.0" prefWidth="900.0" />
+               </children>
+            </VBox>
             <VBox fx:id="seqMsgBox" prefHeight="200.0" prefWidth="100.0">
                <children>
                   <Region prefHeight="60.0" prefWidth="900.0" />

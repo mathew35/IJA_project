@@ -9,6 +9,7 @@ package project;
 
 import uml.SequenceDiagram;
 import uml.UMLClass;
+import uml.UMLClassifier;
 import uml.UMLMessage;
 import uml.UMLOperation;
 
@@ -38,6 +39,8 @@ public class MessageController {
     private boolean msgType, msgTypeOcc;
     private SequenceDiagram sequenceDiagram;
     public UMLMessage createdMessage;
+
+    final UMLOperation placeHolder = new UMLOperation("None", new UMLClassifier());
 
     @FXML
     private Button closeButton;
@@ -69,9 +72,16 @@ public class MessageController {
                 @Override
                 protected void updateItem(UMLOperation item, boolean empty) {
                     super.updateItem(item, empty);
-                    if (item == null || empty) {
+                    if (item == null || empty) 
+                    {
                         setGraphic(null);
-                    } else {
+                    } 
+                    else if (item.equals(placeHolder))
+                    {
+                        setText("None");
+                    }
+                    else
+                    {   
                         setText(item.getAlltoString());
                     }
                 }
@@ -97,6 +107,10 @@ public class MessageController {
 
         fieldReply.setDisable(false);
         createMessageButton.setDisable(true);
+        dropOperation.setButtonCell(cellFactory.call(null));
+        dropOperation.setCellFactory(cellFactory);
+        dropOperation.getItems().add(placeHolder);
+        dropOperation.getSelectionModel().select(placeHolder);
     }
 
     public void loadData(SequenceDiagram diagram)
@@ -111,8 +125,6 @@ public class MessageController {
     public void loadOperations()
     {
         getMsgType();
-        dropOperation.setButtonCell(cellFactory.call(null));
-        dropOperation.setCellFactory(cellFactory);
 
         if (!dropSender.getSelectionModel().isEmpty() && msgType == true)
         {
@@ -125,7 +137,8 @@ public class MessageController {
                     dropOperation.getItems().addAll((className.getOperations()));
                 }
             }
-            sequenceDiagram.findClassifier(dropSender.getValue().getName());
+            dropOperation.getItems().add(placeHolder);
+            dropOperation.getSelectionModel().select(placeHolder);
         }
         else
         {
@@ -171,7 +184,8 @@ public class MessageController {
                     dropOperation.getItems().addAll((className.getOperations()));
                 }
             }
-            sequenceDiagram.findClassifier(dropSender.getValue().getName());
+            dropOperation.getItems().add(placeHolder);
+            dropOperation.getSelectionModel().select(placeHolder);
         }
         else
         {
@@ -198,12 +212,18 @@ public class MessageController {
     {
         int position = -1;
 
+        if (fieldReply.getText().isEmpty())
+        {
+            fieldReply.requestFocus();
+            return;
+        }
+
         if (!fieldPosition.getText().isEmpty())
         {
             position = Integer.parseInt(fieldPosition.getText());
         }
 
-        if (!dropOperation.getSelectionModel().isEmpty())
+        if (dropOperation.getValue() != placeHolder)
         {
             createdMessage = new UMLMessage(dropOperation.getValue(), dropSender.getValue(), dropReceiver.getValue(), msgType, msgTypeOcc, position);
         }

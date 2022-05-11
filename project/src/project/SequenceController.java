@@ -34,6 +34,7 @@ public class SequenceController
     SequenceDiagram sequenceDiagram = new SequenceDiagram();
     GridPane seqGrid = new GridPane();
     GridPane seqGridMsgs = new GridPane();
+    GridPane seqGridAct = new GridPane();
     double msgWidth;
 
     int colFocus, rowFocus;
@@ -51,7 +52,7 @@ public class SequenceController
     private StackPane seqEditorBox;
 
     @FXML
-    private VBox seqMsgBox, seqObjBox, addSeqObjFirst;
+    private VBox seqObjBox, seqMsgBox, seqActBox, addSeqObjFirst;
 
     @FXML
     private HBox optionSeqBox, seqEditorBack;
@@ -131,23 +132,16 @@ public class SequenceController
                 seqEditorBox.getChildren().remove(optionSeqBox);
                 addSeqObjFirst = null;
     
-                initGridState();
+                initGridMsg();
                 initGrid();
+                initGridAct();
             };
 
             ObjectMapper objectMapper = new ObjectMapper();
 
             this.sequenceDiagram = loadSequence(objectMapper, file);
             displaySequence(sequenceDiagram);
-
-            addSeqObjFirst = new VBox();
-            seqObjBox.getChildren().remove(seqGrid);
-            seqGrid = new GridPane();
-
-            seqMsgBox.getChildren().remove(seqGridMsgs);
-            seqGridMsgs = new GridPane();
-
-            displaySequence(sequenceDiagram);
+            updateGrids();
         }
     }
 
@@ -159,8 +153,9 @@ public class SequenceController
             seqEditorBox.getChildren().remove(optionSeqBox);
             addSeqObjFirst = null;
 
-            initGridState();
+            initGridMsg();
             initGrid();
+            initGridAct();
         };
 
         int colCount = sequenceDiagram.getNameClasses().size();
@@ -168,9 +163,10 @@ public class SequenceController
         
         Line startLine = new Line(0, 0, 0, seqEditorBox.getHeight() * 0.01);
         StackPane objRectangle = new StackPane();
-        Rectangle rectangle = new Rectangle(150, 50);
+        Rectangle rectangle = new Rectangle(125, 50);
         Effect effect = new DropShadow(BlurType.GAUSSIAN, Color.DODGERBLUE, 5, 0.75, 0, 0);
         TextField objField = new TextField();
+        objField.setPrefWidth(125);
 
         rectangle.setOnMouseClicked((MouseEvent event) -> 
         {
@@ -229,14 +225,13 @@ public class SequenceController
                                 sequenceDiagram.removeClassByIndex(colFocus);
                                 removeColumn(seqGrid, colFocus);
 
-                                addSeqObjFirst = new VBox();
-                                seqObjBox.getChildren().remove(seqGrid);
-                                seqGrid = new GridPane();
+                                if (sequenceDiagram.getClasses().size() < 7)
+                                {
+                                    addSeqObjButton.setDisable(false);
+                                }
 
-                                seqMsgBox.getChildren().remove(seqGridMsgs);
-                                seqGridMsgs = new GridPane();
 
-                                displaySequence(sequenceDiagram);
+                                updateGrids();
                             }
                         }
                     });
@@ -265,7 +260,7 @@ public class SequenceController
                     objRectangle.getChildren().remove(objField);
                     objRectangle.getChildren().add(objName);
 
-                    if (seqGrid.getColumnCount() >= 5)
+                    if (seqGrid.getColumnCount() >= 7)
                     {
                         addSeqObjButton.setDisable(true);
                     }
@@ -273,6 +268,8 @@ public class SequenceController
                     {
                         addSeqObjButton.setDisable(false);
                     }
+
+                    updateGrids();
                 }
             }
         });
@@ -284,6 +281,13 @@ public class SequenceController
             seqGrid.getRowConstraints().add(new RowConstraints(-1, -1, -1, Priority.ALWAYS, VPos.CENTER, false));
         }
         
+        /// Columns for acts
+        seqGridAct.getColumnConstraints().add(new ColumnConstraints(-1, -1, -1, Priority.ALWAYS, HPos.CENTER, false));
+        for (int i = 0; i < seqGridAct.getColumnCount(); i++)
+        {
+            seqGridAct.getColumnConstraints().set(i, new ColumnConstraints(0, seqGrid.getWidth() / (seqGrid.getColumnCount()), seqGrid.getWidth() / (seqGrid.getColumnCount()), Priority.ALWAYS, HPos.CENTER, false));
+        }
+
         objRectangle.getChildren().add(objField);
 
         startObj.getChildren().addAll(objRectangle, startLine);
@@ -393,7 +397,8 @@ public class SequenceController
             addSeqObjFirst = null;
 
             initGrid();
-            initGridState();
+            initGridMsg();
+            initGridAct();
         }
 
         ArrayList<String> nameList = new ArrayList<String>();
@@ -405,7 +410,7 @@ public class SequenceController
             VBox startObj = new VBox();
             Line startLine = new Line(0, 0, 0, seqEditorBox.getHeight() * 0.01);
             StackPane objRectangle = new StackPane();
-            Rectangle rectangle = new Rectangle(150, 50);
+            Rectangle rectangle = new Rectangle(125, 50);
             Effect effect = new DropShadow(BlurType.GAUSSIAN, Color.DODGERBLUE, 5, 0.75, 0, 0);
 
             rectangle.setOnMouseClicked((MouseEvent event) -> 
@@ -470,15 +475,12 @@ public class SequenceController
                                     removeColumn(seqGrid, colFocus);
                                     System.out.println(sequenceDiagram.getNameClasses());
 
-                                    //updateGridMsg();
-                                    addSeqObjFirst = new VBox();
-                                    seqObjBox.getChildren().remove(seqGrid);
-                                    seqGrid = new GridPane();
+                                    if (sequenceDiagram.getClasses().size() < 7)
+                                    {
+                                        addSeqObjButton.setDisable(false);
+                                    }
 
-                                    seqMsgBox.getChildren().remove(seqGridMsgs);
-                                    seqGridMsgs = new GridPane();
-
-                                    displaySequence(sequenceDiagram);
+                                    updateGrids();
                                 }
                             }
                         });
@@ -499,6 +501,40 @@ public class SequenceController
                 seqGrid.getRowConstraints().add(new RowConstraints(-1, -1, -1, Priority.ALWAYS, VPos.CENTER, false));
                 seqGrid.getRowConstraints().add(new RowConstraints(-1, -1, -1, Priority.ALWAYS, VPos.CENTER, false));
             }
+
+
+            // TODO TODO TODO Mark Activation
+            seqGridAct.getColumnConstraints().add(new ColumnConstraints(-1, -1, -1, Priority.ALWAYS, HPos.CENTER, false));
+            Rectangle actRectangle = new Rectangle(20, 30);
+
+            seqGridAct.setMinWidth(seqEditorBox.getWidth());
+
+            actRectangle.setStroke(Color.BLACK);
+            actRectangle.setFill(Color.TRANSPARENT);
+            
+            if (i == 0)
+            {
+                Region rect = new Region();
+                rect.setStyle("-fx-border-color: black; -fx-min-width: 20; -fx-min-height:30; -fx-max-width:20; -fx-border-style: solid solid hidden solid;");
+
+                Region rect2 = new Region();
+                rect2.setStyle("-fx-border-color: red; -fx-min-width: 20; -fx-min-height:30; -fx-max-width:20; -fx-border-style: hidden solid solid solid;");
+                seqGridAct.add(rect, 0, 0);
+                seqGridAct.add(rect2, 0, 1);
+            }
+
+            seqGridAct.add(actRectangle, i, 0);
+
+            for (int j = 0; j < (seqGridAct.getChildren().size()); j++)
+            {
+                Node nodeMsg = seqGridAct.getChildren().get(j);
+                System.out.println(nodeMsg);
+                /*if (nodeMsg instanceof Rectangle)
+                {
+                    seqGridMsgs.getChildren().remove(j);
+                }*/
+            }
+
             
             objRectangle.getChildren().add(new Text(nameList.get(i)));
 
@@ -919,28 +955,36 @@ public class SequenceController
         seqGrid.setMaxWidth(900);
         seqGrid.setMaxHeight(460);
         seqGrid.setAlignment(Pos.CENTER);
-        seqGrid.setGridLinesVisible(true);
+        //seqGrid.setGridLinesVisible(true);
         seqGrid.setPickOnBounds(false);
         seqObjBox.getChildren().add(seqGrid);
     }
 
     @FXML
-    public void initGridState()
+    public void initGridMsg()
     {
-        //seqGridState.setMinWidth(900);
-        //seqGridState.setMinHeight(460);
         seqGridMsgs.setMaxWidth(900);
         seqGridMsgs.setAlignment(Pos.TOP_CENTER);
-        seqGridMsgs.setGridLinesVisible(true);
+        //seqGridMsgs.setGridLinesVisible(true);
 
         msgWidth = seqEditorBox.getWidth() / 2;
 
         ColumnConstraints columnSpacer = new ColumnConstraints(msgWidth / 2);
         ColumnConstraints column = new ColumnConstraints(msgWidth);
-        //RowConstraints row = new RowConstraints(30);
-        //seqGridMsgs.getRowConstraints().add(row);
         seqGridMsgs.getColumnConstraints().addAll(columnSpacer, column, columnSpacer);
         seqMsgBox.getChildren().add(seqGridMsgs);
+    }
+
+    @FXML
+    public void initGridAct()
+    {
+        seqGridAct.setMaxWidth(900);
+        seqGridAct.setAlignment(Pos.TOP_CENTER);
+        //seqGridAct.setGridLinesVisible(true);
+        seqGridAct.setPickOnBounds(false);
+        seqGridAct.getRowConstraints().add(new RowConstraints(30));
+        seqGridAct.getRowConstraints().add(new RowConstraints(30));
+        seqActBox.getChildren().add(seqGridAct);
     }
 
     /**
@@ -1006,12 +1050,18 @@ public class SequenceController
         grid.getColumnConstraints().remove(targetColumnIndex);
     }
 
-    private void insertRows(int count, GridPane grid) 
+    public void updateGrids()
     {
-        for (Node child : grid.getChildren()) 
-        {
-            Integer rowIndex = GridPane.getRowIndex(child);
-            GridPane.setRowIndex(child, rowIndex == null ? count : count + rowIndex);
-        }
+        addSeqObjFirst = new VBox();
+        seqObjBox.getChildren().remove(seqGrid);
+        seqGrid = new GridPane();
+
+        seqMsgBox.getChildren().remove(seqGridMsgs);
+        seqGridMsgs = new GridPane();
+
+        seqActBox.getChildren().remove(seqGridAct);
+        seqGridAct = new GridPane();
+
+        displaySequence(sequenceDiagram);
     }
 }
