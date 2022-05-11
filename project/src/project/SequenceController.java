@@ -21,6 +21,7 @@ import javafx.scene.input.*;
 
 import javafx.scene.paint.Color;
 import javafx.event.EventHandler;
+
 import uml.*;
 
 public class SequenceController
@@ -399,59 +400,12 @@ public class SequenceController
         popUp.setResizable(false);
         popUp.showAndWait();
 
-        if (actController.createdAct != null)
+
+        /*
+        if (msgController.createdMessage != null)
         {
-            sequenceDiagram.getClasses().get(actController.indexOfClass).addActivation(actController.createdAct);
-            refreshActs();
-        }
-    }
-
-    @FXML
-    public void refreshActs() throws IOException
-    {
-        seqActBox.getChildren().remove(seqGridAct);
-        seqGridAct = new GridPane();
-
-        Integer messageCounter = 0;
-        while (messageCounter < sequenceDiagram.messages.size())
-        {
-            Integer inCount = 0;
-            Integer outCount = 0;
-
-            for (int j = 0; j < sequenceDiagram.getClasses().get(j).getActivations().size(); j++)
-            {
-                Integer fromIndex = sequenceDiagram.getClasses().get(0).getActivations().get(j).getStart();
-                Integer toIndex = sequenceDiagram.getClasses().get(0).getActivations().get(j).getEnd();
-
-                if (fromIndex >= messageCounter && toIndex <= messageCounter)
-                {
-                    inCount++;
-
-                    if (outCount > 0 || messageCounter == sequenceDiagram.messages.size() - 1)
-                    {
-                        Line line = new Line(0, 0, 0, 30 * outCount);
-                        seqGridAct.add(line, 0, 0);
-
-                        outCount = 0;
-                    }
-                }
-                else
-                {
-                    outCount++;
-
-                    if (inCount > 0 || messageCounter == sequenceDiagram.messages.size() - 1)
-                    {
-                        Rectangle rectangle = new Rectangle(20, 30 * inCount);
-                        seqGridAct.add(rectangle, 0, 0);
-
-                        inCount = 0;
-                    }
-                }
-            }
-            messageCounter++;
-        }
-
-        return;
+            createMessage(msgController.createdMessage);
+        }*/
     }
 
     @FXML
@@ -1093,6 +1047,9 @@ public class SequenceController
 
         seqMsgBox.getChildren().remove(seqGridMsgs);
         seqGridMsgs = new GridPane();
+
+        seqActBox.getChildren().remove(seqGridAct);
+        seqGridAct = new GridPane();
 
         displaySequence(sequenceDiagram);
     }

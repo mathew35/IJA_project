@@ -17,8 +17,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.util.List;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
@@ -29,7 +27,6 @@ import javafx.beans.value.ObservableValue;
 public class ActivationController {
     private SequenceDiagram sequenceDiagram;
     public UMLActivation createdAct;
-    public Integer indexOfClass;
 
     @FXML
     private Button closeButton;
@@ -54,11 +51,6 @@ public class ActivationController {
                 if (!newValue.matches("\\d*")) {
                     fieldFrom.setText(newValue.replaceAll("[^\\d]", ""));
                 }
-
-                if (!fieldFrom.getText().equals("") && !fieldTo.getText().equals("") && !dropTime.getSelectionModel().isEmpty())
-                {
-                    createActButton.setDisable(false);
-                }
             }
         });
 
@@ -68,12 +60,11 @@ public class ActivationController {
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) 
             {
                 if (!newValue.matches("\\d*")) {
-                    fieldTo.setText(newValue.replaceAll("[^\\d]", ""));
+                    fieldFrom.setText(newValue.replaceAll("[^\\d]", ""));
                 }
-
-                if (!fieldFrom.getText().equals("") && !fieldTo.getText().equals("") && !dropTime.getSelectionModel().isEmpty())
+                else
                 {
-                    createActButton.setDisable(false);
+                    // TODO
                 }
             }
         });
@@ -88,6 +79,11 @@ public class ActivationController {
         }
     }
 
+    @FXML void createActButton()
+    {
+
+    }
+
     public void loadData(SequenceDiagram diagram)
     {
         sequenceDiagram = diagram;
@@ -96,37 +92,7 @@ public class ActivationController {
 
     @FXML void createActData()
     {
-        int fromIndex = Integer.parseInt(fieldFrom.getText());
-        int toIndex = Integer.parseInt(fieldTo.getText());
-        
-        if (fromIndex > (sequenceDiagram.messages.size() - 1) || toIndex > (sequenceDiagram.messages.size() - 1))
-        {
-            return;
-        }
-
-        List<UMLClass> classes = sequenceDiagram.getClasses();
-        List<UMLActivation> actList = classes.get(classes.indexOf(dropTime.getValue())).getActivations();
-
-        for (UMLActivation act : actList)
-        {
-            System.out.println("Interval nové aktivace: (" + fromIndex + ", " + toIndex + ") + čekuji hranice: (" + act.getStart() + ", " + act.getEnd() + ")");
-            if (fromIndex >= act.getStart() && fromIndex <= act.getEnd())
-            {
-                return;
-            }
-
-            if (toIndex >= act.getStart() && toIndex <= act.getEnd())
-            {
-                return;
-            }
-
-            if (fromIndex <= act.getStart() && act.getEnd() >= toIndex)
-            {
-                return;
-            }
-        }
-
-        createdAct = new UMLActivation(fromIndex, toIndex);
+        createdAct = new UMLActivation();
     }
 
     @FXML void closeWindow()
