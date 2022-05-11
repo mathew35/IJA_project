@@ -23,7 +23,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="editor" prefHeight="800.0" prefWidth="1400.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.EditorController">
+<VBox fx:id="editor" prefHeight="700.0" prefWidth="1400.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.EditorController">
   <children>
     <MenuBar prefWidth="704.0" VBox.vgrow="NEVER">
       <menus>
@@ -75,7 +75,7 @@
           </Tab>
           <Tab text="Class Diagram">
                <content>
-                  <HBox id="ClassDiagramTab" prefHeight="746.0" prefWidth="1400.0" style="-fx-id: TabClassDiagram;">
+                  <HBox id="ClassDiagramTab" prefHeight="646.0" prefWidth="1400.0" style="-fx-id: TabClassDiagram;">
                      <children>
                         <VBox alignment="TOP_CENTER" prefHeight="486.0" prefWidth="152.0">
                            <children>
@@ -176,7 +176,7 @@
                               </SplitPane>
                            </children>
                         </VBox>
-                        <Pane fx:id="ClassGroup" prefHeight="746.0" prefWidth="1248.0">
+                        <Pane fx:id="ClassGroup" prefHeight="646.0" prefWidth="1248.0">
                            <children>
                               <TreeView fx:id="ClassTree" onContextMenuRequested="#selectItem" onMouseClicked="#selectItem" />
                               <Group layoutX="624.0" layoutY="373.0" />
