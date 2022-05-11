@@ -57,7 +57,7 @@
                   <Insets right="20.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="createActButton" mnemonicParsing="false" onAction="#createActData" text="Create Activation">
+            <Button fx:id="createActButton" disable="true" mnemonicParsing="false" onAction="#createActData" text="Create Activation">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>

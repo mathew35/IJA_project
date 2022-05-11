@@ -1,7 +1,5 @@
 package uml;
 
-import java.rmi.UnmarshalException;
-import java.time.temporal.UnsupportedTemporalTypeException;
 import java.util.*;
 import com.fasterxml.jackson.annotation.*;
 
@@ -13,6 +11,8 @@ public class UMLClass  extends UMLClassifier{
     private List<UMLAttribute> attributes = new ArrayList<UMLAttribute>();
     @JsonProperty("operations")
     private List<UMLOperation> operations = new ArrayList<UMLOperation>();
+    @JsonProperty("activations")
+    private List<UMLActivation> activations = new ArrayList<UMLActivation>();
     public UMLClass(){}
     public UMLClass(String name){
         super(name,true);
@@ -127,6 +127,15 @@ public class UMLClass  extends UMLClassifier{
 
     public List<UMLOperation> getOperations(){
         return Collections.unmodifiableList(this.operations);
+    }
+
+    public List<UMLActivation> getActivations(){
+        return Collections.unmodifiableList(this.activations);
+    }
+
+    public void addActivation(UMLActivation activation)
+    {
+        this.activations.add(activation);
     }
 
     public void deepCopyClass(UMLClass another){
