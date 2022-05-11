@@ -103,7 +103,6 @@
             <fileset file="data/class.fxml"/>
             <fileset file="data/sequence.fxml"/>
             <fileset file="target/diagram.json"/>
-            <fileset file="data/activation.fxml"/>
         </jar>
         <javadoc destdir="doc" encoding="UTF-8" docencoding="UTF-8">
             <fileset dir="src">
