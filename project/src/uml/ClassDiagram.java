@@ -85,6 +85,11 @@ public class ClassDiagram extends Element{
     }
 
     @JsonIgnore
+    public List<UMLClassifier> getClassifiers(){
+        return Collections.unmodifiableList(this.classifiers);
+    }
+
+    @JsonIgnore
     public int getClassIndexByName(String name)
     {
         for (int i = 0; i < this.classes.size(); i++)

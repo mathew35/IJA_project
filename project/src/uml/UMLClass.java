@@ -149,6 +149,9 @@ public class UMLClass  extends UMLClassifier{
         }
         for(UMLOperation i:another.operations){
             this.addOperation(UMLOperation.create(i.getName(),i.getType(),i.getArguments().toArray(UMLAttribute[]::new)));
-        }      
+        }
+        for(UMLActivation i:another.activations){
+            this.addActivation(new UMLActivation(i.getStart(), i.getEnd(), i.getDeactivation()));
+        }        
     }
 }

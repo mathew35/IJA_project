@@ -92,4 +92,32 @@ public class SequenceDiagram extends ClassDiagram{
 
         return lineup;
     }
+
+    @JsonIgnore
+    public SequenceDiagram deepCopySeq()
+    {
+        SequenceDiagram retDiag = new SequenceDiagram(this.getName());
+        for(String diagClassName:this.getNameClasses())
+        {
+            retDiag.createClass(diagClassName);
+        }
+        for(UMLClass diagClass:this.getClasses()){
+            for(UMLClass retClass:retDiag.getClasses())
+            {
+                if(retClass.getName().equals(diagClass.getName())){
+                    retClass.deepCopyClass(diagClass);
+                }
+            }
+        }
+        for(UMLClassifier diagClassifier:this.getClassifiers()){
+            retDiag.classifierForName(diagClassifier.getName());
+        }
+
+        for (UMLMessage diaMessage: this.messages)
+        {
+            retDiag.createMessage(diaMessage.message, diaMessage.sender, diaMessage.receiver, diaMessage.transmition, diaMessage.order);
+        }
+
+        return retDiag;
+    }
 }

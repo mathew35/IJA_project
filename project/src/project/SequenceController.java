@@ -32,8 +32,10 @@ public class SequenceController
     GridPane seqGridMsgs = new GridPane();
     GridPane seqGridAct = new GridPane();
     double msgWidth;
-
     int colFocus, rowFocus;
+
+    ArrayList<SequenceDiagram> snapshots = new ArrayList<SequenceDiagram>();
+    int snapshotPos = -1;
 
     @FXML
     private TabPane tabPane;
@@ -42,7 +44,7 @@ public class SequenceController
     private Button addSeqObjButton;
 
     @FXML
-    private Button messageCreatorButton;
+    private Button messageCreatorButton, undoButton, redoButton;
 
     @FXML
     private StackPane seqEditorBox;
@@ -55,6 +57,67 @@ public class SequenceController
 
     @FXML
     private Region actRegion, msgRegion;
+
+    @FXML
+    public void onUndoClick()
+    {
+        if(snapshotPos > 0)
+        {
+            snapshotPos--;
+            sequenceDiagram = snapshots.get(snapshotPos).deepCopySeq();
+            updateGrids();
+
+            if (snapshotPos == 0)
+            {
+                undoButton.setDisable(true);
+            }
+
+            if (snapshotPos != snapshots.size())
+            {
+                redoButton.setDisable(false);
+            }
+        }
+    }
+
+    @FXML
+    public void onRedoClick()
+    {
+        if(snapshots.size()>snapshotPos+1)
+        {
+            snapshotPos++;
+            sequenceDiagram  = snapshots.get(snapshotPos).deepCopySeq();
+            updateGrids();
+
+            if (snapshotPos + 1 == snapshots.size())
+            {
+                redoButton.setDisable(true);
+            }
+
+            if (snapshotPos != 0)
+            {
+                undoButton.setDisable(false);
+            }
+        }
+    }
+    public void createSnapshot(SequenceDiagram diag)
+    {
+        while(snapshots.size()>snapshotPos+1)
+        {
+            snapshots.remove(snapshotPos+1);
+        }
+        snapshotPos++;
+        snapshots.add(diag.deepCopySeq());
+
+        if (snapshotPos != 0)
+        {
+            undoButton.setDisable(false);
+        }
+
+        if (snapshotPos + 1 != snapshots.size())
+        {
+            redoButton.setDisable(false);
+        }
+    }
 
     private static void configureFileChooser(final FileChooser fileChooser, String type) 
     {      
@@ -141,6 +204,7 @@ public class SequenceController
             this.sequenceDiagram = loadSequence(objectMapper, file);
             displaySequence(sequenceDiagram);
             updateGrids();
+            createSnapshot(sequenceDiagram);
         }
     }
 
@@ -224,12 +288,13 @@ public class SequenceController
                                 sequenceDiagram.removeClassByIndex(colFocus);
                                 removeColumn(seqGrid, colFocus);
 
-                                if (sequenceDiagram.getClasses().size() < 7)
+                                if (sequenceDiagram.getClasses().size() < 8)
                                 {
                                     addSeqObjButton.setDisable(false);
                                 }
 
                                 updateGrids();
+                                createSnapshot(sequenceDiagram);
                             }
                         }
                     });
@@ -258,7 +323,7 @@ public class SequenceController
                     objRectangle.getChildren().remove(objField);
                     objRectangle.getChildren().add(objName);
 
-                    if (seqGrid.getColumnCount() >= 7)
+                    if (seqGrid.getColumnCount() >= 8)
                     {
                         addSeqObjButton.setDisable(true);
                     }
@@ -268,6 +333,7 @@ public class SequenceController
                     }
 
                     updateGrids();
+                    createSnapshot(sequenceDiagram);
                 }
             }
         });
@@ -409,6 +475,7 @@ public class SequenceController
         {
             System.out.println("Sussy baka" + actController.indexOfClass + " ");
             sequenceDiagram.getClasses().get(actController.indexOfClass).addActivation(actController.createdAct);
+            createSnapshot(sequenceDiagram);
             refreshActs();
         }
     }
@@ -465,16 +532,7 @@ public class SequenceController
 
                         rectangle.setOnMouseClicked((MouseEvent event) -> 
                         {
-                            Effect effect = new DropShadow(BlurType.GAUSSIAN, Color.DODGERBLUE, 5, 0.75, 0, 0);
-                            //Rectangle selectRec = new Rectangle(messageLabel.getWidth() + 5, messageLabel.getHeight() + 1);
-                            //GridPane.setValignment(selectRec, VPos.TOP);
-                            //GridPane.setHalignment(selectRec, HPos.CENTER);
-
                             rectangle.requestFocus();
-                            System.out.println("Region on focus");
-                            //selectRec.setStroke(Color.DODGERBLUE);
-                            //selectRec.setFill(Color.TRANSPARENT);
-                            //selectRec.setEffect(selectRec.getEffect() == null ? effect : null);
                             
                             Node clickedNode = event.getPickResult().getIntersectedNode();
                             if (clickedNode != seqGridAct) 
@@ -492,8 +550,6 @@ public class SequenceController
 
                                 colFocus = colIndex;
                                 rowFocus = rowIndex;
-
-                                //seqGridAct.add(selectRec, colIndex, rowIndex);
                             }
                         });
 
@@ -524,6 +580,7 @@ public class SequenceController
                                                 }
 
                                                 updateGrids();
+                                                createSnapshot(sequenceDiagram);
                                             }
                                         }
                                     });
@@ -636,12 +693,13 @@ public class SequenceController
                                     removeColumn(seqGrid, colFocus);
                                     System.out.println(sequenceDiagram.getNameClasses());
 
-                                    if (sequenceDiagram.getClasses().size() < 7)
+                                    if (sequenceDiagram.getClasses().size() < 8)
                                     {
                                         addSeqObjButton.setDisable(false);
                                     }
 
                                     updateGrids();
+                                    createSnapshot(sequenceDiagram);
                                 }
                             }
                         });
@@ -857,6 +915,7 @@ public class SequenceController
                                     removeRow(seqGridMsgs, rowFocus);
                                     sequenceDiagram.messages.remove(rowFocus);
                                     updateGrids();
+                                    createSnapshot(sequenceDiagram);
                                 }
                             }
                         });
@@ -944,6 +1003,7 @@ public class SequenceController
                                 removeRow(seqGridMsgs, rowFocus);
                                 sequenceDiagram.messages.remove(rowFocus);
                                 updateGrids();
+                                createSnapshot(sequenceDiagram);
                             }
                         }
                     });
@@ -1082,6 +1142,7 @@ public class SequenceController
         sequenceDiagram.messages.add(msgCount, message);
 
         seqGridAct.getRowConstraints().add(new RowConstraints(30));
+        createSnapshot(sequenceDiagram);
     }
 
     @FXML
@@ -1089,7 +1150,6 @@ public class SequenceController
     {
         seqGrid.setMaxWidth(1220);
         seqGrid.setAlignment(Pos.CENTER);
-        //seqGrid.setGridLinesVisible(true);
         seqGrid.setPickOnBounds(false);
         seqObjBox.getChildren().add(seqGrid);
     }
