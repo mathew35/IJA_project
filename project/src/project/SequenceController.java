@@ -420,7 +420,7 @@ public class SequenceController
             while (messageCounter < seqGridAct.getRowCount())
             {
                 System.out.println("Counter: " + messageCounter);
-                for (int j = 0; j < sequenceDiagram.getClasses().get(j).getActivations().size(); j++)
+                for (int j = 0; j < sequenceDiagram.getClasses().get(i).getActivations().size(); j++)
                 {
                     Integer fromIndex = sequenceDiagram.getClasses().get(i).getActivations().get(j).getStart();
                     Integer toIndex = sequenceDiagram.getClasses().get(i).getActivations().get(j).getEnd();
@@ -583,14 +583,11 @@ public class SequenceController
                 seqGrid.getRowConstraints().add(new RowConstraints(-1, -1, -1, Priority.ALWAYS, VPos.CENTER, false));
             }
 
-            // TODO TODO TODO Mark Activation
             seqGridAct.getColumnConstraints().add(new ColumnConstraints(-1, -1, -1, Priority.ALWAYS, HPos.CENTER, false));
             for (int j = 0; j < seqGridAct.getColumnCount(); j++)
             {
                 seqGridAct.getColumnConstraints().set(j, new ColumnConstraints(seqEditorBox.getWidth()/seqGrid.getColumnCount()));
             }
-
-            //seqGridAct.setMinWidth(seqEditorBox.getWidth());
             
             objRectangle.getChildren().add(new Text(nameList.get(i)));
 
