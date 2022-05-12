@@ -697,7 +697,6 @@ public class EditorController extends MenuBarController implements Initializable
         rect.setStyle("-fx-border-width:1px; -fx-border-color:black;");
         rect.getChildren().addAll(name,sep,contentScroll);
         rect.setAlignment(Pos.CENTER);
-        rect.onM
         name.setText(uclass.getName());
         sep.setStyle("-fx-background-color:BLACK;");
         contentScroll.setContent(contentBox);
