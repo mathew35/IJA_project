@@ -154,11 +154,11 @@
                                  </padding>
                               </Label>
                               <Separator prefWidth="200.0" />
-                              <SplitPane dividerPositions="0.85" orientation="VERTICAL" prefHeight="486.0" prefWidth="291.0">
+                              <SplitPane dividerPositions="0.85" orientation="VERTICAL" prefHeight="486.0" prefWidth="152.0">
                                 <items>
-                                    <ScrollPane fx:id="ClassScrollPane" prefHeight="408.0" prefWidth="280.0">
+                                    <ScrollPane fx:id="ClassScrollPane" prefHeight="408.0" prefWidth="152.0">
                                       <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="408.0" prefWidth="150.0">
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="362.0" prefWidth="150.0">
                                              <children>
                                                 <TextField fx:id="ClassName" layoutY="14.0" prefHeight="25.0" promptText="Class Name" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
                                                 <TreeView fx:id="AttributesTree" layoutY="30.0" prefHeight="174.0" prefWidth="140.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="34.0" />
@@ -176,7 +176,7 @@
                               </SplitPane>
                            </children>
                         </VBox>
-                        <Pane fx:id="ClassGroup" prefHeight="746.0" prefWidth="1248.0">
+                        <Pane fx:id="ClassGroup" prefHeight="746.0" prefWidth="1099.0">
                            <children>
                               <TreeView fx:id="ClassTree" onContextMenuRequested="#selectItem" onMouseClicked="#selectItem" />
                               <Group layoutX="624.0" layoutY="373.0" />
