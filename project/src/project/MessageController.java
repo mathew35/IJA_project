@@ -79,8 +79,6 @@ public class MessageController {
         }
     };
 
-
-    // TODO remove
     @FXML
     public void initialize() 
     {

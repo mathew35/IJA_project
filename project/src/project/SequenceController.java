@@ -41,10 +41,7 @@ public class SequenceController
     private TabPane tabPane;
 
     @FXML
-    private Button addSeqObjButton;
-
-    @FXML
-    private Button messageCreatorButton, undoButton, redoButton;
+    private Button addSeqObjButton, messageCreatorButton, actCreatorButton, undoButton, redoButton;
 
     @FXML
     private StackPane seqEditorBox;
@@ -57,6 +54,16 @@ public class SequenceController
 
     @FXML
     private Region actRegion, msgRegion;
+
+    public void initialize()
+    {
+        addSeqObjButton.setTooltip(new Tooltip("Add Object"));
+        messageCreatorButton.setTooltip(new Tooltip("Add Message..."));
+        actCreatorButton.setTooltip(new Tooltip("Add Activation Interval..."));
+
+        undoButton.setTooltip(new Tooltip("Undo"));
+        redoButton.setTooltip(new Tooltip("Redo"));
+    }
 
     @FXML
     public void onUndoClick()
@@ -486,16 +493,16 @@ public class SequenceController
         for (int i = 0; i < sequenceDiagram.getClasses().size(); i++)
         {
             Integer messageCounter = 0;
-            System.out.println("Object: " + sequenceDiagram.getClasses().get(i).getName());
+            //System.out.println("Object: " + sequenceDiagram.getClasses().get(i).getName());
             while (messageCounter < seqGridAct.getRowCount())
             {
-                System.out.println("Counter: " + messageCounter);
+                //System.out.println("Counter: " + messageCounter);
                 for (int j = 0; j < sequenceDiagram.getClasses().get(i).getActivations().size(); j++)
                 {
                     Integer fromIndex = sequenceDiagram.getClasses().get(i).getActivations().get(j).getStart();
                     Integer toIndex = sequenceDiagram.getClasses().get(i).getActivations().get(j).getEnd();
 
-                    System.out.println("Start: " + fromIndex + " End: " + toIndex + " Counter: " + messageCounter);
+                    //System.out.println("Start: " + fromIndex + " End: " + toIndex + " Counter: " + messageCounter);
     
                     if (sequenceDiagram.getClasses().get(i).getActivations().get(j).isInBounds(messageCounter))
                     {
