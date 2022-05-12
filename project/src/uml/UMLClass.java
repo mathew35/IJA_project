@@ -133,6 +133,11 @@ public class UMLClass  extends UMLClassifier{
         return Collections.unmodifiableList(this.activations);
     }
 
+    public void removeActivation(UMLActivation activationRemove)
+    {
+        this.activations.remove(activationRemove);
+    }
+
     public void addActivation(UMLActivation activation)
     {
         this.activations.add(activation);

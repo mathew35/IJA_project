@@ -39,19 +39,19 @@
       </VBox>
       <StackPane fx:id="seqEditorBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="665.0" prefWidth="1220.0">
          <children>
+            <VBox fx:id="seqObjBox" prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Region prefHeight="10.0" prefWidth="849.0" />
+               </children>
+            </VBox>
             <VBox fx:id="seqActBox" prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <Region prefHeight="65.0" prefWidth="900.0" />
+                  <Region fx:id="actRegion" prefHeight="65.0" prefWidth="900.0" />
                </children>
             </VBox>
             <VBox fx:id="seqMsgBox" prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <Region prefHeight="65.0" prefWidth="900.0" />
-               </children>
-            </VBox>
-            <VBox fx:id="seqObjBox" prefHeight="200.0" prefWidth="100.0">
-               <children>
-                  <Region prefHeight="10.0" prefWidth="849.0" />
+                  <Region fx:id="msgRegion" prefHeight="65.0" prefWidth="900.0" />
                </children>
             </VBox>
             <HBox fx:id="optionSeqBox" alignment="CENTER" prefHeight="100.0" prefWidth="1220.0">

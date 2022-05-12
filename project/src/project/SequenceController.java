@@ -3,6 +3,7 @@ package project;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.core.exc.*;
 import com.fasterxml.jackson.databind.*;
@@ -51,6 +52,9 @@ public class SequenceController
 
     @FXML
     private HBox optionSeqBox, seqEditorBack;
+
+    @FXML
+    private Region actRegion, msgRegion;
 
     private static void configureFileChooser(final FileChooser fileChooser, String type) 
     {      
@@ -375,8 +379,6 @@ public class SequenceController
         popUp.setResizable(false);
         popUp.showAndWait();
 
-        System.out.print("closed");
-
         if (msgController.createdMessage != null)
         {
             createMessage(msgController.createdMessage);
@@ -430,13 +432,18 @@ public class SequenceController
                     if (sequenceDiagram.getClasses().get(i).getActivations().get(j).isInBounds(messageCounter))
                     {
                         Region regionAct = new Region();
+                        Rectangle rectangle = new Rectangle(20, 30);
+
+                        rectangle.setFill(Color.TRANSPARENT);
+
                         regionAct.setPrefSize(20, 30);
                         regionAct.setMaxSize(20, 30);
+                        regionAct.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(0), new Insets(0))));
                         regionAct.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-border-style: hidden solid hidden solid;");
                         
                         if (fromIndex == messageCounter)
                         {
-                            regionAct.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-border-style: solid solid hidden solid;");
+                            regionAct.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-border-style: solid solid hidden solid");
                         }
     
                         if (toIndex == messageCounter)
@@ -446,13 +453,85 @@ public class SequenceController
     
                         if (fromIndex == messageCounter && toIndex == messageCounter)
                         {
-                            regionAct.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-border-style: solid solid solid solid;");
+                            regionAct.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-border-style: solid solid solid solid; -fx-fill: white;");
                         }
     
                         GridPane.setValignment(regionAct, VPos.TOP);
                         GridPane.setHalignment(regionAct, HPos.CENTER);
+
+                        GridPane.setValignment(rectangle, VPos.TOP);
+                        GridPane.setHalignment(rectangle, HPos.CENTER);
+
+                        rectangle.setOnMouseClicked((MouseEvent event) -> 
+                        {
+                            Effect effect = new DropShadow(BlurType.GAUSSIAN, Color.DODGERBLUE, 5, 0.75, 0, 0);
+                            //Rectangle selectRec = new Rectangle(messageLabel.getWidth() + 5, messageLabel.getHeight() + 1);
+                            //GridPane.setValignment(selectRec, VPos.TOP);
+                            //GridPane.setHalignment(selectRec, HPos.CENTER);
+
+                            rectangle.requestFocus();
+                            System.out.println("Region on focus");
+                            //selectRec.setStroke(Color.DODGERBLUE);
+                            //selectRec.setFill(Color.TRANSPARENT);
+                            //selectRec.setEffect(selectRec.getEffect() == null ? effect : null);
+                            
+                            Node clickedNode = event.getPickResult().getIntersectedNode();
+                            if (clickedNode != seqGridAct) 
+                            {
+                                // click on descendant node
+                                Node parent = clickedNode.getParent();
+                                while (parent != seqGridAct) 
+                                {
+                                    clickedNode = parent;
+                                    parent = clickedNode.getParent();
+                                }
+                                Integer colIndex = GridPane.getColumnIndex(clickedNode);
+                                Integer rowIndex = GridPane.getRowIndex(clickedNode);
+                                System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
+
+                                colFocus = colIndex;
+                                rowFocus = rowIndex;
+
+                                //seqGridAct.add(selectRec, colIndex, rowIndex);
+                            }
+                        });
+
+                        rectangle.focusedProperty().addListener(new ChangeListener<Boolean>()
+                        {
+                            @Override
+                            public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue)
+                            {
+                                if (newPropertyValue)
+                                {
+                                    rectangle.setOnKeyPressed(new EventHandler<KeyEvent>() 
+                                    {
+                                        @Override
+                                        public void handle(KeyEvent ke) 
+                                        {
+                                            if (ke.getCode().equals(KeyCode.DELETE)) 
+                                            {
+                                                UMLClass cls = sequenceDiagram.getClasses().get(colFocus);
+                                                List<UMLActivation> clsActivations = cls.getActivations();
+
+                                                for (int i = 0; i < clsActivations.size(); i++)
+                                                {
+                                                    if (rowFocus >= clsActivations.get(i).getStart() && rowFocus <= clsActivations.get(i).getEnd())
+                                                    {
+                                                        cls.removeActivation(clsActivations.get(i));
+                                                        i--;
+                                                    }
+                                                }
+
+                                                updateGrids();
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
     
                         seqGridAct.add(regionAct, i, messageCounter);
+                        seqGridAct.add(rectangle, i, messageCounter);
                     }
                 }
                 messageCounter++;
@@ -1018,6 +1097,7 @@ public class SequenceController
         seqGridMsgs.setMaxWidth(1220);
         seqGridMsgs.setAlignment(Pos.TOP_CENTER);
         //seqGridMsgs.setGridLinesVisible(true);
+        seqGridMsgs.setPickOnBounds(false);
 
         msgWidth = seqEditorBox.getWidth() / 2;
 
@@ -1025,6 +1105,8 @@ public class SequenceController
         ColumnConstraints column = new ColumnConstraints(msgWidth);
         seqGridMsgs.getColumnConstraints().addAll(columnSpacer, column, columnSpacer);
         seqMsgBox.getChildren().add(seqGridMsgs);
+        seqMsgBox.setPickOnBounds(false);
+        msgRegion.setPickOnBounds(false);
     }
 
     @FXML
@@ -1035,6 +1117,8 @@ public class SequenceController
         seqGridAct.setGridLinesVisible(true);
         seqGridAct.setPickOnBounds(false);
         seqActBox.getChildren().add(seqGridAct);
+        seqActBox.setPickOnBounds(false);
+        actRegion.setPickOnBounds(false);
     }
 
     /**
