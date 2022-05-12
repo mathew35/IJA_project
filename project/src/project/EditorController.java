@@ -13,16 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.security.auth.login.CredentialException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.w3c.dom.Attr;
 
 import java.io.IOException;
-import java.lang.management.ClassLoadingMXBean;
 import java.net.URL;
-import java.time.temporal.UnsupportedTemporalTypeException;
 
 import javafx.fxml.*;
 import javafx.scene.Node;
@@ -35,9 +32,13 @@ import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 
-import javafx.event.Event;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
+import javafx.scene.shape.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
+import javafx.scene.text.TextAlignment;
+import javafx.geometry.VPos;
+import javafx.geometry.Pos;
 
 import uml.*;
 
@@ -55,6 +56,12 @@ public class EditorController extends MenuBarController implements Initializable
 
     @FXML
     private TreeView<String> ClassTree;
+    
+    @FXML
+    private Pane ClassPaneDiag;
+
+    @FXML
+    private Pane ClassPaneText;
 
     @FXML
     private TreeView<String> AttributesTree;
@@ -132,7 +139,7 @@ public class EditorController extends MenuBarController implements Initializable
             ChoiceParentClass.getItems().add(i.getName());
             ChoiceChildClass.getItems().add(i.getName());
         }
-        
+        drawClassDiagram();
         NewClassName.setText("");
     }
     public void setClassDiagram(ClassDiagram diag){
@@ -467,20 +474,6 @@ public class EditorController extends MenuBarController implements Initializable
      */
     public void ChangeParent(TreeItem<String> newParent,TreeItem<String> newChild){
         TreeItem<String> chParent = getTreeParent(newChild, ClassTree.getRoot());
-        // if(searchTreeView(newParent.getValue(), newChild) != null){
-        //     removeTreeBranch(newParent, ClassTree.getRoot());
-        //     newChild = searchTreeView(newChild.getValue(), ClassTree.getRoot());
-        //     removeTreeBranch(newChild, chParent);
-        //     newParent.getChildren().add(newChild);
-        //     chParent.getChildren().add(newParent);
-        //     return;
-        // }
-        // if(searchTreeView(newChild.getValue(), newParent) != null){
-        //     removeTreeBranch(newChild, newParent);
-        //     newParent = searchTreeView(newParent.getValue(), ClassTree.getRoot());
-        //     newParent.getChildren().add(newChild);
-        //     return;
-        // }
         removeTreeBranch(newChild, chParent);
         newParent.getChildren().add(newChild);
     }
@@ -628,6 +621,129 @@ public class EditorController extends MenuBarController implements Initializable
         createSnapshot(classDiagram);
     }
     /**
+     * TODO
+    */
+    public void drawClassDiagram(){
+        ClassPaneText.getChildren().removeAll(ClassPaneText.getChildren());
+        ArrayList<ArrayList<UMLClass>> LeveledClasses = new ArrayList<>();
+        int rootCount = 0;
+        int maxLevel = 0;
+        for(UMLClass i:classDiagram.getClasses()){
+            UMLClass parent = i.getParent();
+            int level = 0;
+            while(parent != null){
+                parent = parent.getParent();
+                level++;
+            }
+            while(level+1 > LeveledClasses.size()){
+                LeveledClasses.add(new ArrayList<UMLClass>());
+            }
+            if(level >= 0 && level < LeveledClasses.size()){
+                LeveledClasses.get(level).add(i);
+            }
+            if(level+1>maxLevel){
+                maxLevel = level+1;
+            }
+            // Rectangle rec = new Rectangle();
+            // rec.setX(ClassPaneDiag.getPrefWidth()/(rootCount)-100);
+            // rec.setY(ClassPaneDiag.getPrefHeight()/5-50);
+            // rec.setWidth(200);
+            // rec.setHeight(100);
+            // rec.setFill(Color.BLUE.deriveColor(1,1,1,0.3));
+            // Text txt = new Text("Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text");
+            // txt.setWrappingWidth(200-txt.getFont().getSize());
+            // TextFlow txtflow = new TextFlow(txt);
+            // // txtflow.setLayoutX(ClassPaneDiag.getPrefWidth()/(rootCount)-100);
+            // // txtflow.setLayoutY(ClassPaneDiag.getPrefHeight()/5-50);
+            // txtflow.setMaxWidth(160);
+            // // txtflow.setMaxHeight(100);
+            // ScrollPane txtScroll = new ScrollPane();
+            // txtScroll.setLayoutX(ClassPaneDiag.getPrefWidth()/(rootCount)-100);
+            // txtScroll.setLayoutY(ClassPaneDiag.getPrefHeight()/5-50);
+            // txtScroll.setMaxWidth(200);
+            // txtScroll.setPrefHeight(100);
+            // txtScroll.setStyle("-fx-font-size: "+txt.getFont().getSize()+"px;");
+            // txtScroll.setContent(txtflow);
+            // ClassPaneText.getChildren().add(txtScroll);
+        }
+        int columns = 1;
+        for(ArrayList<UMLClass> i:LeveledClasses){
+            if(i.size()>columns){
+                columns = i.size();
+            }
+        }
+        for(ArrayList<UMLClass> i:LeveledClasses){
+            for(UMLClass uclass:i){
+                drawClass(uclass,i.indexOf(uclass)+1,i.size(),LeveledClasses.indexOf(i)+1,maxLevel);
+            }
+        }
+
+    }
+    /**
+     * TODO
+     */
+    public void drawClass(UMLClass uclass,int column,int allcolumns,int level,int maxlevel){
+        double posX = ClassPaneText.getPrefWidth()/(1+allcolumns)*column;
+        double posY = ClassPaneText.getPrefHeight()/(1+maxlevel)*level;
+        VBox rect = new VBox();
+        Label name = new Label();
+        Separator sep = new Separator();
+        ScrollPane contentScroll = new ScrollPane();
+        VBox contentBox = new VBox();
+        rect.setMaxHeight(200);
+        rect.setPrefWidth(150);
+        rect.setLayoutX(posX-rect.getPrefWidth()/2);
+        rect.setLayoutY(posY);
+        rect.setStyle("-fx-border-width:1px; -fx-border-color:black;");
+        rect.getChildren().addAll(name,sep,contentScroll);
+        rect.setAlignment(Pos.CENTER);
+        name.setText(uclass.getName());
+        sep.setStyle("-fx-background-color:BLACK;");
+        contentScroll.setContent(contentBox);
+        contentScroll.setPrefWidth(150);
+        contentScroll.setMaxHeight(170);
+        TextFlow attr = new TextFlow();
+        attr.setPrefWidth(contentScroll.getPrefWidth()-18);
+        Text attrtxt = new Text();
+        attr.getChildren().add(attrtxt);
+        attrtxt.setText(formatA(uclass.getAttributes()));
+        TextFlow oper = new TextFlow();
+        oper.setPrefWidth(contentScroll.getPrefWidth()-18);
+        Text opertxt = new Text();
+        oper.getChildren().add(opertxt);
+        opertxt.setText(formatO(uclass.getOperations()));
+        if(!uclass.getAttributes().isEmpty()){
+            contentBox.getChildren().add(attr);
+        }
+        if(!uclass.getOperations().isEmpty()){
+            if(!contentBox.getChildren().isEmpty()){
+                Separator sep2 = new Separator();
+                sep2.setStyle("-fx-background-color:BLACK;");
+                contentBox.getChildren().add(sep2);
+            }
+            contentBox.getChildren().add(oper);
+        }
+        // contentBox.getChildren().add()
+        ClassPaneText.getChildren().add(rect);
+    }
+    /**
+     * TODO
+     */
+    public String formatA(List<UMLAttribute> list){
+        String str = "";
+        for(UMLAttribute i: list){
+            str = str + i.getName();
+        }
+        return str;
+    }
+    public String formatO(List<UMLOperation> list){
+        String str = "";
+        for(UMLOperation i: list){
+            str = str + i.getName() +"\n";
+        }
+        return str;
+    }
+     /**
     * Přidání karty do panelu karet 
      * @throws IOException
     */
