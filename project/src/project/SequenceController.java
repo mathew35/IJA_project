@@ -382,6 +382,7 @@ public class SequenceController
         if (msgController.createdMessage != null)
         {
             createMessage(msgController.createdMessage);
+            updateGrids();
         }
     }
 
@@ -855,7 +856,7 @@ public class SequenceController
                                 {
                                     removeRow(seqGridMsgs, rowFocus);
                                     sequenceDiagram.messages.remove(rowFocus);
-                                    System.out.println(sequenceDiagram.getMessagesText());
+                                    updateGrids();
                                 }
                             }
                         });
@@ -942,7 +943,7 @@ public class SequenceController
                             {
                                 removeRow(seqGridMsgs, rowFocus);
                                 sequenceDiagram.messages.remove(rowFocus);
-                                System.out.println(sequenceDiagram.getMessagesText());
+                                updateGrids();
                             }
                         }
                     });
@@ -1116,7 +1117,7 @@ public class SequenceController
     {
         seqGridAct.setMaxWidth(1220);
         seqGridAct.setAlignment(Pos.TOP_CENTER);
-        seqGridAct.setGridLinesVisible(true);
+        //seqGridAct.setGridLinesVisible(true);
         seqGridAct.setPickOnBounds(false);
         seqActBox.getChildren().add(seqGridAct);
         seqActBox.setPickOnBounds(false);
