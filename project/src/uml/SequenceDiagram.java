@@ -36,9 +36,9 @@ public class SequenceDiagram extends ClassDiagram{
      * @param receiver Příjemce zprávy.
      * @param transmition Typ přenosu (synchroní, asynchroní).
      */
-    public UMLMessage createMessage(UMLOperation operation, UMLClass sender, UMLClass receiver, boolean transmition, boolean occurence, int order)
+    public UMLMessage createMessage(UMLOperation operation, UMLClass sender, UMLClass receiver, int transmition, int order)
     {
-        UMLMessage newMessage = new UMLMessage(operation, sender, receiver, transmition, occurence, order);
+        UMLMessage newMessage = new UMLMessage(operation, sender, receiver, transmition, order);
         this.messages.add(newMessage);
 
         return newMessage;
@@ -52,9 +52,9 @@ public class SequenceDiagram extends ClassDiagram{
      * @param receiver Příjemce zprávy.
      * @param transmition Typ přenosu (synchroní, asynchroní).
      */
-    public UMLMessage createMessage(String message, UMLClass sender, UMLClass receiver, boolean transmition, boolean occurence, int order)
+    public UMLMessage createMessage(String message, UMLClass sender, UMLClass receiver, int transmition, int order)
     {
-        UMLMessage newMessage = new UMLMessage(message, sender, receiver, transmition, occurence, order);
+        UMLMessage newMessage = new UMLMessage(message, sender, receiver, transmition, order);
         this.messages.add(newMessage);
 
         return newMessage;

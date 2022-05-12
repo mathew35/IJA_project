@@ -13,26 +13,9 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="391.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.MessageController">
    <children>
-      <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="310.0">
+      <HBox alignment="CENTER_LEFT" prefHeight="46.0" prefWidth="320.0">
          <children>
-            <Label prefHeight="18.0" prefWidth="72.0" text="Type:" />
-            <RadioButton fx:id="rCall" mnemonicParsing="false" onAction="#getMsgType" text="Call">
-               <HBox.margin>
-                  <Insets right="74.0" />
-               </HBox.margin>
-               <toggleGroup>
-                  <ToggleGroup fx:id="msgType1" />
-               </toggleGroup>
-            </RadioButton>
-            <RadioButton fx:id="rReply" mnemonicParsing="false" onAction="#getMsgType" text="Reply" toggleGroup="$msgType1" />
-         </children>
-         <VBox.margin>
-            <Insets left="10.0" top="10.0" />
-         </VBox.margin>
-      </HBox>
-      <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="310.0">
-         <children>
-            <Label prefHeight="18.0" prefWidth="72.0">
+            <Label prefHeight="18.0" prefWidth="72.0" text="Type:">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>
@@ -42,11 +25,28 @@
                   <Insets right="20.0" />
                </HBox.margin>
                <toggleGroup>
-                  <ToggleGroup fx:id="msgType2" />
+                  <ToggleGroup fx:id="msgType1" />
                </toggleGroup>
             </RadioButton>
-            <RadioButton fx:id="rAsync" mnemonicParsing="false" onAction="#getMsgType" text="Asynchrounous" toggleGroup="$msgType2" />
+            <RadioButton fx:id="rAsync" mnemonicParsing="false" onAction="#getMsgType" text="Asynchrounous" toggleGroup="$msgType1" />
          </children>
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="310.0">
+         <children>
+            <Label prefHeight="18.0" prefWidth="72.0" />
+            <RadioButton fx:id="rCreate" mnemonicParsing="false" onAction="#getMsgType" text="Create" toggleGroup="$msgType1">
+               <HBox.margin>
+                  <Insets right="62.0" />
+               </HBox.margin>
+            </RadioButton>
+            <RadioButton fx:id="rReply" mnemonicParsing="false" onAction="#getMsgType" text="Reply" toggleGroup="$msgType1" />
+         </children>
+         <VBox.margin>
+            <Insets left="10.0" />
+         </VBox.margin>
       </HBox>
       <HBox alignment="CENTER_LEFT" prefHeight="53.0" prefWidth="300.0">
          <children>
@@ -94,7 +94,7 @@
                   <Insets left="10.0" />
                </HBox.margin>
             </Label>
-            <ComboBox fx:id="dropOperation" disable="true" prefHeight="26.0" prefWidth="228.0" />
+            <ComboBox fx:id="dropOperation" disable="true" onAction="#loadMessage" prefHeight="26.0" prefWidth="228.0" />
          </children>
       </HBox>
       <HBox alignment="CENTER_LEFT" prefHeight="53.0" prefWidth="300.0">

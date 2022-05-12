@@ -735,7 +735,7 @@ public class SequenceController
                     for (int j = sendIndex + 1; j < recIndex; j++)
                     {
                         Line newLine = new Line(0, 0, seqEditorBox.getWidth() / seqGrid.getColumnCount(), 0);
-                        if (message.transmition == false)
+                        if (message.transmition == 3)
                         {
                             newLine.getStrokeDashArray().addAll(25d, 10d);
                         }
@@ -744,7 +744,7 @@ public class SequenceController
                     }
                 }
 
-                if (message.transmition == true)
+                if (message.transmition == 0 || message.transmition == 1 || message.transmition == 2)
                 {
                     UMLArrow arrow = new UMLArrow();
                     arrow.setStartX(0);
@@ -774,7 +774,7 @@ public class SequenceController
                     for (int j = sendIndex; j > recIndex + 1; j--)
                     {
                         Line newLine = new Line(0, 0, seqEditorBox.getWidth() / seqGrid.getColumnCount(), 0);
-                        if (message.transmition == false)
+                        if (message.transmition == 3)
                         {
                             newLine.getStrokeDashArray().addAll(25d, 10d);
                         }
@@ -782,7 +782,7 @@ public class SequenceController
                         GridPane.setValignment(newLine, VPos.CENTER); 
                     }
                 }
-                if (message.transmition == true)
+                if (message.transmition == 0 || message.transmition == 1 || message.transmition == 2)
                 {
                     UMLArrow arrow = new UMLArrow();
                     arrow.setStartX(0);
@@ -963,14 +963,16 @@ public class SequenceController
             }
         });
 
-        if (message.operation != null)
+        /*if (message.operation != null)
         {    
             messageLabel.setText(message.operation.getAlltoString());
         }
         else
         {
-            messageLabel.setText(message.message);
-        }
+            
+        }*/
+
+        messageLabel.setText(message.message);
 
         double arrowWidth = seqEditorBox.getWidth() / seqGrid.getColumnCount();
                 
@@ -1006,7 +1008,7 @@ public class SequenceController
                 for (int i = sendIndex + 1; i < recIndex; i++)
                 {
                     Line newLine = new Line(0, 0, seqEditorBox.getWidth() / seqGrid.getColumnCount(), 0);
-                    if (message.transmition == false)
+                    if (message.transmition == 3)
                     {
                         newLine.getStrokeDashArray().addAll(25d, 10d);
                     }
@@ -1015,7 +1017,7 @@ public class SequenceController
                 }
             }
 
-            if (message.transmition == true)
+            if (message.transmition == 0 || message.transmition == 1 || message.transmition == 2)
             {
                 UMLArrow arrow = new UMLArrow();
                 arrow.setStartX(0);
@@ -1045,7 +1047,7 @@ public class SequenceController
                 for (int i = sendIndex; i > recIndex + 1; i--)
                 {
                     Line newLine = new Line(0, 0, seqEditorBox.getWidth() / seqGrid.getColumnCount(), 0);
-                    if (message.transmition == false)
+                    if (message.transmition == 3)
                     {
                         newLine.getStrokeDashArray().addAll(25d, 10d);
                     }
@@ -1053,7 +1055,7 @@ public class SequenceController
                     GridPane.setValignment(newLine, VPos.CENTER); 
                 }
             }
-            if (message.transmition == true)
+            if (message.transmition == 0 || message.transmition == 1 || message.transmition == 2)
             {
                 UMLArrow arrow = new UMLArrow();
                 arrow.setStartX(0);

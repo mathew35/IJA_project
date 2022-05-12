@@ -26,7 +26,7 @@ import javafx.util.Callback;
  * Řadič, který je vytvořen pomocí FXML a používá se k inicializaci prvků uživatelského rozhraní v úvodní scéně aplikace.
  */
 public class MessageController {
-    private boolean msgType, msgTypeOcc;
+    private int msgType;
     private SequenceDiagram sequenceDiagram;
     public UMLMessage createdMessage;
 
@@ -36,10 +36,10 @@ public class MessageController {
     private Button closeButton;
 
     @FXML
-    private RadioButton rCall, rReply, rSync, rAsync;
+    private RadioButton rCreate, rReply, rSync, rAsync;
 
     @FXML
-    private ToggleGroup msgType1, msgType2;
+    private ToggleGroup msgType1;
 
     @FXML
     private ComboBox<UMLClass> dropSender, dropReceiver;
@@ -116,7 +116,7 @@ public class MessageController {
     {
         getMsgType();
 
-        if (!dropSender.getSelectionModel().isEmpty() && msgType == true)
+        if (!dropSender.getSelectionModel().isEmpty() && msgType == 0)
         {
             dropOperation.getItems().clear();
 
@@ -138,32 +138,50 @@ public class MessageController {
         enableMessage();
     }
 
+    @FXML 
+    public void loadMessage()
+    {
+        if (!dropOperation.getSelectionModel().isEmpty() && dropOperation.getValue() != placeHolder)
+        {
+            fieldReply.setText(dropOperation.getValue().getName());
+        }
+    }
+
     @FXML
     public void getMsgType()
     {
-        if (rCall.isSelected())
+        if (rCreate.isSelected())
         {
-            msgType = true;
-            dropOperation.setDisable(false);
+            msgType = 2;
+            fieldReply.setDisable(false);
+            dropOperation.setDisable(true);
+            dropOperation.getItems().clear();
 
         }
         else if (rReply.isSelected())
         {
-            msgType = false;
+            msgType = 3;
             fieldReply.setDisable(false);
             dropOperation.setDisable(true);
+            dropOperation.getItems().clear();
         }
         
         if (rSync.isSelected())
         {
-            msgTypeOcc = true;
+            msgType = 0;
+            fieldReply.setDisable(false);
+            dropOperation.setDisable(false);
+            dropOperation.getItems().clear();
         }
         else if (rAsync.isSelected())
         {
-            msgTypeOcc = false;
+            msgType = 1;
+            fieldReply.setDisable(false);
+            dropOperation.setDisable(true);
+            dropOperation.getItems().clear();
         }
 
-        if (!dropSender.getSelectionModel().isEmpty() && msgType == true)
+        if (!dropSender.getSelectionModel().isEmpty() && msgType == 0)
         {
             dropOperation.getItems().clear();
 
@@ -187,7 +205,7 @@ public class MessageController {
 
     public void enableMessage()
     {
-        if (!dropSender.getSelectionModel().isEmpty() && !dropReceiver.getSelectionModel().isEmpty() && msgType1.getSelectedToggle() != null && msgType2.getSelectedToggle() != null)
+        if (!dropSender.getSelectionModel().isEmpty() && !dropReceiver.getSelectionModel().isEmpty() && msgType1.getSelectedToggle() != null)
         {
             createMessageButton.setDisable(false);
         }
@@ -215,11 +233,11 @@ public class MessageController {
 
         if (dropOperation.getValue() != placeHolder)
         {
-            createdMessage = new UMLMessage(dropOperation.getValue(), dropSender.getValue(), dropReceiver.getValue(), msgType, msgTypeOcc, position);
+            createdMessage = new UMLMessage(fieldReply.getText(), dropOperation.getValue(), dropSender.getValue(), dropReceiver.getValue(), msgType, position);
         }
         else
         {
-            createdMessage = new UMLMessage(fieldReply.getText(), dropSender.getValue(), dropReceiver.getValue(), msgType, msgTypeOcc, position);
+            createdMessage = new UMLMessage(fieldReply.getText(), null, dropSender.getValue(), dropReceiver.getValue(), msgType, position);
         }
 
         closeWindow();
