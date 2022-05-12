@@ -225,7 +225,6 @@ public class SequenceController
                                     addSeqObjButton.setDisable(false);
                                 }
 
-
                                 updateGrids();
                             }
                         }
@@ -280,7 +279,7 @@ public class SequenceController
         seqGridAct.getColumnConstraints().add(new ColumnConstraints(-1, -1, -1, Priority.ALWAYS, HPos.CENTER, false));
         for (int i = 0; i < seqGridAct.getColumnCount(); i++)
         {
-            seqGridAct.getColumnConstraints().set(i, new ColumnConstraints(0, seqGrid.getWidth() / (seqGrid.getColumnCount()), seqGrid.getWidth() / (seqGrid.getColumnCount()), Priority.ALWAYS, HPos.CENTER, false));
+            seqGridAct.getColumnConstraints().set(i, new ColumnConstraints(seqEditorBox.getWidth()/seqGrid.getColumnCount()));
         }
 
         objRectangle.getChildren().add(objField);
@@ -402,58 +401,67 @@ public class SequenceController
         popUp.setResizable(false);
         popUp.showAndWait();
 
+        System.out.println("Out of the window");
         if (actController.createdAct != null)
         {
+            System.out.println("Sussy baka" + actController.indexOfClass + " ");
             sequenceDiagram.getClasses().get(actController.indexOfClass).addActivation(actController.createdAct);
             refreshActs();
         }
     }
 
     @FXML
-    public void refreshActs() throws IOException
+    public void refreshActs()
     {
-        Integer messageCounter = 0;
-        Integer inCount = 0;
-        Integer outCount = 0;
-        while (messageCounter < seqGridAct.getRowCount())
+        for (int i = 0; i < sequenceDiagram.getClasses().size(); i++)
         {
-            for (int j = 0; j < sequenceDiagram.getClasses().get(j).getActivations().size(); j++)
+            Integer messageCounter = 0;
+            System.out.println("Object: " + sequenceDiagram.getClasses().get(i).getName());
+            while (messageCounter < seqGridAct.getRowCount())
             {
-                Integer fromIndex = sequenceDiagram.getClasses().get(0).getActivations().get(j).getStart();
-                Integer toIndex = sequenceDiagram.getClasses().get(0).getActivations().get(j).getEnd();
-
-                if (fromIndex <= messageCounter && toIndex >= messageCounter)
+                System.out.println("Counter: " + messageCounter);
+                for (int j = 0; j < sequenceDiagram.getClasses().get(j).getActivations().size(); j++)
                 {
-                    inCount++;
-                    System.out.println("Going thorugh message " + messageCounter + ": (" + fromIndex + ", " + toIndex+") In Counter: " + inCount + " Out Counter: " + outCount);
+                    Integer fromIndex = sequenceDiagram.getClasses().get(i).getActivations().get(j).getStart();
+                    Integer toIndex = sequenceDiagram.getClasses().get(i).getActivations().get(j).getEnd();
 
-                    if (outCount > 0 || messageCounter == sequenceDiagram.messages.size() - 1)
+                    System.out.println("Start: " + fromIndex + " End: " + toIndex + " Counter: " + messageCounter);
+    
+                    if (sequenceDiagram.getClasses().get(i).getActivations().get(j).isInBounds(messageCounter))
                     {
-                        Line line = new Line(0, 0, 0, 30 * outCount - 1);
-                        line.setStroke(Color.RED);
-                        System.out.println("1");
-                        seqGridAct.add(line, 0, 0);
-
-                        outCount = 0;
+                        Region regionAct = new Region();
+                        regionAct.setPrefSize(20, 30);
+                        regionAct.setMaxSize(20, 30);
+                        regionAct.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-border-style: hidden solid hidden solid;");
+                        
+                        if (fromIndex == messageCounter)
+                        {
+                            regionAct.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-border-style: solid solid hidden solid;");
+                        }
+    
+                        if (toIndex == messageCounter)
+                        {
+                            regionAct.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-border-style: hidden solid solid solid;");
+                        }
+    
+                        if (fromIndex == messageCounter && toIndex == messageCounter)
+                        {
+                            regionAct.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-border-style: solid solid solid solid;");
+                        }
+    
+                        GridPane.setValignment(regionAct, VPos.TOP);
+                        GridPane.setHalignment(regionAct, HPos.CENTER);
+    
+                        seqGridAct.add(regionAct, i, messageCounter);
                     }
                 }
-                else
-                {
-                    outCount++;
-                    System.out.println("Going thorugh message " + messageCounter + ": (" + fromIndex + ", " + toIndex+") In Counter: " + inCount + " Out Counter: " + outCount);
-
-                    if (inCount > 0 || messageCounter == sequenceDiagram.messages.size() - 1)
-                    {
-                        Rectangle rectangle = new Rectangle(20, 30 * inCount - 1);
-                        rectangle.setFill(Color.GRAY);
-                        System.out.println("2");
-                        seqGridAct.add(rectangle, 0, 0);
-
-                        inCount = 0;
-                    }
-                }
+                messageCounter++;
             }
-            messageCounter++;
+        }
+
+        for (int i = 0; i < seqGridAct.getColumnCount(); i++)
+        {
+            seqGridAct.getColumnConstraints().set(i, new ColumnConstraints(seqEditorBox.getWidth()/seqGridAct.getColumnCount())); 
         }
 
         return;
@@ -575,9 +583,12 @@ public class SequenceController
                 seqGrid.getRowConstraints().add(new RowConstraints(-1, -1, -1, Priority.ALWAYS, VPos.CENTER, false));
             }
 
-
             // TODO TODO TODO Mark Activation
             seqGridAct.getColumnConstraints().add(new ColumnConstraints(-1, -1, -1, Priority.ALWAYS, HPos.CENTER, false));
+            for (int j = 0; j < seqGridAct.getColumnCount(); j++)
+            {
+                seqGridAct.getColumnConstraints().set(j, new ColumnConstraints(seqEditorBox.getWidth()/seqGrid.getColumnCount()));
+            }
 
             //seqGridAct.setMinWidth(seqEditorBox.getWidth());
             
@@ -789,9 +800,10 @@ public class SequenceController
                 }
             });
 
-            System.out.println("ys");
             seqGridAct.getRowConstraints().add(new RowConstraints(30));
         }
+
+        refreshActs();
     }
 
     @FXML

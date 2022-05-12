@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 
 public class UMLActivation{
     @JsonProperty("start")
-    private Integer  start;
+    private Integer start;
 
     @JsonProperty("end")
     private Integer  end;
@@ -19,5 +19,15 @@ public class UMLActivation{
     }
     public Integer getEnd(){
         return this.end;
+    }
+
+    public boolean isInBounds(int number)
+    {
+        if (this.start <= number && number <= this.end)
+        {
+            return true;
+        }
+        return false;
+        
     }
 }

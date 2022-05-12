@@ -41,12 +41,12 @@
          <children>
             <VBox fx:id="seqActBox" prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <Region prefHeight="60.0" prefWidth="900.0" />
+                  <Region prefHeight="65.0" prefWidth="900.0" />
                </children>
             </VBox>
             <VBox fx:id="seqMsgBox" prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <Region prefHeight="60.0" prefWidth="900.0" />
+                  <Region prefHeight="65.0" prefWidth="900.0" />
                </children>
             </VBox>
             <VBox fx:id="seqObjBox" prefHeight="200.0" prefWidth="100.0">
