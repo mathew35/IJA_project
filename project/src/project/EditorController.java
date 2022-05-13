@@ -53,9 +53,6 @@ public class EditorController extends MenuBarController implements Initializable
     double msgWidth;
 
     ArrayList<SequenceController> sequenceControllers = new ArrayList<SequenceController>();
-
-    @FXML
-    private TreeView<String> ClassTree;
     
     @FXML
     private Pane ClassPaneDiag;
@@ -99,6 +96,7 @@ public class EditorController extends MenuBarController implements Initializable
     @FXML
     private VBox seqMsgBox;
 
+    private UMLClass FocusedClass = null;
     /**
      * Po načtení scény provede prvně tyto úkony pro správné zobrazení a pracování aplikace.
      *
@@ -111,25 +109,8 @@ public class EditorController extends MenuBarController implements Initializable
         tabPane.getTabs().remove(deleted);
         tabPane.getTabs().get(1).setClosable(false);
         selectTab(1);
-        //this.setClassDiagram(classDiagram);
-        // updateClassTab();
     }
     public void updateClassTab(){
-        //ClassTreeView
-        TreeItem<String> rootItem = ClassTree.getRoot();
-        rootItem.getChildren().removeAll(rootItem.getChildren());
-        for(UMLClass i:classDiagram.getClasses()){
-            TreeItem<String> newItem = new TreeItem<String> (i.getName());
-            newItem.setExpanded(true);
-            rootItem.getChildren().add(newItem);
-        }
-        for(UMLClass i:classDiagram.getClasses()){
-            if(i.getParent() != null){
-                TreeItem<String> parent = searchTreeView(i.getParent().getName(), rootItem);
-                TreeItem<String> child = searchTreeView(i.getName(), rootItem);
-                ChangeParent(parent,child);
-            }
-        }
         //ComboBoxes
         String selectedP = ChoiceParentClass.getSelectionModel().getSelectedItem();
         String selectedCH = ChoiceChildClass.getSelectionModel().getSelectedItem();
@@ -139,19 +120,13 @@ public class EditorController extends MenuBarController implements Initializable
             ChoiceParentClass.getItems().add(i.getName());
             ChoiceChildClass.getItems().add(i.getName());
         }
+        ClassName.setPromptText("Class Name");
+        NewClassName.setPromptText("New Class Name");
         drawClassDiagram();
         NewClassName.setText("");
     }
     public void setClassDiagram(ClassDiagram diag){
         classDiagram = diag;
-        TreeItem<String> rootItem = new TreeItem<>(classDiagram.getName());
-        for(UMLClass i:classDiagram.getClasses()){
-            TreeItem<String> newClass = new TreeItem<>(i.getName());
-            rootItem.getChildren().add(newClass);
-        }
-        ClassTree.setShowRoot(false);
-        ClassTree.setRoot(rootItem);
-        ClassName.setPromptText("Class Name");
         updateClassTab();
         createSnapshot(classDiagram);
     }   
@@ -160,11 +135,11 @@ public class EditorController extends MenuBarController implements Initializable
     * Detekuje selekci třídy v ClassDiagram tabu a zobrazí informace o této tříde
     */
     public void selectItem(){
-        TreeItem<String> item = ClassTree.getSelectionModel().getSelectedItem();
-        if(item != null){
-            ClassName.setText(item.getValue());
-            updateAttrTree();
-        }
+        // TreeItem<String> item = ClassTree.getSelectionModel().getSelectedItem();
+        // if(item != null){
+        //     ClassName.setText(item.getValue());
+        //     updateAttrTree();
+        // }
     }
     //source: https://docs.oracle.com/javafx/2/ui_controls/tree-view.htm
     private final class TextFieldTreeCellImpl extends TreeCell<String> {
@@ -257,6 +232,9 @@ public class EditorController extends MenuBarController implements Initializable
      * TODO
      */
     public void updateAttrTree() {
+        if(FocusedClass != null){
+            ClassName.setText(FocusedClass.getName());
+        }
         if (ClassName.getText() != null){
             UMLClass itemClass = null;
             for(UMLClass i:classDiagram.getClasses()){
@@ -277,10 +255,18 @@ public class EditorController extends MenuBarController implements Initializable
             oper.setExpanded(true);
 
             for(UMLAttribute i:itemClass.getAttributes()){
-                attr.getChildren().add(new TreeItem<String>(i.getName()));
+                TreeItem<String> attrib = new TreeItem<String>(i.getName());
+                attrib.getChildren().add(new TreeItem<String>(i.getType().getName())); 
+                attr.getChildren().add(attrib);
             }
             for(UMLOperation i:itemClass.getOperations()){
-                oper.getChildren().add(new TreeItem<String>(i.getName()));
+                TreeItem<String> opr = new TreeItem<String>(i.getName());
+                for(UMLAttribute arg:i.getArguments()){
+                    TreeItem<String> atr = new TreeItem<String>(i.getName());
+                    atr.getChildren().add(new TreeItem<String>(i.getType().getName()));
+                    opr.getChildren().add(atr);
+                }
+                oper.getChildren().add(opr);
             }
             if(attr.getChildren().isEmpty()){
                 attr.getChildren().add(new TreeItem<String>(""));
@@ -322,13 +308,7 @@ public class EditorController extends MenuBarController implements Initializable
             }
             boolean change = false;
             if(itemClass == null){
-                String name = ClassTree.getSelectionModel().getSelectedItem().getValue();
-                for(UMLClass i:classDiagram.getClasses()){
-                    if(i.getName().equals(name)){
-                        itemClass = i;
-                    }
-                }
-                itemClass.rename(ClassName.getText());   
+                FocusedClass.rename(ClassName.getText());   
                 change = true;             
             }
             TreeItem<String> oldRoot = AttributesTree.getRoot();
@@ -423,61 +403,6 @@ public class EditorController extends MenuBarController implements Initializable
         updateAttrTree();
     }
     /**
-     * TODO
-     */
-    public TreeItem<String> searchTreeView(String find, TreeItem<String> list){
-        TreeItem<String> res = null;
-        for(TreeItem<String> i:list.getChildren()){
-            if (i.getValue().equals(find)){
-                res = i;
-            }
-            if (res == null){
-                res = searchTreeView(find, i);
-            }
-        }
-        return res;
-    }
-    /**
-     * TODO
-     */
-    public TreeItem<String> getTreeParent(TreeItem<String> child,TreeItem<String> Origin){
-        TreeItem<String> res = ClassTree.getRoot();
-        for(TreeItem<String> i:Origin.getChildren()){
-            if (i.getChildren().contains(child)){
-                res = i;
-            }
-            if (res == ClassTree.getRoot()){
-                res = getTreeParent(child, i);
-            }
-        }
-        return res;
-    }
-    /**
-     * TODO
-     */
-    public void removeTreeBranch(TreeItem<String> branch,TreeItem<String> Origin){
-        TreeItem<String> parent = getTreeParent(branch,Origin);
-        parent.getChildren().remove(parent.getChildren().indexOf(branch));
-    }
-    /**
-     * TODO
-     */
-    public void removeTreeItem(TreeItem<String> rmItem,TreeItem<String> Origin){
-        TreeItem<String> parent = getTreeParent(rmItem,Origin);
-        for(TreeItem<String> i:rmItem.getChildren()){
-            parent.getChildren().add(i);
-        }
-        parent.getChildren().remove(parent.getChildren().indexOf(rmItem));
-    }
-    /**
-     * TODO
-     */
-    public void ChangeParent(TreeItem<String> newParent,TreeItem<String> newChild){
-        TreeItem<String> chParent = getTreeParent(newChild, ClassTree.getRoot());
-        removeTreeBranch(newChild, chParent);
-        newParent.getChildren().add(newChild);
-    }
-    /**
     * Přidání třídy do diagramu tříd
     */
     public void onAddClassClick(){
@@ -499,7 +424,6 @@ public class EditorController extends MenuBarController implements Initializable
     * Přidání podtřídy ke vybrané tříde v diagramu tříd
     */
     public void onAddSubclassClick(){        
-        TreeItem<String> rootItem = ClassTree.getRoot();
         String text = NewClassName.getText();
         String parentClass = ChoiceParentClass.getSelectionModel().getSelectedItem();
         ClassErrorLabel.setText(null);
@@ -530,33 +454,11 @@ public class EditorController extends MenuBarController implements Initializable
      * TODO
      */
     public void onRemoveClassClick(){
-        TreeItem<String> rootItem = ClassTree.getRoot();
         String deleteClassName = ChoiceParentClass.getSelectionModel().getSelectedItem();
         ClassErrorLabel.setText(null);
         if (deleteClassName == null){
             ClassErrorLabel.setText("Vyber triedu na zmazanie");
             return;
-        }
-        TreeItem<String> deleteClass = null;
-        deleteClass = searchTreeView(deleteClassName,rootItem);
-        if (deleteClass == null){
-            ClassErrorLabel.setText("Class not found");
-            return;
-        }
-        TreeItem<String> parent = getTreeParent(deleteClass,rootItem);
-        UMLClass parentClass = null;
-        for(UMLClass i:classDiagram.getClasses()){
-            if(i.getName() == parent.getValue()){
-                parentClass = i;
-                break;
-            }
-        }
-        for(TreeItem<String> i:deleteClass.getChildren()){
-            for(UMLClass j:classDiagram.getClasses()){
-                if(i.getValue()==j.getName()){
-                    j.setParent(parentClass);
-                }
-            }
         }
         classDiagram.removeClass(deleteClassName);
         updateClassTab();
@@ -567,7 +469,6 @@ public class EditorController extends MenuBarController implements Initializable
      * TOOD
      */
     public void onChangeParentClick(){
-        TreeItem<String> rootItem = ClassTree.getRoot();
         String newParentName = ChoiceParentClass.getSelectionModel().getSelectedItem();
         String ChildName = ChoiceChildClass.getSelectionModel().getSelectedItem();
         ClassErrorLabel.setText(null);
@@ -645,27 +546,6 @@ public class EditorController extends MenuBarController implements Initializable
             if(level+1>maxLevel){
                 maxLevel = level+1;
             }
-            // Rectangle rec = new Rectangle();
-            // rec.setX(ClassPaneDiag.getPrefWidth()/(rootCount)-100);
-            // rec.setY(ClassPaneDiag.getPrefHeight()/5-50);
-            // rec.setWidth(200);
-            // rec.setHeight(100);
-            // rec.setFill(Color.BLUE.deriveColor(1,1,1,0.3));
-            // Text txt = new Text("Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text Try Text");
-            // txt.setWrappingWidth(200-txt.getFont().getSize());
-            // TextFlow txtflow = new TextFlow(txt);
-            // // txtflow.setLayoutX(ClassPaneDiag.getPrefWidth()/(rootCount)-100);
-            // // txtflow.setLayoutY(ClassPaneDiag.getPrefHeight()/5-50);
-            // txtflow.setMaxWidth(160);
-            // // txtflow.setMaxHeight(100);
-            // ScrollPane txtScroll = new ScrollPane();
-            // txtScroll.setLayoutX(ClassPaneDiag.getPrefWidth()/(rootCount)-100);
-            // txtScroll.setLayoutY(ClassPaneDiag.getPrefHeight()/5-50);
-            // txtScroll.setMaxWidth(200);
-            // txtScroll.setPrefHeight(100);
-            // txtScroll.setStyle("-fx-font-size: "+txt.getFont().getSize()+"px;");
-            // txtScroll.setContent(txtflow);
-            // ClassPaneText.getChildren().add(txtScroll);
         }
         int columns = 1;
         for(ArrayList<UMLClass> i:LeveledClasses){
@@ -699,7 +579,7 @@ public class EditorController extends MenuBarController implements Initializable
         rect.getChildren().addAll(name,sep,contentScroll);
         rect.setAlignment(Pos.CENTER);
         rect.setOnMouseClicked((e)->{
-            ClassName.setText(name.getText());
+            FocusedClass = uclass;
             updateAttrTree();
         });
         name.setText(uclass.getName());

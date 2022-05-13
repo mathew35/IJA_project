@@ -178,7 +178,6 @@
                         </VBox>
                         <StackPane>
                            <children>
-                              <TreeView fx:id="ClassTree" onContextMenuRequested="#selectItem" onMouseClicked="#selectItem" prefHeight="666.0" prefWidth="1128.0" />
                               <Pane fx:id="ClassPaneDiag" minHeight="666.0" minWidth="1128.0" prefHeight="666.0" prefWidth="1128.0" />
                               <Pane fx:id="ClassPaneText" minHeight="666.0" minWidth="1128.0" prefHeight="666.0" prefWidth="1128.0" />
                            </children>
