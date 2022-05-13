@@ -592,6 +592,7 @@ public class EditorController extends MenuBarController implements Initializable
         if(newParentName == ChildName){
             ChildClass.setParent(null);
             updateClassTab();
+            createSnapshot(classDiagram);
             return;
         }
         UMLClass commonParent = null;
@@ -732,14 +733,30 @@ public class EditorController extends MenuBarController implements Initializable
     public String formatA(List<UMLAttribute> list){
         String str = "";
         for(UMLAttribute i: list){
-            str = str + i.getName();
+            str = str + "+" + i.getName() + ": " + i.getType().getName() + "\n";
+        }
+        if(!str.isEmpty()){
+            str = str.substring(0,str.length()-1);
         }
         return str;
     }
     public String formatO(List<UMLOperation> list){
         String str = "";
         for(UMLOperation i: list){
-            str = str + i.getName() +"\n";
+            str = str + "+" + i.getName() + "(";
+            String substr = "";
+            for(UMLAttribute j:i.getArguments()){
+                if(substr.isEmpty()){
+                    substr = substr + "attr: " + j.getName();
+                }
+                else{
+                    substr = substr + ", " + j.getName();
+                }
+            }
+            str = str + "): " + i.getType().getName();
+        }
+        if(!str.isEmpty()){
+            str = str.substring(0,str.length()-1);
         }
         return str;
     }

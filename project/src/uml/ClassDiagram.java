@@ -115,6 +115,19 @@ public class ClassDiagram extends Element{
                 }
             }
         }
+        for(UMLClass diagClass:this.classes){
+            for(UMLClass retclass:retDiag.classes){
+                if(retclass.getName().equals(diagClass.getName())){
+                    if(diagClass.getParent() != null){
+                        for(UMLClass search:retDiag.classes){
+                            if(search.getName().equals(diagClass.getParent().getName())){
+                                retclass.setParent(search);
+                            }
+                        }
+                    }
+                }
+            }
+        }
         for(UMLClassifier diagClassifier:this.classifiers){
             retDiag.classifierForName(diagClassifier.getName());
         }
