@@ -17,6 +17,8 @@ import com.fasterxml.jackson.annotation.*;
 public class SequenceDiagram extends ClassDiagram{
     @JsonProperty("messages")
     public List<UMLMessage> messages = new ArrayList<UMLMessage>();
+    @JsonProperty("instances")
+    public List<UMLInstance> instances = new ArrayList<UMLInstance>();
         
     public SequenceDiagram(){}
 
@@ -68,6 +70,14 @@ public class SequenceDiagram extends ClassDiagram{
     public void addMessage(UMLMessage message)
     {
         this.messages.add(message);
+    }
+
+    public UMLInstance createInstance(String name, UMLClass asgClass)
+    {
+        UMLInstance newInstance = new UMLInstance(name, asgClass);
+        this.instances.add(newInstance);
+
+        return  newInstance;
     }
 
     /**

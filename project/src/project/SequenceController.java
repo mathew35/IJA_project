@@ -18,6 +18,7 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 import javafx.stage.*;
+import javafx.util.Callback;
 import javafx.scene.input.*;
 
 import javafx.scene.paint.Color;
@@ -54,6 +55,28 @@ public class SequenceController
 
     @FXML
     private Region actRegion, msgRegion;
+
+    Callback<ListView<UMLClass>, ListCell<UMLClass>> cellFactory = new Callback<ListView<UMLClass>, ListCell<UMLClass>>() {
+
+        @Override
+        public ListCell<UMLClass> call(ListView<UMLClass> l) {
+            return new ListCell<UMLClass>() {
+    
+                @Override
+                protected void updateItem(UMLClass item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty) 
+                    {
+                        setGraphic(null);
+                    } 
+                    else
+                    {   
+                        setText(item.getName());
+                    }
+                }
+            } ;
+        }
+    };
 
     public void initialize()
     {
@@ -230,13 +253,26 @@ public class SequenceController
 
         int colCount = sequenceDiagram.getNameClasses().size();
         VBox startObj = new VBox();
+        HBox rectangleAlignment = new HBox();
+        rectangleAlignment.setPrefWidth(125);
+        rectangleAlignment.setAlignment(Pos.CENTER);
+
         
         Line startLine = new Line(0, 0, 0, seqEditorBox.getHeight() * 0.01);
         StackPane objRectangle = new StackPane();
         Rectangle rectangle = new Rectangle(125, 50);
         Effect effect = new DropShadow(BlurType.GAUSSIAN, Color.DODGERBLUE, 5, 0.75, 0, 0);
         TextField objField = new TextField();
-        objField.setPrefWidth(125);
+        Text spacer = new Text(":");
+
+        ComboBox<UMLClass> dropClasses = new ComboBox<UMLClass>();
+        dropClasses.setButtonCell(cellFactory.call(null));
+        dropClasses.setCellFactory(cellFactory);
+        dropClasses.getItems().addAll(sequenceDiagram.getClasses());
+
+        objField.setPrefWidth(50);
+
+        //rectangle.getChildren().add
 
         rectangle.setOnMouseClicked((MouseEvent event) -> 
         {
@@ -315,6 +351,7 @@ public class SequenceController
         rectangle.setFill(Color.TRANSPARENT);
 
         objRectangle.getChildren().add(rectangle);
+        objRectangle.getChildren().add(rectangleAlignment);
         addSeqObjButton.setDisable(true);
 
         // Multiple Event Handler https://stackoverflow.com/questions/31794167/how-to-handle-multiple-event-types-from-one-class-in-javafx
@@ -359,7 +396,9 @@ public class SequenceController
             seqGridAct.getColumnConstraints().set(i, new ColumnConstraints(seqEditorBox.getWidth()/seqGrid.getColumnCount()));
         }
 
-        objRectangle.getChildren().add(objField);
+        // Here
+        //objRectangle.getChildren().add(objField);
+        rectangleAlignment.getChildren().addAll(objField, spacer, dropClasses);
 
         startObj.getChildren().addAll(objRectangle, startLine);
 

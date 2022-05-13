@@ -10,7 +10,7 @@ package project;
 import uml.SequenceDiagram;
 import uml.UMLActivation;
 import uml.UMLClass;
-
+import uml.UMLInstance;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -106,7 +106,7 @@ public class ActivationController {
             return;
         }
 
-        List<UMLClass> classes = sequenceDiagram.getClasses();
+        List<UMLInstance> instances = sequenceDiagram.getClasses();
         List<UMLActivation> actList = classes.get(classes.indexOf(dropTime.getValue())).getActivations();
         indexOfClass = classes.indexOf(dropTime.getValue());
 

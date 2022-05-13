@@ -129,29 +129,12 @@ public class UMLClass  extends UMLClassifier{
         return Collections.unmodifiableList(this.operations);
     }
 
-    public List<UMLActivation> getActivations(){
-        return Collections.unmodifiableList(this.activations);
-    }
-
-    public void removeActivation(UMLActivation activationRemove)
-    {
-        this.activations.remove(activationRemove);
-    }
-
-    public void addActivation(UMLActivation activation)
-    {
-        this.activations.add(activation);
-    }
-
     public void deepCopyClass(UMLClass another){
         for(UMLAttribute i:another.attributes){
             this.addAttribute(new UMLAttribute(i.getName(),i.getType()));
         }
         for(UMLOperation i:another.operations){
             this.addOperation(UMLOperation.create(i.getName(),i.getType(),i.getArguments().toArray(UMLAttribute[]::new)));
-        }
-        for(UMLActivation i:another.activations){
-            this.addActivation(new UMLActivation(i.getStart(), i.getEnd(), i.getDeactivation()));
-        }        
+        }     
     }
 }
