@@ -37,6 +37,9 @@ public class MessageController {
     private Button closeButton;
 
     @FXML
+    private Label messageLabel;
+
+    @FXML
     private RadioButton rCreate, rReply, rSync, rAsync;
 
     @FXML
@@ -176,6 +179,7 @@ public class MessageController {
             fieldReply.setDisable(false);
             dropOperation.setDisable(true);
             dropOperation.getItems().clear();
+            messageLabel.setText("Message:");
 
         }
         else if (rReply.isSelected())
@@ -184,6 +188,7 @@ public class MessageController {
             fieldReply.setDisable(false);
             dropOperation.setDisable(true);
             dropOperation.getItems().clear();
+            messageLabel.setText("Message:");
         }
         
         if (rSync.isSelected())
@@ -192,6 +197,7 @@ public class MessageController {
             fieldReply.setDisable(false);
             dropOperation.setDisable(false);
             dropOperation.getItems().clear();
+            messageLabel.setText("Arguments:");
         }
         else if (rAsync.isSelected())
         {
@@ -199,6 +205,7 @@ public class MessageController {
             fieldReply.setDisable(false);
             dropOperation.setDisable(true);
             dropOperation.getItems().clear();
+            messageLabel.setText("Arguments:");
         }
 
         if (!dropSender.getSelectionModel().isEmpty() && msgType == 0)

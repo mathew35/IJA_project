@@ -9,13 +9,15 @@ package project;
 
 import uml.SequenceDiagram;
 import uml.UMLActivation;
-import uml.UMLClass;
 import uml.UMLInstance;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.util.List;
 
@@ -42,6 +44,28 @@ public class ActivationController {
 
     @FXML
     private Button createActButton;
+
+    Callback<ListView<UMLInstance>, ListCell<UMLInstance>> cellFactory2 = new Callback<ListView<UMLInstance>, ListCell<UMLInstance>>() {
+
+        @Override
+        public ListCell<UMLInstance> call(ListView<UMLInstance> l) {
+            return new ListCell<UMLInstance>() {
+    
+                @Override
+                protected void updateItem(UMLInstance item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty) 
+                    {
+                        setGraphic(null);
+                    } 
+                    else
+                    {   
+                        setText(item.instancename + ":" + item.asgclass.getName());
+                    }
+                }
+            } ;
+        }
+    };
 
     @FXML
     public void initialize() 
@@ -78,6 +102,9 @@ public class ActivationController {
                 }
             }
         });
+
+        dropTime.setButtonCell(cellFactory2.call(null));
+        dropTime.setCellFactory(cellFactory2);
     }
 
     @FXML void enableInterval()

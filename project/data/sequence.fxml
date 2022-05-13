@@ -24,10 +24,18 @@
                   <FontAwesomeIconView glyphName="PLUS" />
                </graphic>
             </Button>
+            <Button fx:id="removeObjButton" disable="true" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#removeObj" prefHeight="30.0" prefWidth="32.0">
+               <graphic>
+                  <FontAwesomeIconView glyphName="MINUS" />
+               </graphic>
+            </Button>
             <Button fx:id="messageCreatorButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#openMessageCreator" prefHeight="30.0" prefWidth="30.0">
                <graphic>
                   <FontAwesomeIconView glyphName="SEND" />
                </graphic>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
             </Button>
             <Button fx:id="actCreatorButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#openActCreator" prefHeight="30.0" prefWidth="30.0">
                <graphic>

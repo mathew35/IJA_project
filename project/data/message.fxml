@@ -99,7 +99,7 @@
       </HBox>
       <HBox alignment="CENTER_LEFT" prefHeight="53.0" prefWidth="300.0">
          <children>
-            <Label prefHeight="18.0" prefWidth="69.0" text="Message:">
+            <Label fx:id="messageLabel" prefHeight="18.0" prefWidth="69.0" text="Message:">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>
