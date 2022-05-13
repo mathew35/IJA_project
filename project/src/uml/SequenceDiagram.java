@@ -17,6 +17,8 @@ import com.fasterxml.jackson.annotation.*;
 public class SequenceDiagram extends ClassDiagram{
     @JsonProperty("messages")
     public List<UMLMessage> messages = new ArrayList<UMLMessage>();
+    @JsonProperty("instances")
+    public List<UMLInstance> instances = new ArrayList<UMLInstance>();
         
     public SequenceDiagram(){}
 
@@ -36,7 +38,7 @@ public class SequenceDiagram extends ClassDiagram{
      * @param receiver Příjemce zprávy.
      * @param transmition Typ přenosu (synchroní, asynchroní).
      */
-    public UMLMessage createMessage(UMLOperation operation, UMLClass sender, UMLClass receiver, int transmition, int order)
+    public UMLMessage createMessage(UMLOperation operation, UMLInstance  sender, UMLInstance receiver, int transmition, int order)
     {
         UMLMessage newMessage = new UMLMessage(operation, sender, receiver, transmition, order);
         this.messages.add(newMessage);
@@ -52,7 +54,7 @@ public class SequenceDiagram extends ClassDiagram{
      * @param receiver Příjemce zprávy.
      * @param transmition Typ přenosu (synchroní, asynchroní).
      */
-    public UMLMessage createMessage(String message, UMLClass sender, UMLClass receiver, int transmition, int order)
+    public UMLMessage createMessage(String message, UMLInstance  sender, UMLInstance receiver, int transmition, int order)
     {
         UMLMessage newMessage = new UMLMessage(message, sender, receiver, transmition, order);
         this.messages.add(newMessage);
@@ -69,6 +71,15 @@ public class SequenceDiagram extends ClassDiagram{
     {
         this.messages.add(message);
     }
+
+    public UMLInstance createInstance(String name, UMLClass asgClass)
+    {
+        UMLInstance newInstance = new UMLInstance(name, asgClass);
+        this.instances.add(newInstance);
+
+        return  newInstance;
+    }
+    
 
     /**
      * Navrací počet prvků v poli zpráv objektu.
@@ -93,6 +104,19 @@ public class SequenceDiagram extends ClassDiagram{
         return lineup;
     }
 
+    public Integer getIndexOfInstace(String name)
+    {
+        for (int i = 0; i < this.instances.size(); i++)
+        {
+            if (this.instances.get(i).instancename.equals(name))
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     @JsonIgnore
     public SequenceDiagram deepCopySeq()
     {
@@ -101,16 +125,32 @@ public class SequenceDiagram extends ClassDiagram{
         {
             retDiag.createClass(diagClassName);
         }
-        for(UMLClass diagClass:this.getClasses()){
+        for(UMLClass diagClass:this.getClasses())
+        {
             for(UMLClass retClass:retDiag.getClasses())
             {
-                if(retClass.getName().equals(diagClass.getName())){
+                if(retClass.getName().equals(diagClass.getName()))
+                {
                     retClass.deepCopyClass(diagClass);
                 }
             }
         }
-        for(UMLClassifier diagClassifier:this.getClassifiers()){
+
+        for(UMLClassifier diagClassifier:this.getClassifiers())
+        {
             retDiag.classifierForName(diagClassifier.getName());
+        }
+
+        for (UMLInstance dInstance: this.instances)
+        {
+            retDiag.createInstance(dInstance.instancename, dInstance.asgclass);
+            for (UMLInstance rInstance:retDiag.instances)
+            {
+                if (rInstance.instancename.equals(dInstance.instancename))
+                {
+                    rInstance.deepCopyInstance(dInstance);
+                }
+            }
         }
 
         for (UMLMessage diaMessage: this.messages)

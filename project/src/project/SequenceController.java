@@ -18,6 +18,7 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 import javafx.stage.*;
+import javafx.util.Callback;
 import javafx.scene.input.*;
 
 import javafx.scene.paint.Color;
@@ -55,6 +56,28 @@ public class SequenceController
     @FXML
     private Region actRegion, msgRegion;
 
+    Callback<ListView<UMLClass>, ListCell<UMLClass>> cellFactory = new Callback<ListView<UMLClass>, ListCell<UMLClass>>() {
+
+        @Override
+        public ListCell<UMLClass> call(ListView<UMLClass> l) {
+            return new ListCell<UMLClass>() {
+    
+                @Override
+                protected void updateItem(UMLClass item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty) 
+                    {
+                        setGraphic(null);
+                    } 
+                    else
+                    {   
+                        setText(item.getName());
+                    }
+                }
+            } ;
+        }
+    };
+
     public void initialize()
     {
         addSeqObjButton.setTooltip(new Tooltip("Add Object"));
@@ -63,6 +86,15 @@ public class SequenceController
 
         undoButton.setTooltip(new Tooltip("Undo"));
         redoButton.setTooltip(new Tooltip("Redo"));
+
+        UMLClass cls = sequenceDiagram.createClass("ATM");
+        UMLClass cls2 = sequenceDiagram.createClass("Bank");
+        UMLClass cls3 = sequenceDiagram.createClass("Database");
+        UMLOperation op1 = UMLOperation.create("method1", sequenceDiagram.classifierForName("void"), 
+        new UMLAttribute("arg1", sequenceDiagram.classifierForName("C1")),
+        new UMLAttribute("arg2", sequenceDiagram.classifierForName("String")));
+
+        cls.addOperation(op1);
     }
 
     @FXML
@@ -215,7 +247,7 @@ public class SequenceController
         }
     }
 
-    @FXML
+    @FXML // Done for Instances
     private void addSeqObj()
     {
         if (addSeqObjFirst != null)
@@ -228,15 +260,28 @@ public class SequenceController
             initGridAct();
         };
 
-        int colCount = sequenceDiagram.getNameClasses().size();
+        int colCount = sequenceDiagram.instances.size();
         VBox startObj = new VBox();
+        HBox rectangleAlignment = new HBox();
+        rectangleAlignment.setPrefWidth(125);
+        rectangleAlignment.setAlignment(Pos.CENTER);
+
         
         Line startLine = new Line(0, 0, 0, seqEditorBox.getHeight() * 0.01);
         StackPane objRectangle = new StackPane();
         Rectangle rectangle = new Rectangle(125, 50);
         Effect effect = new DropShadow(BlurType.GAUSSIAN, Color.DODGERBLUE, 5, 0.75, 0, 0);
         TextField objField = new TextField();
-        objField.setPrefWidth(125);
+        Text spacer = new Text(":");
+
+        ComboBox<UMLClass> dropClasses = new ComboBox<UMLClass>();
+        dropClasses.setButtonCell(cellFactory.call(null));
+        dropClasses.setCellFactory(cellFactory);
+        dropClasses.getItems().addAll(sequenceDiagram.getClasses());
+
+        objField.setPrefWidth(50);
+
+        //rectangle.getChildren().add
 
         rectangle.setOnMouseClicked((MouseEvent event) -> 
         {
@@ -280,22 +325,22 @@ public class SequenceController
                         {
                             if (ke.getCode().equals(KeyCode.DELETE)) 
                             {
-                                UMLClass clsRemove = sequenceDiagram.getClasses().get(colFocus);
+                                UMLInstance instRemove = sequenceDiagram.instances.get(colFocus);
 
                                 for (int i = 0; i < sequenceDiagram.messages.size(); i++)
                                 {
-                                    if (sequenceDiagram.messages.get(i).sender.getName().equals(clsRemove.getName()) || sequenceDiagram.messages.get(i).receiver.getName().equals(clsRemove.getName()))
+                                    if (sequenceDiagram.messages.get(i).sender.getName().equals(instRemove.getName()) || sequenceDiagram.messages.get(i).receiver.getName().equals(instRemove.getName()))
                                     {
-                                        System.out.println("Removed: " + clsRemove.getName() + " " + sequenceDiagram.messages.get(i).sender.getName() + " " + sequenceDiagram.messages.get(i).receiver.getName());
+                                        System.out.println("Removed: " + instRemove.getName() + " " + sequenceDiagram.messages.get(i).sender.getName() + " " + sequenceDiagram.messages.get(i).receiver.getName());
                                         removeRow(seqGridMsgs, i);
                                         sequenceDiagram.messages.remove(i);
                                     }
                                 }
 
-                                sequenceDiagram.removeClassByIndex(colFocus);
+                                sequenceDiagram.instances.remove(colFocus);
                                 removeColumn(seqGrid, colFocus);
 
-                                if (sequenceDiagram.getClasses().size() < 8)
+                                if (sequenceDiagram.instances.size() < 8)
                                 {
                                     addSeqObjButton.setDisable(false);
                                 }
@@ -315,6 +360,7 @@ public class SequenceController
         rectangle.setFill(Color.TRANSPARENT);
 
         objRectangle.getChildren().add(rectangle);
+        objRectangle.getChildren().add(rectangleAlignment);
         addSeqObjButton.setDisable(true);
 
         // Multiple Event Handler https://stackoverflow.com/questions/31794167/how-to-handle-multiple-event-types-from-one-class-in-javafx
@@ -324,23 +370,22 @@ public class SequenceController
             public void handle(KeyEvent ke) {
                 if (ke.getCode().equals(KeyCode.ENTER)) 
                 {
-                    sequenceDiagram.createClass(objField.getText());
+                    if (dropClasses.getValue() != null)
+                    {  
+                        sequenceDiagram.createInstance(objField.getText(), dropClasses.getValue());
 
-                    Text objName = new Text(objField.getText());
-                    objRectangle.getChildren().remove(objField);
-                    objRectangle.getChildren().add(objName);
+                        if (seqGrid.getColumnCount() >= 8)
+                        {
+                            addSeqObjButton.setDisable(true);
+                        }
+                        else
+                        {
+                            addSeqObjButton.setDisable(false);
+                        }
 
-                    if (seqGrid.getColumnCount() >= 8)
-                    {
-                        addSeqObjButton.setDisable(true);
+                        updateGrids();
+                        createSnapshot(sequenceDiagram);
                     }
-                    else
-                    {
-                        addSeqObjButton.setDisable(false);
-                    }
-
-                    updateGrids();
-                    createSnapshot(sequenceDiagram);
                 }
             }
         });
@@ -359,7 +404,9 @@ public class SequenceController
             seqGridAct.getColumnConstraints().set(i, new ColumnConstraints(seqEditorBox.getWidth()/seqGrid.getColumnCount()));
         }
 
-        objRectangle.getChildren().add(objField);
+        // Here
+        //objRectangle.getChildren().add(objField);
+        rectangleAlignment.getChildren().addAll(objField, spacer, dropClasses);
 
         startObj.getChildren().addAll(objRectangle, startLine);
 
@@ -373,7 +420,7 @@ public class SequenceController
         updateGridMsg();
     }
 
-    @FXML
+    @FXML // Done for Instances
     public void updateGridMsg()
     {
         if (seqGrid.getColumnCount() > 2)
@@ -381,7 +428,6 @@ public class SequenceController
             ColumnConstraints updateColumn = new ColumnConstraints(seqEditorBox.getWidth()/seqGrid.getColumnCount());
             ColumnConstraints updateSpacerColumn = new ColumnConstraints((seqEditorBox.getWidth()/seqGrid.getColumnCount())/2);
 
-            //System.out.println(seqGrid.getColumnCount());
             seqGridMsgs.getColumnConstraints().add(seqGridMsgs.getColumnCount()-2, updateColumn);
 
             for (int i = 0; i < seqGridMsgs.getColumnCount(); i++)
@@ -434,7 +480,7 @@ public class SequenceController
         }
     }
 
-    @FXML
+    @FXML // TODO
     public void openMessageCreator() throws IOException
     {
         FXMLLoader loader = new FXMLLoader(Main.class.getClassLoader().getResource("message.fxml"));
@@ -459,7 +505,7 @@ public class SequenceController
         }
     }
 
-    @FXML
+    @FXML // TODO
     public void openActCreator() throws IOException
     {
         FXMLLoader loader = new FXMLLoader(Main.class.getClassLoader().getResource("activation.fxml"));
@@ -477,11 +523,12 @@ public class SequenceController
         popUp.setResizable(false);
         popUp.showAndWait();
 
+        // TODO
         System.out.println("Out of the window");
         if (actController.createdAct != null)
         {
-            System.out.println("Sussy baka" + actController.indexOfClass + " ");
-            sequenceDiagram.getClasses().get(actController.indexOfClass).addActivation(actController.createdAct);
+            System.out.println("Sussy baka" + actController.indexOfInstance + " ");
+            sequenceDiagram.instances.get(actController.indexOfInstance).addActivation(actController.createdAct);
             createSnapshot(sequenceDiagram);
             refreshActs();
         }
@@ -490,21 +537,20 @@ public class SequenceController
     @FXML
     public void refreshActs()
     {
-        for (int i = 0; i < sequenceDiagram.getClasses().size(); i++)
+        for (int i = 0; i < sequenceDiagram.instances.size(); i++)
         {
             Integer messageCounter = 0;
-            //System.out.println("Object: " + sequenceDiagram.getClasses().get(i).getName());
             while (messageCounter < seqGridAct.getRowCount())
             {
                 //System.out.println("Counter: " + messageCounter);
-                for (int j = 0; j < sequenceDiagram.getClasses().get(i).getActivations().size(); j++)
+                for (int j = 0; j < sequenceDiagram.instances.get(i).activations.size(); j++)
                 {
-                    Integer fromIndex = sequenceDiagram.getClasses().get(i).getActivations().get(j).getStart();
-                    Integer toIndex = sequenceDiagram.getClasses().get(i).getActivations().get(j).getEnd();
+                    Integer fromIndex = sequenceDiagram.instances.get(i).activations.get(j).getStart();
+                    Integer toIndex = sequenceDiagram.instances.get(i).activations.get(j).getEnd();
 
                     //System.out.println("Start: " + fromIndex + " End: " + toIndex + " Counter: " + messageCounter);
     
-                    if (sequenceDiagram.getClasses().get(i).getActivations().get(j).isInBounds(messageCounter))
+                    if (sequenceDiagram.instances.get(i).activations.get(j).isInBounds(messageCounter))
                     {
                         Region regionAct = new Region();
                         Rectangle rectangle = new Rectangle(20, 30);
@@ -574,14 +620,14 @@ public class SequenceController
                                         {
                                             if (ke.getCode().equals(KeyCode.DELETE)) 
                                             {
-                                                UMLClass cls = sequenceDiagram.getClasses().get(colFocus);
-                                                List<UMLActivation> clsActivations = cls.getActivations();
+                                                UMLInstance instace = sequenceDiagram.instances.get(colFocus);
+                                                List<UMLActivation> instActivations = instace.getActivations();
 
-                                                for (int i = 0; i < clsActivations.size(); i++)
+                                                for (int i = 0; i < instActivations.size(); i++)
                                                 {
-                                                    if (rowFocus >= clsActivations.get(i).getStart() && rowFocus <= clsActivations.get(i).getEnd())
+                                                    if (rowFocus >= instActivations.get(i).getStart() && rowFocus <= instActivations.get(i).getEnd())
                                                     {
-                                                        cls.removeActivation(clsActivations.get(i));
+                                                        instace.removeActivation(instActivations.get(i));
                                                         i--;
                                                     }
                                                 }
@@ -615,6 +661,8 @@ public class SequenceController
     @FXML
     public void displaySequence(SequenceDiagram diagram)
     {
+        sequenceDiagram = diagram;
+
         if (addSeqObjFirst != null)
         {
             seqEditorBox.getChildren().remove(addSeqObjFirst);
@@ -625,12 +673,8 @@ public class SequenceController
             initGridMsg();
             initGridAct();
         }
-
-        ArrayList<String> nameList = new ArrayList<String>();
-
-        nameList = diagram.getNameClasses();
        
-        for (int i = 0; i < nameList.size(); i++)
+        for (int i = 0; i < sequenceDiagram.instances.size(); i++)
         {
             VBox startObj = new VBox();
             Line startLine = new Line(0, 0, 0, seqEditorBox.getHeight() * 0.01);
@@ -682,25 +726,24 @@ public class SequenceController
                             {
                                 if (ke.getCode().equals(KeyCode.DELETE)) 
                                 {
-                                    UMLClass clsRemove = sequenceDiagram.getClasses().get(colFocus);
+                                    UMLInstance instRemove = sequenceDiagram.instances.get(colFocus);
 
                                     for (int i = 0; i < sequenceDiagram.messages.size(); i++)
                                     {
-                                        System.out.println("Seeing " + sequenceDiagram.messages.get(i).message + ": " + clsRemove.getName() + " " + sequenceDiagram.messages.get(i).sender.getName() + " " + sequenceDiagram.messages.get(i).receiver.getName());
-                                        if (sequenceDiagram.messages.get(i).sender.getName().equals(clsRemove.getName()) || sequenceDiagram.messages.get(i).receiver.getName().equals(clsRemove.getName()))
+                                        System.out.println("Seeing " + sequenceDiagram.messages.get(i).message + ": " + instRemove.instancename + " " + sequenceDiagram.messages.get(i).sender.instancename + " " + sequenceDiagram.messages.get(i).receiver.instancename);
+                                        if (sequenceDiagram.messages.get(i).sender.instancename.equals(instRemove.instancename) || sequenceDiagram.messages.get(i).receiver.instancename.equals(instRemove.instancename))
                                         {
-                                            System.out.println("Removed " + sequenceDiagram.messages.get(i).message + ": " + clsRemove.getName() + " " + sequenceDiagram.messages.get(i).sender.getName() + " " + sequenceDiagram.messages.get(i).receiver.getName());
+                                            System.out.println("Removed " + sequenceDiagram.messages.get(i).message + ": " + instRemove.instancename + " " + sequenceDiagram.messages.get(i).sender.instancename + " " + sequenceDiagram.messages.get(i).receiver.instancename);
                                             removeRow(seqGridMsgs, i);
                                             sequenceDiagram.messages.remove(i);
                                             i--;
                                         }
                                     }
                                     
-                                    sequenceDiagram.removeClassByIndex(colFocus);
+                                    sequenceDiagram.instances.remove(colFocus);
                                     removeColumn(seqGrid, colFocus);
-                                    System.out.println(sequenceDiagram.getNameClasses());
 
-                                    if (sequenceDiagram.getClasses().size() < 8)
+                                    if (sequenceDiagram.instances.size() < 8)
                                     {
                                         addSeqObjButton.setDisable(false);
                                     }
@@ -734,7 +777,7 @@ public class SequenceController
                 seqGridAct.getColumnConstraints().set(j, new ColumnConstraints(seqEditorBox.getWidth()/seqGrid.getColumnCount()));
             }
             
-            objRectangle.getChildren().add(new Text(nameList.get(i)));
+            objRectangle.getChildren().add(new Text(sequenceDiagram.instances.get(i).instancename + ":" + sequenceDiagram.instances.get(i).asgclass.getName()));
 
             startObj.getChildren().addAll(objRectangle, startLine);
 
@@ -751,8 +794,9 @@ public class SequenceController
         {
             UMLMessage message = sequenceDiagram.messages.get(i);
             int msgCount = sequenceDiagram.messages.indexOf(message);
-            int sendIndex = sequenceDiagram.getClassIndexByName(message.sender.getName());
-            int recIndex = sequenceDiagram.getClassIndexByName(message.receiver.getName());
+            int sendIndex = sequenceDiagram.getIndexOfInstace(message.sender.instancename);
+            int recIndex = sequenceDiagram.getIndexOfInstace(message.receiver.instancename);
+
             Label messageLabel = new Label();
 
             GridPane.setValignment(messageLabel, VPos.TOP);
@@ -830,7 +874,6 @@ public class SequenceController
                     arrow.setEndY(0);
                     seqGridMsgs.add(arrow, recIndex, msgCount);
                 }
-                
                 seqGridMsgs.add(messageLabel, recIndex, msgCount);
             }
             else
@@ -953,8 +996,8 @@ public class SequenceController
     public void createMessage(UMLMessage message)
     {
         int msgCount = sequenceDiagram.returnMessagesCount();
-        int sendIndex = sequenceDiagram.getClasses().indexOf(message.sender);
-        int recIndex = sequenceDiagram.getClasses().indexOf(message.receiver);
+        int sendIndex = sequenceDiagram.instances.indexOf(message.sender);
+        int recIndex = sequenceDiagram.instances.indexOf(message.receiver);
         Label messageLabel = new Label();
 
         GridPane.setValignment(messageLabel, VPos.TOP);
@@ -963,7 +1006,6 @@ public class SequenceController
         messageLabel.setOnMouseClicked((MouseEvent event) -> 
         {
             messageLabel.requestFocus();
-            System.out.println("Textfield on focus");
             Effect effect = new DropShadow(BlurType.GAUSSIAN, Color.DODGERBLUE, 5, 0.75, 0, 0);
             Rectangle selectRec = new Rectangle(messageLabel.getWidth() + 5, messageLabel.getHeight() + 1);
             GridPane.setValignment(selectRec, VPos.TOP);
@@ -1031,15 +1073,6 @@ public class SequenceController
             }
         });
 
-        /*if (message.operation != null)
-        {    
-            messageLabel.setText(message.operation.getAlltoString());
-        }
-        else
-        {
-            
-        }*/
-
         messageLabel.setText(message.message);
 
         double arrowWidth = seqEditorBox.getWidth() / seqGrid.getColumnCount();
@@ -1055,6 +1088,7 @@ public class SequenceController
         }
         else
         {
+            System.out.println(message.order);
             seqGridMsgs.getRowConstraints().add(sequenceDiagram.messages.size(), new RowConstraints(30));
             for (Node child : seqGridMsgs.getChildren()) 
             {

@@ -10,6 +10,7 @@ package project;
 import uml.SequenceDiagram;
 import uml.UMLClass;
 import uml.UMLClassifier;
+import uml.UMLInstance;
 import uml.UMLMessage;
 import uml.UMLOperation;
 
@@ -42,7 +43,7 @@ public class MessageController {
     private ToggleGroup msgType1;
 
     @FXML
-    private ComboBox<UMLClass> dropSender, dropReceiver;
+    private ComboBox<UMLInstance> dropSender, dropReceiver;
 
     @FXML
     private ComboBox<UMLOperation> dropOperation;
@@ -79,6 +80,28 @@ public class MessageController {
         }
     };
 
+    Callback<ListView<UMLInstance>, ListCell<UMLInstance>> cellFactory2 = new Callback<ListView<UMLInstance>, ListCell<UMLInstance>>() {
+
+        @Override
+        public ListCell<UMLInstance> call(ListView<UMLInstance> l) {
+            return new ListCell<UMLInstance>() {
+    
+                @Override
+                protected void updateItem(UMLInstance item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty) 
+                    {
+                        setGraphic(null);
+                    } 
+                    else
+                    {   
+                        setText(item.instancename + ":" + item.asgclass.getName());
+                    }
+                }
+            } ;
+        }
+    };
+
     @FXML
     public void initialize() 
     {
@@ -95,6 +118,12 @@ public class MessageController {
 
         fieldReply.setDisable(false);
         createMessageButton.setDisable(true);
+
+        dropSender.setButtonCell(cellFactory2.call(null));
+        dropSender.setCellFactory(cellFactory2);
+        dropReceiver.setButtonCell(cellFactory2.call(null));
+        dropReceiver.setCellFactory(cellFactory2);
+
         dropOperation.setButtonCell(cellFactory.call(null));
         dropOperation.setCellFactory(cellFactory);
         dropOperation.getItems().add(placeHolder);
@@ -104,8 +133,8 @@ public class MessageController {
     public void loadData(SequenceDiagram diagram)
     {
         sequenceDiagram = diagram;
-        dropSender.getItems().addAll(sequenceDiagram.getClasses());
-        dropReceiver.getItems().addAll(sequenceDiagram.getClasses());
+        dropSender.getItems().addAll(sequenceDiagram.instances);
+        dropReceiver.getItems().addAll(sequenceDiagram.instances);
     }
 
     // TODO
@@ -117,14 +146,7 @@ public class MessageController {
         if (!dropSender.getSelectionModel().isEmpty() && msgType == 0)
         {
             dropOperation.getItems().clear();
-
-            for (UMLClass className : sequenceDiagram.getClasses()) 
-            {
-                if (className.getName().equals(dropSender.getValue().getName())) 
-                {
-                    dropOperation.getItems().addAll((className.getOperations()));
-                }
-            }
+            dropOperation.getItems().addAll(dropSender.getValue().asgclass.getOperations());
             dropOperation.getItems().add(placeHolder);
             dropOperation.getSelectionModel().select(placeHolder);
         }
@@ -182,14 +204,7 @@ public class MessageController {
         if (!dropSender.getSelectionModel().isEmpty() && msgType == 0)
         {
             dropOperation.getItems().clear();
-
-            for (UMLClass className : sequenceDiagram.getClasses()) 
-            {
-                if (className.getName().equals(dropSender.getValue().getName())) 
-                {
-                    dropOperation.getItems().addAll((className.getOperations()));
-                }
-            }
+            dropOperation.getItems().addAll(dropSender.getValue().asgclass.getOperations());
             dropOperation.getItems().add(placeHolder);
             dropOperation.getSelectionModel().select(placeHolder);
         }
