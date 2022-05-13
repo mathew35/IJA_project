@@ -29,13 +29,13 @@ import javafx.beans.value.ObservableValue;
 public class ActivationController {
     private SequenceDiagram sequenceDiagram;
     public UMLActivation createdAct;
-    public Integer indexOfClass;
+    public Integer indexOfInstance;
 
     @FXML
     private Button closeButton1;
 
     @FXML
-    private ComboBox<UMLClass> dropTime;
+    private ComboBox<UMLInstance> dropTime;
 
     @FXML
     private TextField fieldFrom, fieldTo;
@@ -92,7 +92,7 @@ public class ActivationController {
     public void loadData(SequenceDiagram diagram)
     {
         sequenceDiagram = diagram;
-        dropTime.getItems().addAll(sequenceDiagram.getClasses());
+        dropTime.getItems().addAll(sequenceDiagram.instances);
     }
 
     @FXML void createActData()
@@ -106,9 +106,9 @@ public class ActivationController {
             return;
         }
 
-        List<UMLInstance> instances = sequenceDiagram.getClasses();
-        List<UMLActivation> actList = classes.get(classes.indexOf(dropTime.getValue())).getActivations();
-        indexOfClass = classes.indexOf(dropTime.getValue());
+        indexOfInstance = sequenceDiagram.instances.indexOf(dropTime.getValue());
+        List<UMLActivation> actList = sequenceDiagram.instances.get(sequenceDiagram.instances.indexOf(dropTime.getValue())).activations;
+
 
         for (UMLActivation act : actList)
         {

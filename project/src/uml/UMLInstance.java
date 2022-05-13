@@ -7,6 +7,7 @@
 
 package uml;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,18 +18,18 @@ import com.fasterxml.jackson.annotation.*;
  */
 public class UMLInstance extends Element
 {
-    @JsonProperty("name")
-    public String name;
+    @JsonProperty("instancename")
+    public String instancename;
     @JsonProperty("asgclass")
     public UMLClass asgclass;
     @JsonProperty("activations")
-    public List<UMLActivation> activations;
+    public List<UMLActivation> activations = new ArrayList<UMLActivation>();
 
     public UMLInstance(){}
 
-    public UMLInstance(String name, UMLClass asgclass)
+    public UMLInstance(String instancename, UMLClass asgclass)
     {
-        this.name = name;
+        this.instancename = instancename;
         this.asgclass = asgclass;
     }
 
@@ -44,5 +45,13 @@ public class UMLInstance extends Element
     public void addActivation(UMLActivation activation)
     {
         this.activations.add(activation);
+    }
+
+    public void deepCopyInstance(UMLInstance another)
+    {
+        for (UMLActivation act : another.activations)
+        {
+            this.addActivation(new UMLActivation(act.getStart(), act.getEnd()));
+        }  
     }
 }

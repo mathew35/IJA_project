@@ -11,8 +11,6 @@ public class UMLClass  extends UMLClassifier{
     private List<UMLAttribute> attributes = new ArrayList<UMLAttribute>();
     @JsonProperty("operations")
     private List<UMLOperation> operations = new ArrayList<UMLOperation>();
-    @JsonProperty("activations")
-    private List<UMLActivation> activations = new ArrayList<UMLActivation>();
     public UMLClass(){}
     public UMLClass(String name){
         super(name,true);

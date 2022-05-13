@@ -18,9 +18,9 @@ public class UMLMessage{
     @JsonProperty("message")
     public String message;
     @JsonProperty("sender")
-    public UMLClass sender;
+    public UMLInstance sender;
     @JsonProperty("receiver")
-    public UMLClass receiver;
+    public UMLInstance receiver;
     @JsonProperty("transmition")
     public int transmition; // 0 = sync, 1 = async, 2 = reply, 3 = creation
     @JsonProperty("order")
@@ -37,7 +37,7 @@ public class UMLMessage{
      * @param occurence Typ přenosu (synchroní, asynchroní).
      * @param order Pořadí zprávy.
      */
-    public UMLMessage(UMLOperation operation, UMLClass sender, UMLClass receiver, int transmition, int order)
+    public UMLMessage(UMLOperation operation, UMLInstance  sender, UMLInstance  receiver, int transmition, int order)
     {
         this.operation = operation;
         this.sender = sender;
@@ -55,7 +55,7 @@ public class UMLMessage{
      * @param transmition Typ přenosu (volání, odpověď).
      * @param order Pořadí zprávy.
      */
-    public UMLMessage(String message, UMLOperation operation, UMLClass sender, UMLClass receiver, int transmition, int order)
+    public UMLMessage(String message, UMLOperation operation, UMLInstance  sender, UMLInstance  receiver, int transmition, int order)
     {
         this.message = message;
         this.operation = operation;
@@ -73,7 +73,7 @@ public class UMLMessage{
      * @param transmition Typ přenosu.
      * @param order Pořadí zprávy.
      */
-    public UMLMessage(String message, UMLClass sender, UMLClass receiver, int transmition, int order)
+    public UMLMessage(String message, UMLInstance  sender, UMLInstance  receiver, int transmition, int order)
     {
         this.message = message;
         this.sender = sender;
