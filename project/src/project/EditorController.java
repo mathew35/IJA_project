@@ -140,6 +140,11 @@ public class EditorController extends MenuBarController implements Initializable
             i.setClassDiagram(classDiagram);
         }
     }
+    public void updateSequenceClass(UMLClass oldClass, UMLClass newClass){
+        for(SequenceController i:sequenceControllers){
+            i.changeInClass(oldClass,newClass);
+        }
+    }
     public void setClassDiagram(ClassDiagram diag){
         classDiagram = diag;
         updateClassTab();
@@ -347,6 +352,11 @@ public class EditorController extends MenuBarController implements Initializable
      */
     public void onUpdateClick() {
         if (!ClassName.getText().isEmpty()){
+            UMLClass oldClass = new UMLClass();
+            if(FocusedClass!=null){
+                oldClass.rename(FocusedClass.getName());
+                oldClass.deepCopyClass(FocusedClass);
+            }
             UMLClass itemClass = null;
             for(UMLClass i:classDiagram.getClasses()){
                 if(i.getName().equals(ClassName.getText())){
@@ -355,7 +365,11 @@ public class EditorController extends MenuBarController implements Initializable
             }
             boolean change = false;
             if(itemClass == null){
-                FocusedClass.rename(ClassName.getText());   
+                if(FocusedClass == null){
+                    return;
+                }
+                FocusedClass.rename(ClassName.getText()); 
+                itemClass = FocusedClass;  
                 change = true;             
             }
             TreeItem<String> oldRoot = AttributesTree.getRoot();
@@ -441,6 +455,7 @@ public class EditorController extends MenuBarController implements Initializable
             updateClassTab();
             updateAttrTree();
             if(change){
+                updateSequenceClass(oldClass, itemClass);
                 createSnapshot(classDiagram);
                 updateSequenceControllers();
             }
