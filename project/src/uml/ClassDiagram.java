@@ -103,19 +103,19 @@ public class ClassDiagram extends Element{
         return -1;
     }
 
-    public ClassDiagram deepCopy(){
-        ClassDiagram retDiag = new ClassDiagram(this.getName());
-        for(String diagClassName:this.getNameClasses()){
+    public void deepCopy(ClassDiagram another){
+        ClassDiagram retDiag = new ClassDiagram(another.getName());
+        for(String diagClassName:another.getNameClasses()){
             retDiag.createClass(diagClassName);
         }
-        for(UMLClass diagClass:this.classes){
+        for(UMLClass diagClass:another.classes){
             for(UMLClass retClass:retDiag.classes){
                 if(retClass.getName().equals(diagClass.getName())){
                     retClass.deepCopyClass(diagClass);
                 }
             }
         }
-        for(UMLClass diagClass:this.classes){
+        for(UMLClass diagClass:another.classes){
             for(UMLClass retclass:retDiag.classes){
                 if(retclass.getName().equals(diagClass.getName())){
                     if(diagClass.getParent() != null){
@@ -128,9 +128,11 @@ public class ClassDiagram extends Element{
                 }
             }
         }
-        for(UMLClassifier diagClassifier:this.classifiers){
+        for(UMLClassifier diagClassifier:another.classifiers){
             retDiag.classifierForName(diagClassifier.getName());
         }
-        return retDiag;
+        this.rename(retDiag.getName());
+        this.classes = retDiag.classes;
+        this.classifiers = retDiag.classifiers;
     }
 }

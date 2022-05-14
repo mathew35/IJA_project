@@ -92,7 +92,7 @@ public class SequenceController
 
     public void setClassDiagram(ClassDiagram cDiagram)
     {
-        sequenceDiagram = (SequenceDiagram)cDiagram.deepCopy();
+        sequenceDiagram.deepCopy(cDiagram);
     }
 
     @FXML

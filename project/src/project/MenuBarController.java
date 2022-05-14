@@ -49,7 +49,7 @@ public class MenuBarController {
     public void onUndoClick(){
         if(snapshotPos > 0){
             snapshotPos--;
-            classDiagram = snapshots.get(snapshotPos).deepCopy();
+            classDiagram.deepCopy(snapshots.get(snapshotPos));
             refresh();
         }
     }
@@ -57,7 +57,7 @@ public class MenuBarController {
     public void onRedoClick(){
         if(snapshots.size()>snapshotPos+1){
             snapshotPos++;
-            classDiagram = snapshots.get(snapshotPos).deepCopy();
+            classDiagram.deepCopy(snapshots.get(snapshotPos));
             refresh();
         }
     }
@@ -66,7 +66,9 @@ public class MenuBarController {
             snapshots.remove(snapshotPos+1);
         }
         snapshotPos++;
-        snapshots.add(diag.deepCopy());
+        ClassDiagram ret = new ClassDiagram();
+        ret.deepCopy(diag);
+        snapshots.add(ret);
     }
     public void refresh(){
         //to be implemented inside controllers
