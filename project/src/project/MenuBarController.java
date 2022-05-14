@@ -23,18 +23,29 @@ public class MenuBarController {
     int snapshotPos = -1;
 
     @FXML
-    private MenuItem MenuSave;
-
-    @FXML
     private Button RedoButton;
 
     @FXML
     private Button UndoButton;
 
+    public void onMenuNewClassDiagClick(){
+        System.out.println("NewClassDiag");
+    }
+    public void onMenuOpenClassDiagClick(){
+        System.out.println("OpenClassDiag");
+    }
+    public void onMenuCloseClick(){
+        System.out.println("Close");
+    }
     public void onMenuSaveClick(){
         SaveDiagram(classDiagram);
     }
-
+    public void onMenuQuitClick(){
+        System.out.println("Quit");
+    }
+    public void onAboutClick(){
+        System.out.println("AboutUMLDiagramEditor");        
+    }
     public void onUndoClick(){
         if(snapshotPos > 0){
             snapshotPos--;

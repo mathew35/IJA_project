@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.*;
 
 public class UMLOperation extends UMLAttribute{
     @JsonProperty("arguments")
-    private ArrayList<UMLAttribute> arguments;
+    private ArrayList<UMLAttribute> arguments = new ArrayList<UMLAttribute>();
     public UMLOperation(){}
     public UMLOperation(String name, UMLClassifier type){
         super(name, type);

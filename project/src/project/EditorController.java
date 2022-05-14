@@ -16,8 +16,6 @@ import java.util.ResourceBundle;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.w3c.dom.Attr;
-
 import java.io.IOException;
 import java.net.URL;
 
@@ -29,6 +27,7 @@ import javafx.scene.layout.*;
 import javafx.scene.input.KeyCode;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.stage.WindowEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 
@@ -37,6 +36,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.scene.text.TextAlignment;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.geometry.VPos;
 import javafx.geometry.Pos;
 
@@ -112,18 +112,28 @@ public class EditorController extends MenuBarController implements Initializable
     }
     public void updateClassTab(){
         //ComboBoxes
-        String selectedP = ChoiceParentClass.getSelectionModel().getSelectedItem();
-        String selectedCH = ChoiceChildClass.getSelectionModel().getSelectedItem();
-        ChoiceParentClass.getItems().removeAll(ChoiceParentClass.getItems());
-        ChoiceChildClass.getItems().removeAll(ChoiceChildClass.getItems());
-        for(UMLClass i:classDiagram.getClasses()){
-            ChoiceParentClass.getItems().add(i.getName());
-            ChoiceChildClass.getItems().add(i.getName());
+        List<String> ChItems = new ArrayList<String>(ChoiceChildClass.getItems());
+        for(String i:ChItems){
+            if(!classDiagram.getNameClasses().contains(i)){
+                ChoiceChildClass.getItems().remove(i);
+            }
         }
-        ClassName.setPromptText("Class Name");
+        List<String> PItems = new ArrayList<String>(ChoiceParentClass.getItems());
+        for(String i:PItems){
+            if(!classDiagram.getNameClasses().contains(i)){
+                ChoiceParentClass.getItems().remove(i);
+            }
+        }
+        for(String i:classDiagram.getNameClasses()){
+            if(!ChoiceParentClass.getItems().contains(i)){
+                ChoiceParentClass.getItems().add(i);
+            }
+            if(!ChoiceChildClass.getItems().contains(i)){
+                ChoiceChildClass.getItems().add(i);
+            }
+        }
         NewClassName.setPromptText("New Class Name");
         drawClassDiagram();
-        NewClassName.setText("");
     }
     public void setClassDiagram(ClassDiagram diag){
         classDiagram = diag;
@@ -131,16 +141,6 @@ public class EditorController extends MenuBarController implements Initializable
         createSnapshot(classDiagram);
     }   
 
-    /**
-    * Detekuje selekci třídy v ClassDiagram tabu a zobrazí informace o této tříde
-    */
-    public void selectItem(){
-        // TreeItem<String> item = ClassTree.getSelectionModel().getSelectedItem();
-        // if(item != null){
-        //     ClassName.setText(item.getValue());
-        //     updateAttrTree();
-        // }
-    }
     //source: https://docs.oracle.com/javafx/2/ui_controls/tree-view.htm
     private final class TextFieldTreeCellImpl extends TreeCell<String> {
  
@@ -148,20 +148,62 @@ public class EditorController extends MenuBarController implements Initializable
         private ContextMenu addMenu = new ContextMenu();
  
         public TextFieldTreeCellImpl() {
-            MenuItem addMenuItem = new MenuItem("New Item");
-            addMenu.getItems().add(addMenuItem);
+            MenuItem addMenuItem = new MenuItem("New");
+            Menu removeMenu = new Menu("Delete");
+            addMenu.getItems().addAll(addMenuItem,removeMenu);
+            addMenu.setOnShowing(new EventHandler<WindowEvent>(){
+                public void handle(WindowEvent e){
+                            TreeItem<String> actItem = getTreeItem();
+                            removeMenu.getItems().removeAll(removeMenu.getItems());
+                            for(TreeItem<String> i:actItem.getChildren()){
+                                removeMenu.getItems().add(new MenuItem(i.getValue()));
+                            }
+                            for(MenuItem i:removeMenu.getItems()){
+                                i.setOnAction(new EventHandler(){
+                                    public void handle(Event t){
+                                        TreeItem<String> actItem = getTreeItem();
+                                        for(TreeItem<String> j:actItem.getChildren()){
+                                            if(j.getValue().equals(i.getText())){
+                                                actItem.getChildren().remove(j);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                            if(actItem.getValue().equals("Attributes")||actItem.getValue().equals("Operations")){
+                                addMenuItem.setText("New "+ actItem.getValue().toString().substring(0,actItem.getValue().toString().length()-1));
+                            }
+                            else if(actItem.getValue().equals("Arguments")){
+                                addMenuItem.setText("New Argument");
+                            }
+                            else{
+                                addMenu.getItems().removeAll(addMenu.getItems());
+                            }
+                }
+            });
             addMenuItem.setOnAction(new EventHandler() {
                 public void handle(Event t) {
-                    TreeItem newItem = 
-                    new TreeItem<String>("New Item");
-                        getTreeItem().getChildren().add(newItem);
+                    TreeItem actItem = getTreeItem();
+                    if(actItem.getValue().equals("Attributes") || actItem.getValue().equals("Arguments")){
+                        TreeItem newAttr = new TreeItem<String>("New " + actItem.getValue().toString().substring(0,actItem.getValue().toString().length()-1));
+                        newAttr.getChildren().add(new TreeItem<String>("Type"));
+                        getTreeItem().getChildren().add(newAttr);
+                    }
+                    if(actItem.getValue().equals("Operations")){
+                        TreeItem newOper = new TreeItem<String>("New Operation");
+                        newOper.getChildren().add(new TreeItem<String>("Arguments"));
+                        newOper.getChildren().add(new TreeItem<String>("Return type"));
+                        newOper.setExpanded(true);
+                        getTreeItem().getChildren().add(newOper);
+                    }
                 }
             });
         }
  
         @Override
         public void startEdit() { 
-            if(getTreeItem().getValue() == "Attributes" || getTreeItem().getValue() == "Operations"){
+            if(getTreeItem().getValue() == "Attributes" || getTreeItem().getValue() == "Operations" || getTreeItem().getValue() == "Arguments"){
                 cancelEdit();
             }
             else{
@@ -200,7 +242,7 @@ public class EditorController extends MenuBarController implements Initializable
                     setText(getString());
                     setGraphic(getTreeItem().getGraphic());
                     if (
-                        !getTreeItem().isLeaf()&&getTreeItem().getParent()!= null
+                        getTreeItem().getParent()!= null
                     ){
                         setContextMenu(addMenu);
                     }
@@ -256,23 +298,22 @@ public class EditorController extends MenuBarController implements Initializable
 
             for(UMLAttribute i:itemClass.getAttributes()){
                 TreeItem<String> attrib = new TreeItem<String>(i.getName());
-                attrib.getChildren().add(new TreeItem<String>(i.getType().getName())); 
+                TreeItem<String> type = new TreeItem<String>(i.getType().getName());
+                attrib.getChildren().add(type); 
                 attr.getChildren().add(attrib);
             }
             for(UMLOperation i:itemClass.getOperations()){
                 TreeItem<String> opr = new TreeItem<String>(i.getName());
+                TreeItem<String> args = new TreeItem<String>("Arguments");
+                TreeItem<String> type = new TreeItem<String>(i.getType().getName());
+                opr.getChildren().addAll(args, type);
                 for(UMLAttribute arg:i.getArguments()){
-                    TreeItem<String> atr = new TreeItem<String>(i.getName());
-                    atr.getChildren().add(new TreeItem<String>(i.getType().getName()));
-                    opr.getChildren().add(atr);
+                    TreeItem<String> atr = new TreeItem<String>(arg.getName());
+                    TreeItem<String> atrType = new TreeItem<String>(arg.getType().getName());
+                    atr.getChildren().add(atrType);
+                    args.getChildren().add(atr);
                 }
                 oper.getChildren().add(opr);
-            }
-            if(attr.getChildren().isEmpty()){
-                attr.getChildren().add(new TreeItem<String>(""));
-            }
-            if(oper.getChildren().isEmpty()){
-                oper.getChildren().add(new TreeItem<String>(""));
             }
             rootItem.getChildren().add(attr);
             rootItem.getChildren().add(oper);
@@ -312,57 +353,65 @@ public class EditorController extends MenuBarController implements Initializable
                 change = true;             
             }
             TreeItem<String> oldRoot = AttributesTree.getRoot();
-            ArrayList<String> Attributes = new ArrayList<String>();
-            ArrayList<String> Operations = new ArrayList<String>();
-            for(TreeItem<String>i:oldRoot.getChildren().get(0).getChildren()){
-                if(!i.getValue().equals("")){
-                    Attributes.add(i.getValue());
+            TreeItem<String> TreeAttributes = oldRoot.getChildren().get(0);
+            TreeItem<String> TreeOperations = oldRoot.getChildren().get(1);
+            ArrayList<UMLAttribute> Attributes = new ArrayList<UMLAttribute>();
+            ArrayList<UMLOperation> Operations = new ArrayList<UMLOperation>();
+            for(TreeItem<String> i:TreeAttributes.getChildren()){
+                Attributes.add(new UMLAttribute(i.getValue(),new UMLClassifier(i.getChildren().get(0).getValue())));
+            }
+            for(TreeItem<String> i:TreeOperations.getChildren()){
+                UMLOperation newOper = new UMLOperation(i.getValue(),new UMLClassifier(i.getChildren().get(1).getValue()));
+                for(TreeItem<String> j:i.getChildren().get(0).getChildren()){
+                    UMLAttribute arg = new UMLAttribute(j.getValue(),new UMLClassifier(j.getChildren().get(0).getValue()));
+                    newOper.addArgument(arg);
                 }
+                Operations.add(newOper);
             }
-            for(TreeItem<String>i:oldRoot.getChildren().get(1).getChildren()){
-                if(!i.getValue().equals("")){
-                    Operations.add(i.getValue());
-                }
-            }
-            ArrayList<UMLAttribute> newAttributes = new ArrayList<UMLAttribute>();
-            ArrayList<UMLOperation> newOperations= new ArrayList<UMLOperation>();
-            for(String i:Attributes){
-                newAttributes.add(new UMLAttribute(i,null));
-            }
-            for(String i:Operations){
-                newOperations.add(new UMLOperation(i,null));
-            }
-            if(Attributes.size() == itemClass.getAttributes().size()){
-                for(String s:Attributes){
-                    boolean found = false;
-                    for(UMLAttribute a: itemClass.getAttributes()){
-                        if(s.equals(a.getName())){
-                            found = true;
-                            break;
-                        }
-                    }
-                    if(!found){
-                        change = true;
+            List<UMLAttribute> toRmAttr = new ArrayList<UMLAttribute>();
+            for(UMLAttribute i:itemClass.getAttributes()){
+                boolean found = false;
+                for(UMLAttribute j:Attributes){
+                    if(j.getName().equals(i.getName()) && j.getType().getName().equals(i.getType().getName())){
+                        found = true;
                         break;
                     }
                 }
+                if(!found){
+                    change = true;
+                    toRmAttr.add(i);
+                }
             }
-            if(Operations.size() == itemClass.getOperations().size()){
-                for(String s:Operations){
-                    boolean found = false;
-                    for(UMLAttribute a: itemClass.getOperations()){
-                        if(s.equals(a.getName())){
-                            found = true;
-                            break;
+            List<UMLOperation> toRmOper = new ArrayList<UMLOperation>();
+            for(UMLOperation i:itemClass.getOperations()){
+                boolean found = false;
+                for(UMLOperation j:Operations){
+                    if(j.getName().equals(i.getName()) && j.getType().getName().equals(i.getType().getName())){
+                        found = true;
+                        for(UMLAttribute k:i.getArguments()){
+                            boolean foundAttr = false;
+                            for(UMLAttribute l:j.getArguments()){
+                                if(l.getName().equals(k.getName()) && l.getType().getName().equals(k.getType().getName())){
+                                    foundAttr = true;
+                                    break;
+                                }
+                            }
+                            if(!foundAttr){
+                                found = false;
+                                break;
+                            }
                         }
-                    }
-                    if(!found){
-                        change = true;
                         break;
                     }
                 }
+                if(!found){
+                    change = true;
+                    toRmAttr.add(i);
+                }
             }
-
+            if(Attributes.size() != itemClass.getAttributes().size() || Operations.size() != itemClass.getOperations().size()){
+                change = true;
+            }
             List<String> toRemove = new ArrayList<String>();
             for(UMLAttribute i:itemClass.getAttributes()){
                 toRemove.add(i.getName());
@@ -377,10 +426,10 @@ public class EditorController extends MenuBarController implements Initializable
             for(String i:toRemove){
                 itemClass.removeAttrOper(i);
             }
-            for(UMLAttribute i:newAttributes){
+            for(UMLAttribute i:Attributes){
                 itemClass.addAttribute(i);
             }
-            for(UMLOperation i:newOperations){
+            for(UMLOperation i:Operations){
                 itemClass.addOperation(i);
             }
             updateClassTab();
@@ -571,8 +620,8 @@ public class EditorController extends MenuBarController implements Initializable
         Separator sep = new Separator();
         ScrollPane contentScroll = new ScrollPane();
         VBox contentBox = new VBox();
-        rect.setMaxHeight(200);
-        rect.setPrefWidth(150);
+        rect.setMaxHeight(80);
+        rect.setPrefWidth(180);
         rect.setLayoutX(posX-rect.getPrefWidth()/2);
         rect.setLayoutY(posY);
         rect.setStyle("-fx-border-width:1px; -fx-border-color:black;");
@@ -585,8 +634,9 @@ public class EditorController extends MenuBarController implements Initializable
         name.setText(uclass.getName());
         sep.setStyle("-fx-background-color:BLACK;");
         contentScroll.setContent(contentBox);
-        contentScroll.setPrefWidth(150);
+        contentScroll.setPrefWidth(rect.getPrefWidth());
         contentScroll.setMaxHeight(170);
+        contentScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         TextFlow attr = new TextFlow();
         attr.setPrefWidth(contentScroll.getPrefWidth()-18);
         Text attrtxt = new Text();
@@ -603,6 +653,7 @@ public class EditorController extends MenuBarController implements Initializable
         if(!uclass.getOperations().isEmpty()){
             if(!contentBox.getChildren().isEmpty()){
                 Separator sep2 = new Separator();
+                // sep2.setPrefWidth(contentScroll.getPrefWidth());
                 sep2.setStyle("-fx-background-color:BLACK;");
                 contentBox.getChildren().add(sep2);
             }
@@ -630,14 +681,16 @@ public class EditorController extends MenuBarController implements Initializable
             str = str + "+" + i.getName() + "(";
             String substr = "";
             for(UMLAttribute j:i.getArguments()){
-                if(substr.isEmpty()){
-                    substr = substr + "attr: " + j.getName();
-                }
-                else{
+                if(!substr.isEmpty()){
                     substr = substr + ", " + j.getName();
                 }
+                substr = substr + j.getName()+": " + j.getType().getName();
             }
-            str = str + "): " + i.getType().getName();
+            str = str + substr + ")";
+            if(!i.getType().getName().isEmpty()){
+                str = str + ": " + i.getType().getName();
+            }
+            str = str + "\n";
         }
         if(!str.isEmpty()){
             str = str.substring(0,str.length()-1);
