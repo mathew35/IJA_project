@@ -27,9 +27,10 @@ import javafx.util.Callback;
  * Řadič, který je vytvořen pomocí FXML a používá se k inicializaci prvků uživatelského rozhraní v úvodní scéně aplikace.
  */
 public class MessageController {
-    private int msgType;
+    public int msgType;
     private SequenceDiagram sequenceDiagram;
     public UMLMessage createdMessage;
+    public UMLInstance createdInstance;
 
     final UMLOperation placeHolder = new UMLOperation("None", new UMLClassifier());
 
@@ -52,7 +53,10 @@ public class MessageController {
     private ComboBox<UMLOperation> dropOperation;
 
     @FXML
-    private TextField fieldReply, fieldPosition;
+    private ComboBox<UMLClass> dropClass;
+
+    @FXML
+    private TextField fieldReply, fieldPosition, fieldInst;
 
     @FXML
     private Button createMessageButton;
@@ -77,6 +81,28 @@ public class MessageController {
                     else
                     {   
                         setText(item.getAlltoString());
+                    }
+                }
+            } ;
+        }
+    };
+
+    Callback<ListView<UMLClass>, ListCell<UMLClass>> cellFactory3 = new Callback<ListView<UMLClass>, ListCell<UMLClass>>() {
+
+        @Override
+        public ListCell<UMLClass> call(ListView<UMLClass> l) {
+            return new ListCell<UMLClass>() {
+    
+                @Override
+                protected void updateItem(UMLClass item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty) 
+                    {
+                        setGraphic(null);
+                    } 
+                    else
+                    {   
+                        setText(item.getName());
                     }
                 }
             } ;
@@ -121,6 +147,9 @@ public class MessageController {
 
         fieldReply.setDisable(false);
         createMessageButton.setDisable(true);
+
+        dropClass.setButtonCell(cellFactory3.call(null));
+        dropClass.setCellFactory(cellFactory3);
 
         dropSender.setButtonCell(cellFactory2.call(null));
         dropSender.setCellFactory(cellFactory2);
@@ -180,6 +209,12 @@ public class MessageController {
             dropOperation.setDisable(true);
             dropOperation.getItems().clear();
             messageLabel.setText("Message:");
+            dropClass.setDisable(false);
+            fieldInst.setDisable(false);
+            dropClass.getItems().clear();
+            dropClass.getItems().addAll(sequenceDiagram.getClasses());
+            fieldReply.setText("<<create>>");
+            dropReceiver.setDisable(true);
 
         }
         else if (rReply.isSelected())
@@ -189,6 +224,9 @@ public class MessageController {
             dropOperation.setDisable(true);
             dropOperation.getItems().clear();
             messageLabel.setText("Message:");
+            dropClass.setDisable(true);
+            fieldInst.setDisable(true);
+            dropClass.getItems().clear();
         }
         
         if (rSync.isSelected())
@@ -198,6 +236,9 @@ public class MessageController {
             dropOperation.setDisable(false);
             dropOperation.getItems().clear();
             messageLabel.setText("Arguments:");
+            dropClass.setDisable(true);
+            fieldInst.setDisable(true);
+            dropClass.getItems().clear();
         }
         else if (rAsync.isSelected())
         {
@@ -206,6 +247,9 @@ public class MessageController {
             dropOperation.setDisable(true);
             dropOperation.getItems().clear();
             messageLabel.setText("Arguments:");
+            dropClass.setDisable(true);
+            fieldInst.setDisable(true);
+            dropClass.getItems().clear();
         }
 
         if (!dropSender.getSelectionModel().isEmpty() && msgType == 0)
@@ -225,13 +269,27 @@ public class MessageController {
 
     public void enableMessage()
     {
-        if (!dropSender.getSelectionModel().isEmpty() && !dropReceiver.getSelectionModel().isEmpty() && msgType1.getSelectedToggle() != null)
+        if (!rCreate.isSelected())
         {
-            createMessageButton.setDisable(false);
+            if (!dropSender.getSelectionModel().isEmpty() && !dropReceiver.getSelectionModel().isEmpty())
+            {
+                createMessageButton.setDisable(false);
+            }
+            else
+            {
+                createMessageButton.setDisable(true);
+            }
         }
         else
         {
-            createMessageButton.setDisable(true);
+            if (!dropClass.getSelectionModel().isEmpty())
+            {
+                createMessageButton.setDisable(false);
+            }
+            else
+            {
+                createMessageButton.setDisable(true);
+            }
         }
     }
 
@@ -240,26 +298,41 @@ public class MessageController {
     {
         int position = -1;
 
+        if (!fieldPosition.getText().isEmpty())
+        {
+            position = Integer.parseInt(fieldPosition.getText());
+        }
+
         if (fieldReply.getText().isEmpty())
         {
             fieldReply.requestFocus();
             return;
         }
 
-        if (!fieldPosition.getText().isEmpty())
+        if (msgType == 2)
         {
-            position = Integer.parseInt(fieldPosition.getText());
-        }
+            if (fieldInst.getText().isEmpty())
+            {
+                fieldInst.requestFocus();
+                return;
+            }
 
-        if (dropOperation.getValue() != placeHolder)
-        {
-            createdMessage = new UMLMessage(fieldReply.getText(), dropOperation.getValue(), dropSender.getValue(), dropReceiver.getValue(), msgType, position);
+            createdInstance = new UMLInstance(fieldInst.getText(), dropClass.getValue());
+            createdMessage = new UMLMessage(fieldReply.getText(), null, dropSender.getValue(), createdInstance, msgType, position);
+
         }
         else
         {
-            createdMessage = new UMLMessage(fieldReply.getText(), null, dropSender.getValue(), dropReceiver.getValue(), msgType, position);
+            if (dropOperation.getValue() != placeHolder)
+            {
+                createdMessage = new UMLMessage(fieldReply.getText(), dropOperation.getValue(), dropSender.getValue(), dropReceiver.getValue(), msgType, position);
+            }
+            else
+            {
+                createdMessage = new UMLMessage(fieldReply.getText(), null, dropSender.getValue(), dropReceiver.getValue(), msgType, position);
+            }
         }
-
+        
         closeWindow();
     }
 

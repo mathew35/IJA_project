@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.plaf.TreeUI;
+
 import com.fasterxml.jackson.core.exc.*;
 import com.fasterxml.jackson.databind.*;
 import javafx.beans.value.*;
@@ -273,8 +275,8 @@ public class SequenceController
             ObjectMapper objectMapper = new ObjectMapper();
 
             this.sequenceDiagram = loadSequence(objectMapper, file);
-            displaySequence(sequenceDiagram);
-            updateGrids();
+            displaySequence(sequenceDiagram, true);
+            //updateGrids();
             createSnapshot(sequenceDiagram);
         }
     }
@@ -294,12 +296,11 @@ public class SequenceController
 
         int colCount = sequenceDiagram.instances.size();
         VBox startObj = new VBox();
+        startObj.setPadding(new Insets(0, 0, 5, 0)); //margins around the whole grid
         HBox rectangleAlignment = new HBox();
         rectangleAlignment.setPrefWidth(125);
         rectangleAlignment.setAlignment(Pos.CENTER);
 
-        
-        Line startLine = new Line(0, 0, 0, seqEditorBox.getHeight() * 0.01);
         StackPane objRectangle = new StackPane();
         Rectangle rectangle = new Rectangle(125, 50);
         Effect effect = new DropShadow(BlurType.GAUSSIAN, Color.DODGERBLUE, 5, 0.75, 0, 0);
@@ -426,7 +427,7 @@ public class SequenceController
         //objRectangle.getChildren().add(objField);
         rectangleAlignment.getChildren().addAll(objField, spacer, dropClasses);
 
-        startObj.getChildren().addAll(objRectangle, startLine);
+        startObj.getChildren().addAll(objRectangle);
 
         seqGrid.add(startObj, colCount, 0);
         objField.requestFocus();
@@ -516,10 +517,24 @@ public class SequenceController
         popUp.setResizable(false);
         popUp.showAndWait();
 
-        if (msgController.createdMessage != null)
+        if (msgController.msgType != 2)
         {
-            createMessage(msgController.createdMessage);
-            updateGrids();
+            if (msgController.createdMessage != null)
+            {
+                createMessage(msgController.createdMessage);
+                updateGrids();
+            }
+        }
+        else
+        {
+            if (msgController.createdMessage != null && msgController.createdInstance != null)
+            {
+                sequenceDiagram.instances.add(msgController.createdInstance);
+                createMessage(msgController.createdMessage);
+                sequenceDiagram.instances.get(sequenceDiagram.instances.size() - 1).addActivation(new UMLActivation(0, sequenceDiagram.messages.size() - 1, true));
+                updateGrids();
+                refreshActs();
+            }
         }
     }
 
@@ -541,7 +556,6 @@ public class SequenceController
         popUp.setResizable(false);
         popUp.showAndWait();
 
-        System.out.println("Out of the window");
         if (actController.createdAct != null)
         {
             System.out.println("Sussy baka" + actController.indexOfInstance + " ");
@@ -583,102 +597,120 @@ public class SequenceController
                 {
                     Integer fromIndex = sequenceDiagram.instances.get(i).activations.get(j).getStart();
                     Integer toIndex = sequenceDiagram.instances.get(i).activations.get(j).getEnd();
+                    boolean deactivated = sequenceDiagram.instances.get(i).activations.get(j).getDeactivation();
 
                     //System.out.println("Start: " + fromIndex + " End: " + toIndex + " Counter: " + messageCounter);
     
                     if (sequenceDiagram.instances.get(i).activations.get(j).isInBounds(messageCounter))
                     {
-                        Region regionAct = new Region();
-                        Rectangle rectangle = new Rectangle(20, 30);
-
-                        rectangle.setFill(Color.TRANSPARENT);
-
-                        regionAct.setPrefSize(20, 30);
-                        regionAct.setMaxSize(20, 30);
-                        regionAct.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(0), new Insets(0))));
-                        regionAct.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-border-style: hidden solid hidden solid;");
-                        
-                        if (fromIndex == messageCounter)
+                        if (deactivated == false)
                         {
-                            regionAct.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-border-style: solid solid hidden solid");
-                        }
-    
-                        if (toIndex == messageCounter)
-                        {
-                            regionAct.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-border-style: hidden solid solid solid;");
-                        }
-    
-                        if (fromIndex == messageCounter && toIndex == messageCounter)
-                        {
-                            regionAct.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-border-style: solid solid solid solid; -fx-fill: white;");
-                        }
-    
-                        GridPane.setValignment(regionAct, VPos.TOP);
-                        GridPane.setHalignment(regionAct, HPos.CENTER);
+                            Region regionAct = new Region();
+                            Rectangle rectangle = new Rectangle(20, 30);
 
-                        GridPane.setValignment(rectangle, VPos.TOP);
-                        GridPane.setHalignment(rectangle, HPos.CENTER);
+                            rectangle.setFill(Color.TRANSPARENT);
 
-                        rectangle.setOnMouseClicked((MouseEvent event) -> 
-                        {
-                            rectangle.requestFocus();
+                            regionAct.setPrefSize(20, 30);
+                            regionAct.setMaxSize(20, 30);
+                            regionAct.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(0), new Insets(0))));
+                            regionAct.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-border-style: hidden solid hidden solid;");
                             
-                            Node clickedNode = event.getPickResult().getIntersectedNode();
-                            if (clickedNode != seqGridAct) 
+                            if (fromIndex == messageCounter)
                             {
-                                // click on descendant node
-                                Node parent = clickedNode.getParent();
-                                while (parent != seqGridAct) 
-                                {
-                                    clickedNode = parent;
-                                    parent = clickedNode.getParent();
-                                }
-                                Integer colIndex = GridPane.getColumnIndex(clickedNode);
-                                Integer rowIndex = GridPane.getRowIndex(clickedNode);
-                                System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
-
-                                colFocus = colIndex;
-                                rowFocus = rowIndex;
+                                regionAct.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-border-style: solid solid hidden solid");
                             }
-                        });
-
-                        rectangle.focusedProperty().addListener(new ChangeListener<Boolean>()
-                        {
-                            @Override
-                            public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue)
+        
+                            if (toIndex == messageCounter)
                             {
-                                if (newPropertyValue)
+                                regionAct.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-border-style: hidden solid solid solid;");
+                            }
+        
+                            if (fromIndex == messageCounter && toIndex == messageCounter)
+                            {
+                                regionAct.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-border-style: solid solid solid solid; -fx-fill: white;");
+                            }
+        
+                            GridPane.setValignment(regionAct, VPos.TOP);
+                            GridPane.setHalignment(regionAct, HPos.CENTER);
+
+                            GridPane.setValignment(rectangle, VPos.TOP);
+                            GridPane.setHalignment(rectangle, HPos.CENTER);
+
+                            rectangle.setOnMouseClicked((MouseEvent event) -> 
+                            {
+                                rectangle.requestFocus();
+                                
+                                Node clickedNode = event.getPickResult().getIntersectedNode();
+                                if (clickedNode != seqGridAct) 
                                 {
-                                    rectangle.setOnKeyPressed(new EventHandler<KeyEvent>() 
+                                    // click on descendant node
+                                    Node parent = clickedNode.getParent();
+                                    while (parent != seqGridAct) 
                                     {
-                                        @Override
-                                        public void handle(KeyEvent ke) 
-                                        {
-                                            if (ke.getCode().equals(KeyCode.DELETE)) 
-                                            {
-                                                UMLInstance instace = sequenceDiagram.instances.get(colFocus);
-                                                List<UMLActivation> instActivations = instace.getActivations();
+                                        clickedNode = parent;
+                                        parent = clickedNode.getParent();
+                                    }
+                                    Integer colIndex = GridPane.getColumnIndex(clickedNode);
+                                    Integer rowIndex = GridPane.getRowIndex(clickedNode);
+                                    System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
 
-                                                for (int i = 0; i < instActivations.size(); i++)
-                                                {
-                                                    if (rowFocus >= instActivations.get(i).getStart() && rowFocus <= instActivations.get(i).getEnd())
-                                                    {
-                                                        instace.removeActivation(instActivations.get(i));
-                                                        i--;
-                                                    }
-                                                }
-
-                                                updateGrids();
-                                                createSnapshot(sequenceDiagram);
-                                            }
-                                        }
-                                    });
+                                    colFocus = colIndex;
+                                    rowFocus = rowIndex;
                                 }
+                            });
+
+                            rectangle.focusedProperty().addListener(new ChangeListener<Boolean>()
+                            {
+                                @Override
+                                public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue, Boolean newPropertyValue)
+                                {
+                                    if (newPropertyValue)
+                                    {
+                                        rectangle.setOnKeyPressed(new EventHandler<KeyEvent>() 
+                                        {
+                                            @Override
+                                            public void handle(KeyEvent ke) 
+                                            {
+                                                if (ke.getCode().equals(KeyCode.DELETE)) 
+                                                {
+                                                    UMLInstance instace = sequenceDiagram.instances.get(colFocus);
+                                                    List<UMLActivation> instActivations = instace.getActivations();
+
+                                                    for (int i = 0; i < instActivations.size(); i++)
+                                                    {
+                                                        if (rowFocus >= instActivations.get(i).getStart() && rowFocus <= instActivations.get(i).getEnd())
+                                                        {
+                                                            instace.removeActivation(instActivations.get(i));
+                                                            i--;
+                                                        }
+                                                    }
+
+                                                    updateGrids();
+                                                    createSnapshot(sequenceDiagram);
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+        
+                            seqGridAct.add(regionAct, i, messageCounter);
+                            seqGridAct.add(rectangle, i, messageCounter);
+                        }
+                        else
+                        {
+                            Rectangle rectangle = new Rectangle(20, 30);
+                            rectangle.setFill(Color.web("f4f4f4"));
+                            GridPane.setValignment(rectangle, VPos.TOP);
+                            GridPane.setHalignment(rectangle, HPos.CENTER);
+
+                            if (toIndex == messageCounter)
+                            {
+                                rectangle.setHeight(15);
                             }
-                        });
-    
-                        seqGridAct.add(regionAct, i, messageCounter);
-                        seqGridAct.add(rectangle, i, messageCounter);
+
+                            seqGridAct.add(rectangle, i, messageCounter);
+                        }
                     }
                 }
                 messageCounter++;
@@ -695,7 +727,7 @@ public class SequenceController
     
 
     @FXML
-    public void displaySequence(SequenceDiagram diagram)
+    public void displaySequence(SequenceDiagram diagram, boolean loading)
     {
         sequenceDiagram = diagram;
 
@@ -713,7 +745,7 @@ public class SequenceController
         for (int i = 0; i < sequenceDiagram.instances.size(); i++)
         {
             VBox startObj = new VBox();
-            Line startLine = new Line(0, 0, 0, seqEditorBox.getHeight() * 0.01);
+            startObj.setPadding(new Insets(0, 0, 5, 0)); //margins around the whole grid
             StackPane objRectangle = new StackPane();
             Rectangle rectangle = new Rectangle(125, 50);
             Effect effect = new DropShadow(BlurType.GAUSSIAN, Color.DODGERBLUE, 5, 0.75, 0, 0);
@@ -798,7 +830,7 @@ public class SequenceController
             
             objRectangle.getChildren().add(new Text(sequenceDiagram.instances.get(i).instancename + ":" + sequenceDiagram.instances.get(i).asgclass.getName()));
 
-            startObj.getChildren().addAll(objRectangle, startLine);
+            startObj.getChildren().addAll(objRectangle);
 
             seqGrid.add(startObj, i, 0);
 
@@ -813,15 +845,21 @@ public class SequenceController
         {
             UMLMessage message = sequenceDiagram.messages.get(i);
             int msgCount = sequenceDiagram.messages.indexOf(message);
-            int sendIndex = sequenceDiagram.getIndexOfInstace(message.sender.instancename);
-            int recIndex = sequenceDiagram.getIndexOfInstace(message.receiver.instancename);
 
+            int sendIndex = sequenceDiagram.instances.indexOf(message.sender);
+            int recIndex = sequenceDiagram.instances.indexOf(message.receiver);
+
+            if (loading == true)
+            {
+                sendIndex = sequenceDiagram.getIndexOfInstace(message.sender.instancename);
+                recIndex = sequenceDiagram.getIndexOfInstace(message.receiver.instancename);
+            }
+            
             Label messageLabel = new Label();
 
             GridPane.setValignment(messageLabel, VPos.TOP);
             GridPane.setHalignment(messageLabel, HPos.CENTER);
 
-            // TODO
             if (message.operation != null)
             {    
                 messageLabel.setText(message.operation.getName() + "(" + message.message +")");
@@ -836,6 +874,7 @@ public class SequenceController
             if (sendIndex > recIndex)
             {
                 arrowWidth = -arrowWidth;
+                System.out.println(arrowWidth);
             }
 
             if (message.order == -1 || msgCount == 0)
@@ -1020,6 +1059,8 @@ public class SequenceController
         int recIndex = sequenceDiagram.instances.indexOf(message.receiver);
         Label messageLabel = new Label();
 
+        System.out.println("sendIndex: " + sendIndex + "recIndex: " + recIndex);
+
         GridPane.setValignment(messageLabel, VPos.TOP);
         GridPane.setHalignment(messageLabel, HPos.CENTER);
 
@@ -1147,7 +1188,7 @@ public class SequenceController
                 }
             }
 
-            if (message.transmition == 0 || message.transmition == 1 || message.transmition == 2)
+            if (message.transmition != 2)
             {
                 UMLArrow arrow = new UMLArrow();
                 arrow.setStartX(0);
@@ -1172,6 +1213,8 @@ public class SequenceController
         }
         else
         {
+            System.out.println("1stage sendIndex: " + sendIndex + " recIndex: " + recIndex);
+
             if (Math.abs(sendIndex - recIndex) != 1)
             {
                 for (int i = sendIndex; i > recIndex + 1; i--)
@@ -1185,7 +1228,8 @@ public class SequenceController
                     GridPane.setValignment(newLine, VPos.CENTER); 
                 }
             }
-            if (message.transmition == 0 || message.transmition == 1 || message.transmition == 2)
+
+            if (message.transmition != 2)
             {
                 UMLArrow arrow = new UMLArrow();
                 arrow.setStartX(0);
@@ -1197,6 +1241,8 @@ public class SequenceController
             }
             else
             {
+                System.out.println("2stage sendIndex: " + sendIndex + " recIndex: " + recIndex);
+
                 UMLArrowReply arrow = new UMLArrowReply();
                 arrow.setStartX(0);
                 arrow.setStartY(0);
@@ -1328,6 +1374,6 @@ public class SequenceController
         seqActBox.getChildren().remove(seqGridAct);
         seqGridAct = new GridPane();
 
-        displaySequence(sequenceDiagram);
+        displaySequence(sequenceDiagram, false);
     }
 }

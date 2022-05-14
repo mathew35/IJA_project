@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="391.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.MessageController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="523.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.MessageController">
    <children>
       <HBox alignment="CENTER_LEFT" prefHeight="46.0" prefWidth="320.0">
          <children>
@@ -87,7 +87,7 @@
             <Line endX="160.09291076660156" endY="-0.20710371434688568" startX="444.1858215332031" startY="-0.20659637451171875" stroke="#868686" />
          </children>
       </HBox>
-      <HBox alignment="CENTER_LEFT" prefHeight="53.0" prefWidth="300.0">
+      <HBox fx:id="other1" alignment="CENTER_LEFT" prefHeight="53.0" prefWidth="320.0">
          <children>
             <Label prefHeight="18.0" prefWidth="69.0" text="Operation:">
                <HBox.margin>
@@ -97,7 +97,7 @@
             <ComboBox fx:id="dropOperation" disable="true" onAction="#loadMessage" prefHeight="26.0" prefWidth="228.0" />
          </children>
       </HBox>
-      <HBox alignment="CENTER_LEFT" prefHeight="53.0" prefWidth="300.0">
+      <HBox fx:id="other2" alignment="CENTER_LEFT" prefHeight="53.0" prefWidth="300.0">
          <children>
             <Label fx:id="messageLabel" prefHeight="18.0" prefWidth="69.0" text="Message:">
                <HBox.margin>
@@ -107,7 +107,32 @@
             <TextField fx:id="fieldReply" disable="true" prefHeight="26.0" prefWidth="227.0" />
          </children>
       </HBox>
-      <HBox alignment="CENTER_RIGHT" prefHeight="53.0" prefWidth="300.0">
+      <HBox alignment="CENTER" prefHeight="0.0" prefWidth="300.0">
+         <children>
+            <Line endX="160.09291076660156" endY="-0.20710371434688568" startX="444.1858215332031" startY="-0.20659637451171875" stroke="#868686" />
+         </children>
+      </HBox>
+      <HBox fx:id="create1" alignment="CENTER_LEFT" prefHeight="53.0" prefWidth="300.0">
+         <children>
+            <Label prefHeight="18.0" prefWidth="86.0" text="Instance Name:">
+               <HBox.margin>
+                  <Insets left="10.0" right="10.0" />
+               </HBox.margin>
+            </Label>
+            <TextField fx:id="fieldInst" disable="true" prefHeight="26.0" prefWidth="201.0" />
+         </children>
+      </HBox>
+      <HBox fx:id="create2" alignment="CENTER_LEFT" prefHeight="53.0" prefWidth="300.0">
+         <children>
+            <Label prefHeight="18.0" prefWidth="86.0" text="Instance Class:">
+               <HBox.margin>
+                  <Insets left="10.0" right="10.0" />
+               </HBox.margin>
+            </Label>
+            <ComboBox fx:id="dropClass" disable="true" onAction="#enableMessage" prefHeight="26.0" prefWidth="202.0" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_RIGHT" prefHeight="53.0" prefWidth="320.0">
          <children>
             <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeWindow" text="Cancel">
                <HBox.margin>
