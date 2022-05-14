@@ -724,6 +724,7 @@ public class EditorController extends MenuBarController implements Initializable
         SequenceController controller = loader.getController();
 
         sequenceControllers.add(controller);
+        updateSequenceControllers();
 
         tab.setOnCloseRequest(e -> {
             

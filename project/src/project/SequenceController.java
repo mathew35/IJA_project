@@ -35,6 +35,7 @@ public class SequenceController
     GridPane seqGridAct = new GridPane();
     double msgWidth;
     int colFocus, rowFocus;
+    EditorController editorStatic;
 
     ArrayList<SequenceDiagram> snapshots = new ArrayList<SequenceDiagram>();
     int snapshotPos = -1;
@@ -93,6 +94,7 @@ public class SequenceController
     public void setClassDiagram(ClassDiagram cDiagram)
     {
         sequenceDiagram.deepCopy(cDiagram);
+        System.out.println(sequenceDiagram.getClasses());
     }
 
     @FXML
@@ -268,7 +270,9 @@ public class SequenceController
 
             ObjectMapper objectMapper = new ObjectMapper();
 
-            this.sequenceDiagram = loadSequence(objectMapper, file);
+            this.sequenceDiagram.messages = loadSequence(objectMapper, file).messages;
+            this.sequenceDiagram.instances = loadSequence(objectMapper, file).instances;
+
             displaySequence(sequenceDiagram, true);
             createSnapshot(sequenceDiagram);
         }
@@ -316,7 +320,6 @@ public class SequenceController
         {
             rectangle.requestFocus();
             Node clickedNode = event.getPickResult().getIntersectedNode();
-            System.out.println(clickedNode);
             if (clickedNode != seqGrid) 
             {
                 // click on descendant node
@@ -573,7 +576,6 @@ public class SequenceController
 
         if (actController.createdAct != null)
         {
-            System.out.println("Sussy baka" + actController.indexOfInstance + " ");
             sequenceDiagram.instances.get(actController.indexOfInstance).addActivation(actController.createdAct);
             createSnapshot(sequenceDiagram);
             refreshActs();
@@ -769,7 +771,6 @@ public class SequenceController
             {
                 rectangle.requestFocus();
                 Node clickedNode = event.getPickResult().getIntersectedNode();
-                System.out.println(clickedNode);
                 if (clickedNode != seqGrid) 
                 {
                     // click on descendant node
@@ -872,7 +873,6 @@ public class SequenceController
 
             if (loading == true)
             {
-                System.out.println("2 sendIndex: " + sendIndex + " recIndex: " + recIndex);
                 sendIndex = sequenceDiagram.getIndexOfInstace(message.sender);
                 recIndex = sequenceDiagram.getIndexOfInstace(message.receiver);
             }
@@ -896,7 +896,6 @@ public class SequenceController
             if (sendIndex > recIndex)
             {
                 arrowWidth = -arrowWidth;
-                System.out.println(arrowWidth);
             }
 
             if (message.order == -1 || msgCount == 0)
@@ -1183,7 +1182,7 @@ public class SequenceController
         }
         else
         {
-            System.out.println(message.order);
+            System.out.println("Message order: " + message.order);
             seqGridMsgs.getRowConstraints().add(sequenceDiagram.messages.size(), new RowConstraints(30));
             for (Node child : seqGridMsgs.getChildren()) 
             {
