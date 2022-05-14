@@ -98,37 +98,24 @@ public class SequenceController
         System.out.println(sequenceDiagram.getClasses());
     }
 
-    public void changeInOperation(UMLClass oldClass, UMLClass newClass)
-    {
-
+    public void changeInOperation(UMLOperation oldOper, UMLOperation newOper, UMLClass uclass){
+        for(UMLClass i:sequenceDiagram.getClasses()){
+            if(i.getName().equals(uclass.getName())){
+                for(UMLOperation j:i.getOperations()){
+                        if(j.getName().equals(oldOper.getName())){
+                            j.rename(newOper.getName());
+                            break;
+                        }
+                }
+                break;
+            }
+        }
     }
-
+        
     public void changeInClass(UMLClass oldClass, UMLClass newClass){
         for(UMLClass i:sequenceDiagram.getClasses()){
             if(i.getName().equals(oldClass.getName())){
                 i.rename(newClass.getName());
-                //TODO split into new function changeInOperation
-                for(UMLOperation j:i.getOperations()){
-                    for(UMLOperation k:oldClass.getOperations()){
-                        if(j.getName().equals(k.getName())){
-                            boolean found = false;
-                            for(UMLOperation l:newClass.getOperations()){
-                                if(j.getName().equals(l.getName())){
-                                    found = true;
-                                }
-                            }
-                            if(!found){
-                                if(oldClass.getOperations().size() == newClass.getOperations().size()){
-                                    j.rename("renamed");
-                                }
-                                else{
-                                    j.rename("renamed/removed");
-                                }
-                            }
-                        }
-                    }
-                }
-
                 break;
             }
         }
