@@ -175,12 +175,12 @@ public class MessageController {
     {
         getMsgType();
 
-        if (!dropSender.getSelectionModel().isEmpty())
+        if (!dropReceiver.getSelectionModel().isEmpty())
         {
             if (msgType == 0 || msgType == 1)
             {
                 dropOperation.getItems().clear();
-                dropOperation.getItems().addAll(dropSender.getValue().asgclass.getOperations());
+                dropOperation.getItems().addAll(dropReceiver.getValue().asgclass.getOperations());
                 dropOperation.getItems().add(placeHolder);
                 dropOperation.getSelectionModel().select(placeHolder);
             }
@@ -259,12 +259,12 @@ public class MessageController {
             dropReceiver.setDisable(false);
         }
 
-        if (!dropSender.getSelectionModel().isEmpty())
+        if (!dropReceiver.getSelectionModel().isEmpty())
         {
             if (msgType == 0 || msgType == 1)
             {
                 dropOperation.getItems().clear();
-                dropOperation.getItems().addAll(dropSender.getValue().asgclass.getOperations());
+                dropOperation.getItems().addAll(dropReceiver.getValue().asgclass.getOperations());
                 dropOperation.getItems().add(placeHolder);
                 dropOperation.getSelectionModel().select(placeHolder);
             }

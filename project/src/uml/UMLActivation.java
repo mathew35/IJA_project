@@ -30,6 +30,22 @@ public class UMLActivation{
         return this.end;
     }
 
+    public void setEnd(int newEnd)
+    {
+        this.end = newEnd;
+    }
+
+    public void setStart(int newStart)
+    {
+        if (newStart < 0)
+        {
+            this.start = 0;
+            return;
+        }
+
+        this.start = newStart;
+    }
+
     public boolean getDeactivation()
     {
         return this.deactivation;
