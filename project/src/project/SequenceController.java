@@ -309,14 +309,105 @@ public class SequenceController
             ObjectMapper objectMapper = new ObjectMapper();
 
             SequenceDiagram sequenceDiagramLoad = loadSequence(objectMapper, file);
-            //sequenceDiagram = 
+
+            sequenceDiagram.instances = sequenceDiagramLoad.instances;
+            sequenceDiagram.messages = sequenceDiagramLoad.messages;
 
             displaySequence(sequenceDiagram, true);
             createSnapshot(sequenceDiagram);
+            checkIncon();
         }
     }
 
-    @FXML // Done for Instances
+    private void checkIncon()
+    {
+        List<UMLClass> classes = sequenceDiagram.getClasses();
+
+        for (int i = 0; i < sequenceDiagram.instances.size(); i++)
+        {
+            boolean found = false;
+            for (int j = 0; j < classes.size(); j++)
+            {
+                if (classes.get(j).getName().equals(sequenceDiagram.instances.get(i).asgclass.getName()))
+                {
+                    found = true;
+                }
+            }
+
+            if (found == false)
+            {
+                for (int j = 0; j < seqGrid.getRowCount(); j++)
+                {
+                    System.out.println("i: " + i + " j: " + j + " = " + (i + j * sequenceDiagram.instances.size()));
+                    System.out.println(seqGrid.getChildren().get(i + j * sequenceDiagram.instances.size()));
+            
+                    for (Node node : seqGrid.getChildren()) 
+                    {
+                        if (GridPane.getColumnIndex(node) == i && GridPane.getRowIndex(node) == j) 
+                        {
+                            if (node instanceof VBox)
+                            {
+                                StackPane stacked = (StackPane)((VBox)node).getChildren().get(0);
+                                ((Rectangle)stacked.getChildren().get(0)).setStroke(Color.RED);
+                                ((Text)stacked.getChildren().get(1)).setFill(Color.RED);
+                            }
+
+                            if (node instanceof Line)
+                            {
+                                ((Line)node).setStroke(Color.RED);
+                            }
+                        }
+                    }
+                }
+
+                Integer messageCounter = 0;
+                Integer maxDraw = seqGridAct.getRowCount();
+
+                while (messageCounter < maxDraw + 1)
+                {
+                    System.out.println("Counter: " + messageCounter);
+                    for (int j = 0; j < sequenceDiagram.instances.get(i).activations.size(); j++)
+                    {
+                        Integer fromIndex = sequenceDiagram.instances.get(i).activations.get(j).getStart();
+                        Integer toIndex = sequenceDiagram.instances.get(i).activations.get(j).getEnd();
+                        boolean deactivated = sequenceDiagram.instances.get(i).activations.get(j).getDeactivation();
+
+                        for (Node node : seqGridAct.getChildren()) 
+                        {
+                            if (GridPane.getColumnIndex(node) == i && GridPane.getRowIndex(node) == messageCounter) 
+                            {
+                                if (deactivated == false)
+                                {
+                                    if (node instanceof Region)
+                                    {
+                                        ((Region)node).setStyle("-fx-border-color: red; -fx-border-width: 1; -fx-border-style: hidden solid hidden solid;");
+                                        
+                                        if (fromIndex == messageCounter)
+                                        {
+                                            ((Region)node).setStyle("-fx-border-color: red; -fx-border-width: 1; -fx-border-style: solid solid hidden solid");
+                                        }
+                    
+                                        if (toIndex == messageCounter)
+                                        {
+                                            ((Region)node).setStyle("-fx-border-color: red; -fx-border-width: 1; -fx-border-style: hidden solid solid solid;");
+                                        }
+                    
+                                        if (fromIndex == messageCounter && toIndex == messageCounter)
+                                        {
+                                            ((Region)node).setStyle("-fx-border-color: red; -fx-border-width: 1; -fx-border-style: solid solid solid solid; -fx-fill: white;");
+                                        }
+                                    }
+                                }                                    
+                            }
+                        }
+                    }
+                    messageCounter++;
+                }
+            }
+        }
+    }
+
+    @FXML
     private void addSeqObj()
     {
         if (addSeqObjFirst != null)
@@ -416,7 +507,7 @@ public class SequenceController
         startObj.setAlignment(Pos.CENTER);
 
         rectangle.setStroke(Color.BLACK);
-        rectangle.setFill(Color.TRANSPARENT);
+        rectangle.setFill(Color.WHITE);
 
         objRectangle.getChildren().add(rectangle);
         objRectangle.getChildren().add(rectangleAlignment);
@@ -470,15 +561,11 @@ public class SequenceController
             seqGrid.getRowConstraints().add(new RowConstraints(-1, -1, -1, Priority.ALWAYS, VPos.CENTER, false));
         }
         
-        /// Columns for acts
         seqGridAct.getColumnConstraints().add(new ColumnConstraints(-1, -1, -1, Priority.ALWAYS, HPos.CENTER, false));
         for (int i = 0; i < seqGridAct.getColumnCount(); i++)
         {
             seqGridAct.getColumnConstraints().set(i, new ColumnConstraints(seqEditorBox.getWidth()/seqGrid.getColumnCount()));
         }
-
-        // Here
-        //objRectangle.getChildren().add(objField);
         rectangleAlignment.getChildren().addAll(objField, spacer, dropClasses);
 
         startObj.getChildren().addAll(objRectangle);
@@ -868,9 +955,7 @@ public class SequenceController
             startObj.setAlignment(Pos.CENTER);
 
             rectangle.setStroke(Color.BLACK);
-            rectangle.setFill(Color.TRANSPARENT);
-
-            objRectangle.getChildren().add(rectangle);
+            rectangle.setFill(Color.WHITE);
 
             seqGrid.getColumnConstraints().add(new ColumnConstraints(-1, -1, -1, Priority.ALWAYS, HPos.CENTER, false));
             if (i == 0)
@@ -885,7 +970,9 @@ public class SequenceController
                 seqGridAct.getColumnConstraints().set(j, new ColumnConstraints(seqEditorBox.getWidth()/seqGrid.getColumnCount()));
             }
             
-            objRectangle.getChildren().add(new Text(sequenceDiagram.instances.get(i).instancename + ":" + sequenceDiagram.instances.get(i).asgclass.getName()));
+            objRectangle.getChildren().addAll(rectangle, new Text(sequenceDiagram.instances.get(i).instancename + ":" + sequenceDiagram.instances.get(i).asgclass.getName()));
+
+            //objRectangle.getChildren().add(rectangle);
 
             startObj.getChildren().addAll(objRectangle);
 
@@ -1205,7 +1292,6 @@ public class SequenceController
             }
         });
 
-        // TODO
         if (message.operation != null)
         {    
             messageLabel.setText(message.operation.getName() + "(" + message.message +")");
