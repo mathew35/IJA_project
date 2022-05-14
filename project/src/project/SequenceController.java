@@ -30,6 +30,7 @@ import uml.*;
 public class SequenceController
 {
     SequenceDiagram sequenceDiagram = new SequenceDiagram();
+    ClassDiagram classDiagram = new ClassDiagram();
     GridPane seqGrid = new GridPane();
     GridPane seqGridMsgs = new GridPane();
     GridPane seqGridAct = new GridPane();
@@ -97,6 +98,11 @@ public class SequenceController
         System.out.println(sequenceDiagram.getClasses());
     }
 
+    public void changeInOperation(UMLClass oldClass, UMLClass newClass)
+    {
+
+    }
+
     public void changeInClass(UMLClass oldClass, UMLClass newClass){
         for(UMLClass i:sequenceDiagram.getClasses()){
             if(i.getName().equals(oldClass.getName())){
@@ -126,9 +132,7 @@ public class SequenceController
                 break;
             }
         }
-        updateGrids();
-        updateGridMsg();
-        
+        updateGrids();        
     }
 
     @FXML
@@ -304,8 +308,8 @@ public class SequenceController
 
             ObjectMapper objectMapper = new ObjectMapper();
 
-            this.sequenceDiagram.messages = loadSequence(objectMapper, file).messages;
-            this.sequenceDiagram.instances = loadSequence(objectMapper, file).instances;
+            SequenceDiagram sequenceDiagramLoad = loadSequence(objectMapper, file);
+            sequenceDiagram = 
 
             displaySequence(sequenceDiagram, true);
             createSnapshot(sequenceDiagram);
