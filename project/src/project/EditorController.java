@@ -24,6 +24,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.shape.Line;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.WindowEvent;
@@ -346,7 +347,7 @@ public class EditorController extends MenuBarController implements Initializable
      * TODO
      */
     public void onUpdateClick() {
-        if (!ClassName.getText().isEmpty()){
+        if (ClassName.getText() != null && !ClassName.getText().isEmpty()){
             UMLClass oldClass = new UMLClass();
             if(FocusedClass!=null){
                 oldClass.rename(FocusedClass.getName());
@@ -628,17 +629,28 @@ public class EditorController extends MenuBarController implements Initializable
                 columns = i.size();
             }
         }
+        ArrayList<ArrayList<VBox>> classBoxes = new ArrayList<ArrayList<VBox>>();
+        int classBoxesPointer = -1;
         for(ArrayList<UMLClass> i:LeveledClasses){
+            classBoxes.add(new ArrayList<VBox>());
+            classBoxesPointer++;
             for(UMLClass uclass:i){
-                drawClass(uclass,i.indexOf(uclass)+1,i.size(),LeveledClasses.indexOf(i)+1,maxLevel);
+                classBoxes.get(classBoxesPointer).add(
+                    drawClass(uclass,i.indexOf(uclass)+1,i.size(),LeveledClasses.indexOf(i)+1,maxLevel)
+                );
             }
         }
-
+        ClassPaneDiag.getChildren().removeAll(ClassPaneDiag.getChildren());
+        for(UMLClass i:classDiagram.getClasses()){
+            if(i.getParent()!=null){
+                drawRelations(classBoxes,i);
+            }
+        }
     }
     /**
      * TODO
      */
-    public void drawClass(UMLClass uclass,int column,int allcolumns,int level,int maxlevel){
+    public VBox drawClass(UMLClass uclass,int column,int allcolumns,int level,int maxlevel){
         double posX = ClassPaneText.getPrefWidth()/(1+allcolumns)*column;
         double posY = ClassPaneText.getPrefHeight()/(1+maxlevel)*level;
         VBox rect = new VBox();
@@ -646,6 +658,7 @@ public class EditorController extends MenuBarController implements Initializable
         Separator sep = new Separator();
         ScrollPane contentScroll = new ScrollPane();
         VBox contentBox = new VBox();
+        rect.setId(uclass.getName());
         rect.setMaxHeight(80);
         rect.setPrefWidth(180);
         rect.setLayoutX(posX-rect.getPrefWidth()/2);
@@ -687,6 +700,45 @@ public class EditorController extends MenuBarController implements Initializable
         }
         // contentBox.getChildren().add()
         ClassPaneText.getChildren().add(rect);
+        return rect;
+    }
+    /**
+     * TODO
+     */
+    public void drawRelations(ArrayList<ArrayList<VBox>> VBs, UMLClass uclass){
+        String parent = uclass.getParent().getName();
+        String child = uclass.getName();
+        VBox VBparent = null;
+        VBox VBchild = null;
+        for(ArrayList<VBox> arrvb:VBs){
+            for(VBox vb:arrvb){
+                if(vb.getId().equals(child)){
+                    VBchild = vb;
+                }
+                if(vb.getId().equals(parent)){
+                    VBparent = vb;
+                }
+            }
+        }
+        System.out.println(VBchild.getBoundsInParent());
+        System.out.println(VBchild.getLayoutX());
+        System.out.println(VBchild.getLayoutY());
+        Line line = new Line();
+        line.setStartX(VBchild.getLayoutX()+VBchild.getPrefWidth()/2);
+        line.setStartY(VBchild.getLayoutY());
+        line.setEndX(VBchild.getLayoutX()+VBchild.getPrefWidth()/2);
+        line.setEndY(VBchild.getLayoutY()-(VBchild.getLayoutY()-VBparent.getLayoutY())/4);
+        Line line2 = new Line();
+        line2.setStartX(line.getEndX());
+        line2.setStartY(line.getEndY());
+        line2.setEndX(VBparent.getLayoutX()+VBparent.getPrefWidth()/2);
+        line2.setEndY(line.getEndY());
+        Line line3 = new Line();
+        line3.setStartX(line2.getEndX());
+        line3.setStartY(line2.getEndY());
+        line3.setEndX(line2.getEndX());
+        line3.setEndY(VBparent.getLayoutY()+VBparent.getHeight()+15);
+        ClassPaneDiag.getChildren().addAll(line,line2,line3);
     }
     /**
      * TODO
