@@ -147,9 +147,10 @@ public class EditorController extends MenuBarController implements Initializable
     }
     public void setClassDiagram(ClassDiagram diag){
         classDiagram = diag;
-        updateClassTab();
         createSnapshot(classDiagram);
+        classDiagram.deepCopy(snapshots.get(snapshotPos));
         updateSequenceControllers();
+        refresh();
     }   
 
     //source: https://docs.oracle.com/javafx/2/ui_controls/tree-view.htm
@@ -369,8 +370,13 @@ public class EditorController extends MenuBarController implements Initializable
                     return;
                 }
                 FocusedClass.rename(ClassName.getText()); 
-                itemClass = FocusedClass;  
+                updateClassTab();
+                updateAttrTree(); 
+                updateSequenceClass(oldClass, FocusedClass);
+                createSnapshot(classDiagram);
+                updateSequenceControllers();
                 change = true;             
+                return;
             }
             TreeItem<String> oldRoot = AttributesTree.getRoot();
             TreeItem<String> TreeAttributes = oldRoot.getChildren().get(0);

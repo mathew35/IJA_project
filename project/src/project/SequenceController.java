@@ -98,7 +98,37 @@ public class SequenceController
     }
 
     public void changeInClass(UMLClass oldClass, UMLClass newClass){
-        // for(UMLClass i:sequenceDiagram.getClasses()
+        for(UMLClass i:sequenceDiagram.getClasses()){
+            if(i.getName().equals(oldClass.getName())){
+                i.rename(newClass.getName());
+                //TODO split into new function changeInOperation
+                for(UMLOperation j:i.getOperations()){
+                    for(UMLOperation k:oldClass.getOperations()){
+                        if(j.getName().equals(k.getName())){
+                            boolean found = false;
+                            for(UMLOperation l:newClass.getOperations()){
+                                if(j.getName().equals(l.getName())){
+                                    found = true;
+                                }
+                            }
+                            if(!found){
+                                if(oldClass.getOperations().size() == newClass.getOperations().size()){
+                                    j.rename("renamed");
+                                }
+                                else{
+                                    j.rename("renamed/removed");
+                                }
+                            }
+                        }
+                    }
+                }
+
+                break;
+            }
+        }
+        updateGrids();
+        updateGridMsg();
+        
     }
 
     @FXML
