@@ -739,28 +739,28 @@ public class EditorController extends MenuBarController implements Initializable
         int numTabs = tabPane.getTabs().size();
         Tab tab = new Tab("Sequence Diagram "+(numTabs-1));
 
-        FXMLLoader loader = new FXMLLoader(Main.class.getClassLoader().getResource("sequence.fxml"));
-        tab.setContent(loader.load());
+        if (numTabs > 1)
+        {
+            FXMLLoader loader = new FXMLLoader(Main.class.getClassLoader().getResource("sequence.fxml"));
+            tab.setContent(loader.load());
 
-        SequenceController controller = loader.getController();
+            SequenceController controller = loader.getController();
 
-        sequenceControllers.add(controller);
-        updateSequenceControllers();
+            sequenceControllers.add(controller);
+            updateSequenceControllers();
 
-        tab.setOnCloseRequest(e -> {
+            tab.setOnCloseRequest(e -> {
             
-            Alert alert = new Alert(AlertType.CONFIRMATION, "Do you want to save sequence diagram?",  ButtonType.NO, ButtonType.YES);
-            alert.showAndWait();
-
-            if (alert.getResult() == ButtonType.YES) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                controller.exportSequence(objectMapper);
-            }
-        });
-
-        tab.setOnClosed(e -> {
-            sequenceControllers.remove(tabPane.getSelectionModel().getSelectedIndex() - 2);
-        });
+                Alert alert = new Alert(AlertType.CONFIRMATION, "Do you want to save sequence diagram?",  ButtonType.NO, ButtonType.YES);
+                alert.showAndWait();
+    
+                if (alert.getResult() == ButtonType.YES) {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    controller.exportSequence(objectMapper);
+                }
+                sequenceControllers.remove(tabPane.getSelectionModel().getSelectedIndex() - 2);
+            });
+        }
 
         tab.setClosable(true);
 
