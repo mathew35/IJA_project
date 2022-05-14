@@ -749,8 +749,8 @@ public class EditorController extends MenuBarController implements Initializable
             if (alert.getResult() == ButtonType.YES) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 controller.exportSequence(objectMapper);
-                sequenceControllers.remove(tabPane.getSelectionModel().getSelectedIndex() - 2);
             }
+            sequenceControllers.remove(tabPane.getSelectionModel().getSelectedIndex() - 2);
         });
 
         tab.setClosable(true);
