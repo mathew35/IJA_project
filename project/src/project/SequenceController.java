@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.plaf.TreeUI;
-
 import com.fasterxml.jackson.core.exc.*;
 import com.fasterxml.jackson.databind.*;
 import javafx.beans.value.*;
@@ -90,16 +88,11 @@ public class SequenceController
 
         undoButton.setTooltip(new Tooltip("Undo"));
         redoButton.setTooltip(new Tooltip("Redo"));
+    }
 
-        UMLClass cls = sequenceDiagram.createClass("Main");
-        UMLClass cls2 = sequenceDiagram.createClass("ClassDiagram");
-        UMLClass cls3 = sequenceDiagram.createClass("UMLClass");
-        UMLClass cls4 = sequenceDiagram.createClass("UMLAttribute");
-        UMLOperation op1 = UMLOperation.create("method1", sequenceDiagram.classifierForName("void"), 
-        new UMLAttribute("arg1", sequenceDiagram.classifierForName("C1")),
-        new UMLAttribute("arg2", sequenceDiagram.classifierForName("String")));
-
-        cls.addOperation(op1);
+    public void setClassDiagram(ClassDiagram cDiagram)
+    {
+        sequenceDiagram = (SequenceDiagram)cDiagram.deepCopy();
     }
 
     @FXML
