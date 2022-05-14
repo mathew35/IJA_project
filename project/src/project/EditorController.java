@@ -756,6 +756,9 @@ public class EditorController extends MenuBarController implements Initializable
                 ObjectMapper objectMapper = new ObjectMapper();
                 controller.exportSequence(objectMapper);
             }
+        });
+
+        tab.setOnClosed(e -> {
             sequenceControllers.remove(tabPane.getSelectionModel().getSelectedIndex() - 2);
         });
 
