@@ -9,7 +9,6 @@ package project;
 
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import uml.ClassDiagram;
 import uml.SequenceDiagram;
 
@@ -22,14 +21,8 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.*;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Alert.AlertType;
 
 
 /**

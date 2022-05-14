@@ -20,24 +20,18 @@ import java.io.IOException;
 import java.net.URL;
 
 import javafx.fxml.*;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.*;
 import javafx.scene.input.KeyCode;
-import javafx.event.Event;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.WindowEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 
-import javafx.scene.shape.*;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import javafx.scene.text.TextAlignment;
-import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.geometry.VPos;
 import javafx.geometry.Pos;
 
 import uml.*;
@@ -171,8 +165,8 @@ public class EditorController extends MenuBarController implements Initializable
                                 removeMenu.getItems().add(new MenuItem(i.getValue()));
                             }
                             for(MenuItem i:removeMenu.getItems()){
-                                i.setOnAction(new EventHandler(){
-                                    public void handle(Event t){
+                                i.setOnAction(new EventHandler<ActionEvent>(){
+                                    public void handle(ActionEvent t){
                                         TreeItem<String> actItem = getTreeItem();
                                         for(TreeItem<String> j:actItem.getChildren()){
                                             if(j.getValue().equals(i.getText())){
@@ -194,16 +188,16 @@ public class EditorController extends MenuBarController implements Initializable
                             }
                 }
             });
-            addMenuItem.setOnAction(new EventHandler() {
-                public void handle(Event t) {
-                    TreeItem actItem = getTreeItem();
+            addMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+                public void handle(ActionEvent t) {
+                    TreeItem<String> actItem = getTreeItem();
                     if(actItem.getValue().equals("Attributes") || actItem.getValue().equals("Arguments")){
-                        TreeItem newAttr = new TreeItem<String>("New " + actItem.getValue().toString().substring(0,actItem.getValue().toString().length()-1));
+                        TreeItem<String> newAttr = new TreeItem<String>("New " + actItem.getValue().toString().substring(0,actItem.getValue().toString().length()-1));
                         newAttr.getChildren().add(new TreeItem<String>("Type"));
                         getTreeItem().getChildren().add(newAttr);
                     }
                     if(actItem.getValue().equals("Operations")){
-                        TreeItem newOper = new TreeItem<String>("New Operation");
+                        TreeItem<String> newOper = new TreeItem<String>("New Operation");
                         newOper.getChildren().add(new TreeItem<String>("Arguments"));
                         newOper.getChildren().add(new TreeItem<String>("Return type"));
                         newOper.setExpanded(true);
@@ -610,7 +604,6 @@ public class EditorController extends MenuBarController implements Initializable
     public void drawClassDiagram(){
         ClassPaneText.getChildren().removeAll(ClassPaneText.getChildren());
         ArrayList<ArrayList<UMLClass>> LeveledClasses = new ArrayList<>();
-        int rootCount = 0;
         int maxLevel = 0;
         for(UMLClass i:classDiagram.getClasses()){
             UMLClass parent = i.getParent();
