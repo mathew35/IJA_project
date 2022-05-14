@@ -15,6 +15,7 @@ import javafx.fxml.*;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.*;
@@ -367,7 +368,12 @@ public class SequenceController
                         {
                             if (ke.getCode().equals(KeyCode.DELETE)) 
                             {
-                                removeObj();
+                                Alert alert = new Alert(AlertType.CONFIRMATION, "Deleting instance will result in deletion of associated messages. Are you sure you want to continue?",  ButtonType.NO, ButtonType.YES);
+                                alert.showAndWait();
+
+                                if (alert.getResult() == ButtonType.YES) {
+                                    removeObj();
+                                }
                             }
                         }
                     });
@@ -816,7 +822,12 @@ public class SequenceController
                             {
                                 if (ke.getCode().equals(KeyCode.DELETE)) 
                                 {
-                                    removeObj();
+                                    Alert alert = new Alert(AlertType.CONFIRMATION, "Deleting instance will result in deletion of associated messages. Are you sure you want to continue?",  ButtonType.NO, ButtonType.YES);
+                                    alert.showAndWait();
+
+                                    if (alert.getResult() == ButtonType.YES) {
+                                        removeObj();
+                                    }
                                 }
                             }
                         });
@@ -1041,6 +1052,9 @@ public class SequenceController
                                 {
                                     removeRow(seqGridMsgs, rowFocus);
                                     sequenceDiagram.messages.remove(rowFocus);
+
+
+
                                     updateGrids();
                                     createSnapshot(sequenceDiagram);
                                 }
@@ -1128,6 +1142,7 @@ public class SequenceController
                         {
                             if (ke.getCode().equals(KeyCode.DELETE)) 
                             {
+                                // TODO
                                 removeRow(seqGridMsgs, rowFocus);
                                 sequenceDiagram.messages.remove(rowFocus);
                                 updateGrids();
