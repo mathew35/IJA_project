@@ -97,6 +97,10 @@ public class SequenceController
         System.out.println(sequenceDiagram.getClasses());
     }
 
+    public void changeInClass(UMLClass oldClass, UMLClass newClass){
+        // for(UMLClass i:sequenceDiagram.getClasses()
+    }
+
     @FXML
     public void onUndoClick()
     {
