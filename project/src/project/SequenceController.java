@@ -309,7 +309,7 @@ public class SequenceController
             ObjectMapper objectMapper = new ObjectMapper();
 
             SequenceDiagram sequenceDiagramLoad = loadSequence(objectMapper, file);
-            sequenceDiagram = 
+            //sequenceDiagram = 
 
             displaySequence(sequenceDiagram, true);
             createSnapshot(sequenceDiagram);
