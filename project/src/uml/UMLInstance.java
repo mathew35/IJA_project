@@ -51,7 +51,7 @@ public class UMLInstance extends Element
     {
         for (UMLActivation act : another.activations)
         {
-            this.addActivation(new UMLActivation(act.getStart(), act.getEnd()));
+            this.addActivation(new UMLActivation(act.getStart(), act.getEnd(), act.getDeactivation()));
         }  
     }
 }

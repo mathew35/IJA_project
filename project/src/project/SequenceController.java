@@ -129,10 +129,10 @@ public class SequenceController
 
         for (int i = 0; i < sequenceDiagram.messages.size(); i++)
         {
-            System.out.println("Seeing " + sequenceDiagram.messages.get(i).message + ": " + instRemove.instancename + " " + sequenceDiagram.messages.get(i).sender.instancename + " " + sequenceDiagram.messages.get(i).receiver.instancename);
+            //System.out.println("Seeing " + sequenceDiagram.messages.get(i).message + ": " + instRemove.instancename + " " + sequenceDiagram.messages.get(i).sender.instancename + " " + sequenceDiagram.messages.get(i).receiver.instancename);
             if (sequenceDiagram.messages.get(i).sender.instancename.equals(instRemove.instancename) || sequenceDiagram.messages.get(i).receiver.instancename.equals(instRemove.instancename))
             {
-                System.out.println("Removed " + sequenceDiagram.messages.get(i).message + ": " + instRemove.instancename + " " + sequenceDiagram.messages.get(i).sender.instancename + " " + sequenceDiagram.messages.get(i).receiver.instancename);
+                //System.out.println("Removed " + sequenceDiagram.messages.get(i).message + ": " + instRemove.instancename + " " + sequenceDiagram.messages.get(i).sender.instancename + " " + sequenceDiagram.messages.get(i).receiver.instancename);
                 removeRow(seqGridMsgs, i);
                 sequenceDiagram.messages.remove(i);
                 i--;
@@ -276,7 +276,6 @@ public class SequenceController
 
             this.sequenceDiagram = loadSequence(objectMapper, file);
             displaySequence(sequenceDiagram, true);
-            //updateGrids();
             createSnapshot(sequenceDiagram);
         }
     }
@@ -293,6 +292,9 @@ public class SequenceController
             initGrid();
             initGridAct();
         };
+
+        undoButton.setDisable(true);
+        redoButton.setDisable(true);
 
         int colCount = sequenceDiagram.instances.size();
         VBox startObj = new VBox();
@@ -391,19 +393,33 @@ public class SequenceController
                 {
                     if (dropClasses.getValue() != null)
                     {  
-                        sequenceDiagram.createInstance(objField.getText(), dropClasses.getValue());
-
-                        if (seqGrid.getColumnCount() >= 8)
+                        boolean foundSame = false;
+                        for (int i = 0; i < sequenceDiagram.instances.size(); i++)
                         {
-                            addSeqObjButton.setDisable(true);
-                        }
-                        else
-                        {
-                            addSeqObjButton.setDisable(false);
+                            if (sequenceDiagram.instances.get(i).instancename.equals(objField.getText()) && sequenceDiagram.instances.get(i).asgclass.equals(dropClasses.getValue()))
+                            {
+                                foundSame = true;
+                            }
                         }
 
-                        updateGrids();
-                        createSnapshot(sequenceDiagram);
+                        if (foundSame == false)
+                        {
+                            sequenceDiagram.createInstance(objField.getText(), dropClasses.getValue());
+
+                            if (seqGrid.getColumnCount() >= 8)
+                            {
+                                addSeqObjButton.setDisable(true);
+                            }
+                            else
+                            {
+                                addSeqObjButton.setDisable(false);
+                            }
+
+                            updateGrids();
+                            createSnapshot(sequenceDiagram);
+                            undoButton.setDisable(false);
+                            redoButton.setDisable(false);
+                        }                      
                     }
                 }
             }
@@ -846,13 +862,15 @@ public class SequenceController
             UMLMessage message = sequenceDiagram.messages.get(i);
             int msgCount = sequenceDiagram.messages.indexOf(message);
 
-            int sendIndex = sequenceDiagram.instances.indexOf(message.sender);
-            int recIndex = sequenceDiagram.instances.indexOf(message.receiver);
+            int sendIndex = sequenceDiagram.getIndexOfInstace(message.sender);
+            int recIndex = sequenceDiagram.getIndexOfInstace(message.receiver);
+            System.out.println("1 sendIndex: " + sendIndex + " recIndex: " + recIndex);
 
             if (loading == true)
             {
-                sendIndex = sequenceDiagram.getIndexOfInstace(message.sender.instancename);
-                recIndex = sequenceDiagram.getIndexOfInstace(message.receiver.instancename);
+                System.out.println("2 sendIndex: " + sendIndex + " recIndex: " + recIndex);
+                sendIndex = sequenceDiagram.getIndexOfInstace(message.sender);
+                recIndex = sequenceDiagram.getIndexOfInstace(message.receiver);
             }
             
             Label messageLabel = new Label();
@@ -1213,8 +1231,6 @@ public class SequenceController
         }
         else
         {
-            System.out.println("1stage sendIndex: " + sendIndex + " recIndex: " + recIndex);
-
             if (Math.abs(sendIndex - recIndex) != 1)
             {
                 for (int i = sendIndex; i > recIndex + 1; i--)
@@ -1241,8 +1257,6 @@ public class SequenceController
             }
             else
             {
-                System.out.println("2stage sendIndex: " + sendIndex + " recIndex: " + recIndex);
-
                 UMLArrowReply arrow = new UMLArrowReply();
                 arrow.setStartX(0);
                 arrow.setStartY(0);

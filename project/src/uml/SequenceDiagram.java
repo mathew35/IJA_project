@@ -104,12 +104,14 @@ public class SequenceDiagram extends ClassDiagram{
         return lineup;
     }
 
-    public Integer getIndexOfInstace(String name)
+    public Integer getIndexOfInstace(UMLInstance instance)
     {
         for (int i = 0; i < this.instances.size(); i++)
         {
-            if (this.instances.get(i).instancename.equals(name))
+            System.out.println("Entered: " + instance.instancename + " Copared: " + this.instances.get(i).instancename);
+            if (this.instances.get(i).instancename.equals(instance.instancename) && this.instances.get(i).asgclass.getName().equals(instance.asgclass.getName()))
             {
+                System.out.println("Found same: " + instance.instancename + " " + this.instances.get(i).instancename);
                 return i;
             }
         }
