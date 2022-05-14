@@ -300,7 +300,7 @@ public class SequenceController
 
         int colCount = sequenceDiagram.instances.size();
         VBox startObj = new VBox();
-        startObj.setPadding(new Insets(0, 0, 5, 0)); //margins around the whole grid
+        startObj.setPadding(new Insets(0, 0, 5, 0));
         HBox rectangleAlignment = new HBox();
         rectangleAlignment.setPrefWidth(125);
         rectangleAlignment.setAlignment(Pos.CENTER);
@@ -317,8 +317,6 @@ public class SequenceController
         dropClasses.getItems().addAll(sequenceDiagram.getClasses());
 
         objField.setPrefWidth(50);
-
-        //rectangle.getChildren().add
 
         rectangle.setOnMouseClicked((MouseEvent event) -> 
         {
@@ -368,7 +366,7 @@ public class SequenceController
                         {
                             if (ke.getCode().equals(KeyCode.DELETE)) 
                             {
-                                Alert alert = new Alert(AlertType.CONFIRMATION, "Deleting instance will result in deletion of associated messages. Are you sure you want to continue?",  ButtonType.NO, ButtonType.YES);
+                                Alert alert = new Alert(AlertType.CONFIRMATION, "Deleting instance will result in deletion of associated messages",  ButtonType.NO, ButtonType.YES);
                                 alert.showAndWait();
 
                                 if (alert.getResult() == ButtonType.YES) {
@@ -873,7 +871,7 @@ public class SequenceController
 
             int sendIndex = sequenceDiagram.getIndexOfInstace(message.sender);
             int recIndex = sequenceDiagram.getIndexOfInstace(message.receiver);
-            System.out.println("1 sendIndex: " + sendIndex + " recIndex: " + recIndex);
+            //System.out.println("1 sendIndex: " + sendIndex + " recIndex: " + recIndex);
 
             if (loading == true)
             {
@@ -1046,10 +1044,14 @@ public class SequenceController
                             {
                                 if (ke.getCode().equals(KeyCode.DELETE)) 
                                 {
+                                    if (sequenceDiagram.messages.get(rowFocus).transmition == 2)
+                                    {
+                                        colFocus = sequenceDiagram.getIndexOfInstace(sequenceDiagram.messages.get(rowFocus).receiver);
+                                        removeObj();
+                                    }
+
                                     removeRow(seqGridMsgs, rowFocus);
                                     sequenceDiagram.messages.remove(rowFocus);
-
-
 
                                     updateGrids();
                                     createSnapshot(sequenceDiagram);
@@ -1087,7 +1089,7 @@ public class SequenceController
         int recIndex = sequenceDiagram.instances.indexOf(message.receiver);
         Label messageLabel = new Label();
 
-        System.out.println("sendIndex: " + sendIndex + "recIndex: " + recIndex);
+        //System.out.println("sendIndex: " + sendIndex + "recIndex: " + recIndex);
 
         GridPane.setValignment(messageLabel, VPos.TOP);
         GridPane.setHalignment(messageLabel, HPos.CENTER);
@@ -1138,8 +1140,14 @@ public class SequenceController
                         {
                             if (ke.getCode().equals(KeyCode.DELETE)) 
                             {
-                                // TODO
+                                if (sequenceDiagram.messages.get(rowFocus).transmition == 2)
+                                {
+                                    colFocus = sequenceDiagram.getIndexOfInstace(sequenceDiagram.messages.get(rowFocus).receiver);
+                                    removeObj();
+                                }
+
                                 removeRow(seqGridMsgs, rowFocus);
+
                                 sequenceDiagram.messages.remove(rowFocus);
                                 updateGrids();
                                 createSnapshot(sequenceDiagram);

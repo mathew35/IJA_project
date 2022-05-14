@@ -22,7 +22,7 @@ public class UMLMessage{
     @JsonProperty("receiver")
     public UMLInstance receiver;
     @JsonProperty("transmition")
-    public int transmition; // 0 = sync, 1 = async, 2 = reply, 3 = creation
+    public int transmition; // 0 = sync, 1 = async, 2 = creation, 3 = reply
     @JsonProperty("order")
     public int order; // -1 = last
 

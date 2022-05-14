@@ -175,12 +175,19 @@ public class MessageController {
     {
         getMsgType();
 
-        if (!dropSender.getSelectionModel().isEmpty() && msgType == 0)
+        if (!dropSender.getSelectionModel().isEmpty())
         {
-            dropOperation.getItems().clear();
-            dropOperation.getItems().addAll(dropSender.getValue().asgclass.getOperations());
-            dropOperation.getItems().add(placeHolder);
-            dropOperation.getSelectionModel().select(placeHolder);
+            if (msgType == 0 || msgType == 1)
+            {
+                dropOperation.getItems().clear();
+                dropOperation.getItems().addAll(dropSender.getValue().asgclass.getOperations());
+                dropOperation.getItems().add(placeHolder);
+                dropOperation.getSelectionModel().select(placeHolder);
+            }
+            else
+            {
+                dropOperation.setDisable(true);
+            }
         }
         else
         {
@@ -193,10 +200,7 @@ public class MessageController {
     @FXML 
     public void loadMessage()
     {
-        if (!dropOperation.getSelectionModel().isEmpty() && dropOperation.getValue() != placeHolder)
-        {
-            fieldReply.setText(dropOperation.getValue().getName());
-        }
+        // Caused confussion
     }
 
     @FXML
@@ -227,6 +231,7 @@ public class MessageController {
             dropClass.setDisable(true);
             fieldInst.setDisable(true);
             dropClass.getItems().clear();
+            dropReceiver.setDisable(false);
         }
         
         if (rSync.isSelected())
@@ -239,25 +244,34 @@ public class MessageController {
             dropClass.setDisable(true);
             fieldInst.setDisable(true);
             dropClass.getItems().clear();
+            dropReceiver.setDisable(false);
         }
         else if (rAsync.isSelected())
         {
             msgType = 1;
             fieldReply.setDisable(false);
-            dropOperation.setDisable(true);
+            dropOperation.setDisable(false);
             dropOperation.getItems().clear();
             messageLabel.setText("Arguments:");
             dropClass.setDisable(true);
             fieldInst.setDisable(true);
             dropClass.getItems().clear();
+            dropReceiver.setDisable(false);
         }
 
-        if (!dropSender.getSelectionModel().isEmpty() && msgType == 0)
+        if (!dropSender.getSelectionModel().isEmpty())
         {
-            dropOperation.getItems().clear();
-            dropOperation.getItems().addAll(dropSender.getValue().asgclass.getOperations());
-            dropOperation.getItems().add(placeHolder);
-            dropOperation.getSelectionModel().select(placeHolder);
+            if (msgType == 0 || msgType == 1)
+            {
+                dropOperation.getItems().clear();
+                dropOperation.getItems().addAll(dropSender.getValue().asgclass.getOperations());
+                dropOperation.getItems().add(placeHolder);
+                dropOperation.getSelectionModel().select(placeHolder);
+            }
+            else
+            {
+                dropOperation.setDisable(true);
+            }
         }
         else
         {
