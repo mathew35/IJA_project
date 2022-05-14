@@ -135,10 +135,16 @@ public class EditorController extends MenuBarController implements Initializable
         NewClassName.setPromptText("New Class Name");
         drawClassDiagram();
     }
+    public void updateSequenceControllers(){
+        for(SequenceController i:sequenceControllers){
+            i.setClassDiagram(classDiagram);
+        }
+    }
     public void setClassDiagram(ClassDiagram diag){
         classDiagram = diag;
         updateClassTab();
         createSnapshot(classDiagram);
+        updateSequenceControllers();
     }   
 
     //source: https://docs.oracle.com/javafx/2/ui_controls/tree-view.htm
@@ -436,6 +442,7 @@ public class EditorController extends MenuBarController implements Initializable
             updateAttrTree();
             if(change){
                 createSnapshot(classDiagram);
+                updateSequenceControllers();
             }
         }
     }
@@ -468,6 +475,7 @@ public class EditorController extends MenuBarController implements Initializable
         }
         updateClassTab();
         createSnapshot(classDiagram);
+        updateSequenceControllers();
     }
     /**
     * Přidání podtřídy ke vybrané tříde v diagramu tříd
@@ -497,6 +505,7 @@ public class EditorController extends MenuBarController implements Initializable
         }
         updateClassTab();
         createSnapshot(classDiagram);
+        updateSequenceControllers();
     }
 
     /**
@@ -512,6 +521,7 @@ public class EditorController extends MenuBarController implements Initializable
         classDiagram.removeClass(deleteClassName);
         updateClassTab();
         createSnapshot(classDiagram);
+        updateSequenceControllers();
     }
 
     /**
@@ -543,6 +553,7 @@ public class EditorController extends MenuBarController implements Initializable
             ChildClass.setParent(null);
             updateClassTab();
             createSnapshot(classDiagram);
+            updateSequenceControllers();
             return;
         }
         UMLClass commonParent = null;
@@ -570,6 +581,7 @@ public class EditorController extends MenuBarController implements Initializable
         ChildClass.setParent(newParentClass);
         updateClassTab();
         createSnapshot(classDiagram);
+        updateSequenceControllers();
     }
     /**
      * TODO
