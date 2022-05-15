@@ -798,6 +798,7 @@ public class SequenceController
             createSnapshot(sequenceDiagram);
             refreshActs();
         }
+        checkIncon();
     }
 
     @FXML
