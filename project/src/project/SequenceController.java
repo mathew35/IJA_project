@@ -1202,6 +1202,32 @@ public class SequenceController
                                         removeObj();
                                     }
 
+                                    for (int j = 0; j < sequenceDiagram.instances.size(); j++)
+                                    {
+                                        for (int i = 0; i < sequenceDiagram.instances.get(j).activations.size(); i++)
+                                        {
+                                            System.out.println("colFocus: " + colFocus + " i: " + i);
+                                            if (sequenceDiagram.instances.get(j).activations.get(i).getDeactivation() == true)
+                                            {
+                                                if (sequenceDiagram.instances.get(j).activations.get(i).isInBounds(rowFocus))
+                                                {
+                                                    sequenceDiagram.instances.get(j).activations.get(i).setEnd(sequenceDiagram.instances.get(j).activations.get(i).getEnd() - 1);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (sequenceDiagram.instances.get(j).activations.get(i).isInBounds(rowFocus))
+                                                {
+                                                    sequenceDiagram.instances.get(j).activations.get(i).setEnd(sequenceDiagram.instances.get(j).activations.get(i).getEnd() - 1);
+                                                    if (sequenceDiagram.instances.get(j).activations.get(i).getEnd() < sequenceDiagram.instances.get(j).activations.get(i).getStart())
+                                                    {
+                                                        sequenceDiagram.instances.get(j).activations.remove(i);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
                                     removeRow(seqGridMsgs, rowFocus);
                                     sequenceDiagram.messages.remove(rowFocus);
 
@@ -1296,6 +1322,32 @@ public class SequenceController
                                 {
                                     colFocus = sequenceDiagram.getIndexOfInstace(sequenceDiagram.messages.get(rowFocus).receiver);
                                     removeObj();
+                                }
+
+                                for (int j = 0; j < sequenceDiagram.instances.size(); j++)
+                                {
+                                    for (int i = 0; i < sequenceDiagram.instances.get(j).activations.size(); i++)
+                                    {
+                                        System.out.println("colFocus: " + colFocus + " i: " + i);
+                                        if (sequenceDiagram.instances.get(j).activations.get(i).getDeactivation() == true)
+                                        {
+                                            if (sequenceDiagram.instances.get(j).activations.get(i).isInBounds(rowFocus))
+                                            {
+                                                sequenceDiagram.instances.get(j).activations.get(i).setEnd(sequenceDiagram.instances.get(j).activations.get(i).getEnd() - 1);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (sequenceDiagram.instances.get(j).activations.get(i).isInBounds(rowFocus))
+                                            {
+                                                sequenceDiagram.instances.get(j).activations.get(i).setEnd(sequenceDiagram.instances.get(j).activations.get(i).getEnd() - 1);
+                                                if (sequenceDiagram.instances.get(j).activations.get(i).getEnd() < sequenceDiagram.instances.get(j).activations.get(i).getStart())
+                                                {
+                                                    sequenceDiagram.instances.get(j).activations.remove(i);
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
 
                                 removeRow(seqGridMsgs, rowFocus);
