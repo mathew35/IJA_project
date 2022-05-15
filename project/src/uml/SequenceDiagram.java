@@ -151,9 +151,8 @@ public class SequenceDiagram extends ClassDiagram{
             retDiag.createInstance(dInstance.instancename, dInstance.asgclass);
             for (UMLInstance rInstance:retDiag.instances)
             {
-                if (rInstance.instancename.equals(dInstance.instancename))
+                if (rInstance.instancename.equals(dInstance.instancename) && rInstance.asgclass.equals(dInstance.asgclass))
                 {
-                    // System.out.println(rInstance.asgclass.getName());
                     rInstance.deepCopyInstance(dInstance);
                 }
             }
