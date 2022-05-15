@@ -109,7 +109,8 @@ public class SequenceDiagram extends ClassDiagram{
     {
         for (int i = 0; i < this.instances.size(); i++)
         {
-            //System.out.println("Entered: " + instance.instancename + " Copared: " + this.instances.get(i).instancename);
+            // System.out.println("Entered: " + instance.instancename + " Copared: " + this.instances.get(i).instancename);
+            // System.out.println("Entered: " + this.instances.get(i).asgclass.getName() + " Copared: " + instance.asgclass.getName());
             if (this.instances.get(i).instancename.equals(instance.instancename) && this.instances.get(i).asgclass.getName().equals(instance.asgclass.getName()))
             {
                 //System.out.println("Found same: " + instance.instancename + " " + this.instances.get(i).instancename);
@@ -152,6 +153,7 @@ public class SequenceDiagram extends ClassDiagram{
             {
                 if (rInstance.instancename.equals(dInstance.instancename))
                 {
+                    // System.out.println(rInstance.asgclass.getName());
                     rInstance.deepCopyInstance(dInstance);
                 }
             }

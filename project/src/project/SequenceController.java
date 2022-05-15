@@ -95,7 +95,8 @@ public class SequenceController
     public void setClassDiagram(ClassDiagram cDiagram)
     {
         sequenceDiagram.deepCopy(cDiagram);
-        System.out.println(sequenceDiagram.getClasses());
+        // System.out.println(sequenceDiagram.getClasses());
+        checkIncon();
     }
 
     public void changeInOperation(UMLOperation oldOper, UMLOperation newOper, UMLClass uclass){
@@ -110,6 +111,23 @@ public class SequenceController
                 break;
             }
         }
+        for(UMLInstance i:sequenceDiagram.instances){
+            if(i.asgclass.getName().equals(uclass.getName())){
+                for(UMLOperation j:i.asgclass.getOperations()){
+                        if(j.getName().equals(oldOper.getName())){
+                            j.rename(newOper.getName());
+                            break;
+                        }
+                }
+            }
+        }
+        for(UMLMessage i:sequenceDiagram.messages){
+            if(i.receiver.asgclass.getName().equals(uclass.getName())){
+                if(i.operation.getName().equals(oldOper.getName())){
+                    i.operation.rename(newOper.getName());
+                }
+            }
+        }
     }
         
     public void changeInClass(UMLClass oldClass, UMLClass newClass){
@@ -117,6 +135,19 @@ public class SequenceController
             if(i.getName().equals(oldClass.getName())){
                 i.rename(newClass.getName());
                 break;
+            }
+        }
+        for(UMLInstance i:sequenceDiagram.instances){
+            if(i.asgclass.getName().equals(oldClass.getName())){
+                i.asgclass.rename(newClass.getName());
+            }
+        }
+        for(UMLMessage i:sequenceDiagram.messages){
+            if(i.sender.asgclass.getName().equals(oldClass.getName())){
+                i.sender.asgclass.rename(newClass.getName());
+            }
+            if(i.receiver.asgclass.getName().equals(oldClass.getName())){
+                i.receiver.asgclass.rename(newClass.getName());
             }
         }
         updateGrids();        
@@ -397,7 +428,7 @@ public class SequenceController
         {
             if (sequenceDiagram.messages.get(i).operation != null)
             {
-                System.out.println(sequenceDiagram.messages.get(i).operation.getName());
+                // System.out.println(sequenceDiagram.messages.get(i).operation.getName());
                 boolean found = false;
                 for (int j = 0; j < classes.size(); j++)
                 {
@@ -489,7 +520,7 @@ public class SequenceController
                 }
                 colFocus = GridPane.getColumnIndex(clickedNode);
                 rowFocus = GridPane.getRowIndex(clickedNode);
-                System.out.println("Mouse clicked cell: " + colFocus + " And: " + rowFocus);
+                // System.out.println("Mouse clicked cell: " + colFocus + " And: " + rowFocus);
 
                 rectangle.setStroke(Color.DODGERBLUE);
                 rectangle.setEffect(rectangle.getEffect() == null ? effect : null);
@@ -824,7 +855,7 @@ public class SequenceController
                                     }
                                     Integer colIndex = GridPane.getColumnIndex(clickedNode);
                                     Integer rowIndex = GridPane.getRowIndex(clickedNode);
-                                    System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
+                                    // System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
 
                                     colFocus = colIndex;
                                     rowFocus = rowIndex;
@@ -939,7 +970,7 @@ public class SequenceController
                     colFocus = GridPane.getColumnIndex(clickedNode);
                     rowFocus = GridPane.getRowIndex(clickedNode);
 
-                    System.out.println("Mouse clicked cell: " + colFocus + " And: " + rowFocus);
+                    // System.out.println("Mouse clicked cell: " + colFocus + " And: " + rowFocus);
 
                     rectangle.setStroke(Color.DODGERBLUE);
                     rectangle.setEffect(rectangle.getEffect() == null ? effect : null);
@@ -1157,7 +1188,7 @@ public class SequenceController
                 GridPane.setHalignment(selectRec, HPos.CENTER);
 
                 messageLabel.requestFocus();
-                System.out.println("Textfield on focus");
+                // System.out.println("Textfield on focus");
                 selectRec.setStroke(Color.DODGERBLUE);
                 selectRec.setFill(Color.TRANSPARENT);
                 selectRec.setEffect(selectRec.getEffect() == null ? effect : null);
@@ -1174,7 +1205,7 @@ public class SequenceController
                     }
                     Integer colIndex = GridPane.getColumnIndex(clickedNode);
                     Integer rowIndex = GridPane.getRowIndex(clickedNode);
-                    System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
+                    // System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
 
                     colFocus = colIndex;
                     rowFocus = rowIndex;
@@ -1245,7 +1276,7 @@ public class SequenceController
                     }
                     else
                     {
-                        System.out.println("Textfield out focus");
+                        // System.out.println("Textfield out focus");
                         for (int j = 0; j < (seqGridMsgs.getChildren().size()); j++)
                         {
                             Node nodeMsg = seqGridMsgs.getChildren().get(j);
@@ -1301,7 +1332,7 @@ public class SequenceController
                 }
                 Integer colIndex = GridPane.getColumnIndex(clickedNode);
                 Integer rowIndex = GridPane.getRowIndex(clickedNode);
-                System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
+                // System.out.println("Mouse clicked cell: " + colIndex + " And: " + rowIndex);
 
                 colFocus = colIndex;
                 rowFocus = rowIndex;
@@ -1372,7 +1403,7 @@ public class SequenceController
                 }
                 else
                 {
-                    System.out.println("Textfield out focus");
+                    // System.out.println("Textfield out focus");
                     for (int i = 0; i < (seqGridMsgs.getChildren().size()); i++)
                     {
                         Node nodeMsg = seqGridMsgs.getChildren().get(i);
@@ -1408,7 +1439,7 @@ public class SequenceController
         }
         else
         {
-            System.out.println("Message order: " + message.order);
+            // System.out.println("Message order: " + message.order);
             seqGridMsgs.getRowConstraints().add(sequenceDiagram.messages.size(), new RowConstraints(30));
             for (Node child : seqGridMsgs.getChildren()) 
             {

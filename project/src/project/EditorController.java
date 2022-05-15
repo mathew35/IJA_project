@@ -232,7 +232,7 @@ public class EditorController extends MenuBarController implements Initializable
         @Override
         public void cancelEdit() {
             super.cancelEdit();
-            setText((String) getItem());
+            setText(getItem());
             setGraphic(getTreeItem().getGraphic());
         }
  
@@ -318,7 +318,8 @@ public class EditorController extends MenuBarController implements Initializable
                 TreeItem<String> opr = new TreeItem<String>(i.getName());
                 TreeItem<String> args = new TreeItem<String>("Arguments");
                 TreeItem<String> type = new TreeItem<String>(i.getType().getName());
-                opr.getChildren().addAll(args, type);
+                opr.getChildren().add(args);
+                opr.getChildren().add(type);
                 for(UMLAttribute arg:i.getArguments()){
                     TreeItem<String> atr = new TreeItem<String>(arg.getName());
                     TreeItem<String> atrType = new TreeItem<String>(arg.getType().getName());
@@ -374,7 +375,7 @@ public class EditorController extends MenuBarController implements Initializable
                 updateAttrTree(); 
                 updateSequenceClass(oldClass, FocusedClass);
                 createSnapshot(classDiagram);
-                updateSequenceControllers();
+                // updateSequenceControllers();
                 change = true;             
                 return;
             }
@@ -512,6 +513,7 @@ public class EditorController extends MenuBarController implements Initializable
     public void refresh(){
         updateClassTab();
         updateAttrTree();
+        updateSequenceControllers();
     }
     /**
     * Přidání třídy do diagramu tříd
@@ -761,9 +763,6 @@ public class EditorController extends MenuBarController implements Initializable
                 }
             }
         }
-        System.out.println(VBchild.getBoundsInParent());
-        System.out.println(VBchild.getLayoutX());
-        System.out.println(VBchild.getLayoutY());
         Line line = new Line();
         line.setStartX(VBchild.getLayoutX()+VBchild.getPrefWidth()/2);
         line.setStartY(VBchild.getLayoutY());
