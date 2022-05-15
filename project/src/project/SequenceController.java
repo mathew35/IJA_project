@@ -760,6 +760,7 @@ public class SequenceController
         
         for (int i = 0; i < sequenceDiagram.instances.size(); i++)
         {
+            //System.out.print(sequenceDiagram.instances.get(i).asgclass.getName());
             Integer messageCounter = 0;
             while (messageCounter < maxDraw + 1)
             {
@@ -770,7 +771,7 @@ public class SequenceController
                     Integer toIndex = sequenceDiagram.instances.get(i).activations.get(j).getEnd();
                     boolean deactivated = sequenceDiagram.instances.get(i).activations.get(j).getDeactivation();
 
-                    //System.out.println("Start: " + fromIndex + " End: " + toIndex + " Counter: " + messageCounter);
+                    System.out.println("Adding to " + sequenceDiagram.instances.get(i).asgclass.getName() + " Start: " + fromIndex + " End: " + toIndex + " Counter: " + messageCounter);
     
                     if (sequenceDiagram.instances.get(i).activations.get(j).isInBounds(messageCounter))
                     {
@@ -1224,6 +1225,11 @@ public class SequenceController
                                                         sequenceDiagram.instances.get(j).activations.remove(i);
                                                     }
                                                 }
+                                                else if (sequenceDiagram.instances.get(j).activations.get(i).getStart() > rowFocus)
+                                                {
+                                                    sequenceDiagram.instances.get(j).activations.get(i).setEnd(sequenceDiagram.instances.get(j).activations.get(i).getEnd() - 1);
+                                                    sequenceDiagram.instances.get(j).activations.get(i).setStart(sequenceDiagram.instances.get(j).activations.get(i).getStart() - 1);
+                                                }
                                             }
                                         }
                                     }
@@ -1345,6 +1351,11 @@ public class SequenceController
                                                 {
                                                     sequenceDiagram.instances.get(j).activations.remove(i);
                                                 }
+                                            }
+                                            else if (sequenceDiagram.instances.get(j).activations.get(i).getStart() > rowFocus)
+                                            {
+                                                sequenceDiagram.instances.get(j).activations.get(i).setEnd(sequenceDiagram.instances.get(j).activations.get(i).getEnd() - 1);
+                                                sequenceDiagram.instances.get(j).activations.get(i).setStart(sequenceDiagram.instances.get(j).activations.get(i).getStart() - 1);
                                             }
                                         }
                                     }
