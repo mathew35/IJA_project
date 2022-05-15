@@ -140,6 +140,11 @@ public class EditorController extends MenuBarController implements Initializable
             i.changeInClass(oldClass,newClass);
         }
     }
+    public void updateSequenceOper(UMLOperation oldOper, UMLOperation newOper, UMLClass uclass){
+        for(SequenceController i:sequenceControllers){
+            i.changeInOperation(oldOper,newOper,uclass);
+        }
+    }
     public void setClassDiagram(ClassDiagram diag){
         classDiagram = diag;
         createSnapshot(classDiagram);
@@ -406,23 +411,57 @@ public class EditorController extends MenuBarController implements Initializable
             List<UMLOperation> toRmOper = new ArrayList<UMLOperation>();
             for(UMLOperation i:itemClass.getOperations()){
                 boolean found = false;
+                boolean fOpName = false;
                 for(UMLOperation j:Operations){
-                    if(j.getName().equals(i.getName()) && j.getType().getName().equals(i.getType().getName())){
-                        found = true;
-                        for(UMLAttribute k:i.getArguments()){
-                            boolean foundAttr = false;
-                            for(UMLAttribute l:j.getArguments()){
-                                if(l.getName().equals(k.getName()) && l.getType().getName().equals(k.getType().getName())){
-                                    foundAttr = true;
+                    if(j.getName().equals(i.getName())){
+                        fOpName = true;
+                        if(j.getType().getName().equals(i.getType().getName())){
+                            found = true;
+                            for(UMLAttribute k:i.getArguments()){
+                                boolean foundAttr = false;
+                                for(UMLAttribute l:j.getArguments()){
+                                    if(l.getName().equals(k.getName()) && l.getType().getName().equals(k.getType().getName())){
+                                        foundAttr = true;
+                                        break;
+                                    }
+                                }
+                                if(!foundAttr){
+                                    found = false;
                                     break;
                                 }
                             }
-                            if(!foundAttr){
-                                found = false;
+                            break;
+                        }
+                    } 
+                }
+                if(!fOpName && itemClass.getOperations().size() == Operations.size()){
+                    ArrayList<String> searched = new ArrayList<String>();
+                    UMLOperation oldOper = null;
+                    for(UMLOperation j:Operations){
+                        searched.add(j.getName());
+                    }
+                    for(UMLOperation j:itemClass.getOperations()){
+                        boolean foundOper = false;
+                        for(UMLOperation k:Operations){
+                            if(j.getName()==k.getName()){
+                                searched.remove(k.getName());
+                                foundOper = true;
                                 break;
                             }
                         }
-                        break;
+                        if(!foundOper){
+                            oldOper = j;
+                        }
+                    }
+                    UMLOperation newOper = null;
+                    for(UMLOperation j:Operations){
+                        if(j.getName().equals(searched.get(0))){
+                            newOper = j;
+                            break;
+                        }
+                    }
+                    if(newOper != null){
+                        updateSequenceOper(oldOper, newOper, itemClass);
                     }
                 }
                 if(!found){
