@@ -699,6 +699,7 @@ public class EditorController extends MenuBarController implements Initializable
         VBox contentBox = new VBox();
         rect.setId(uclass.getName());
         rect.setMaxHeight(80);
+        rect.setPrefHeight(rect.getMaxHeight());
         rect.setPrefWidth(180);
         rect.setLayoutX(posX-rect.getPrefWidth()/2);
         rect.setLayoutY(posY);
@@ -713,6 +714,7 @@ public class EditorController extends MenuBarController implements Initializable
         sep.setStyle("-fx-background-color:BLACK;");
         contentScroll.setContent(contentBox);
         contentScroll.setPrefWidth(rect.getPrefWidth());
+        contentScroll.setPrefHeight(rect.getPrefHeight());
         contentScroll.setMaxHeight(170);
         contentScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         TextFlow attr = new TextFlow();
