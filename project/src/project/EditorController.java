@@ -699,6 +699,7 @@ public class EditorController extends MenuBarController implements Initializable
         VBox contentBox = new VBox();
         rect.setId(uclass.getName());
         rect.setMaxHeight(80);
+        rect.setPrefHeight(rect.getMaxHeight());
         rect.setPrefWidth(180);
         rect.setLayoutX(posX-rect.getPrefWidth()/2);
         rect.setLayoutY(posY);
@@ -713,6 +714,7 @@ public class EditorController extends MenuBarController implements Initializable
         sep.setStyle("-fx-background-color:BLACK;");
         contentScroll.setContent(contentBox);
         contentScroll.setPrefWidth(rect.getPrefWidth());
+        contentScroll.setPrefHeight(rect.getPrefHeight());
         contentScroll.setMaxHeight(170);
         contentScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         TextFlow attr = new TextFlow();
@@ -776,8 +778,23 @@ public class EditorController extends MenuBarController implements Initializable
         line3.setStartX(line2.getEndX());
         line3.setStartY(line2.getEndY());
         line3.setEndX(line2.getEndX());
-        line3.setEndY(VBparent.getLayoutY()+VBparent.getHeight()+15);
-        ClassPaneDiag.getChildren().addAll(line,line2,line3);
+        line3.setEndY(VBparent.getLayoutY()+VBparent.getMaxHeight()+10);
+        Line triangle1 = new Line();
+        triangle1.setStartX(line3.getEndX());
+        triangle1.setStartY(line3.getEndY()-10);
+        triangle1.setEndX(line3.getEndX()-10);
+        triangle1.setEndY(line3.getEndY());
+        Line triangle2 = new Line();
+        triangle2.setStartX(line3.getEndX());
+        triangle2.setStartY(line3.getEndY()-10);
+        triangle2.setEndX(line3.getEndX()+10);
+        triangle2.setEndY(line3.getEndY());
+        Line triangle3 = new Line();
+        triangle3.setStartX(line3.getEndX()-10);
+        triangle3.setStartY(line3.getEndY());
+        triangle3.setEndX(line3.getEndX()+10);
+        triangle3.setEndY(line3.getEndY());
+        ClassPaneDiag.getChildren().addAll(line,line2,line3,triangle1,triangle2,triangle3);
     }
     /**
      * TODO
