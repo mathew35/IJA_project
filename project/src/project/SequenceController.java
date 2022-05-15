@@ -95,6 +95,22 @@ public class SequenceController
     public void setClassDiagram(ClassDiagram cDiagram)
     {
         sequenceDiagram.deepCopy(cDiagram);
+        for(UMLClass i:sequenceDiagram.getClasses()){
+            for(UMLInstance j:sequenceDiagram.instances){
+                if(i.getName().equals(j.asgclass.getName())){
+                    ArrayList<String> toRM = new ArrayList<String>();
+                    for(UMLOperation oper: j.asgclass.getOperations()){
+                        toRM.add(oper.getName());
+                    }
+                    for(String oper:toRM){
+                        j.asgclass.removeAttrOper(oper);
+                    }
+                    for(UMLOperation oper:i.getOperations()){
+                        j.asgclass.addOperation(oper);
+                    }
+                }
+            }
+        }
         // System.out.println(sequenceDiagram.getClasses());
         checkIncon();
     }
@@ -329,6 +345,22 @@ public class SequenceController
             SequenceDiagram sequenceDiagramLoad = loadSequence(objectMapper, file);
 
             sequenceDiagram.instances = sequenceDiagramLoad.instances;
+            for(UMLInstance j:sequenceDiagram.instances){
+                for(UMLClass i:sequenceDiagram.getClasses()){
+                    if(i.getName().equals(j.asgclass.getName())){
+                        ArrayList<String> toRM = new ArrayList<String>();
+                        for(UMLOperation oper: j.asgclass.getOperations()){
+                            toRM.add(oper.getName());
+                        }
+                        for(String oper:toRM){
+                            j.asgclass.removeAttrOper(oper);
+                        }
+                        for(UMLOperation oper:i.getOperations()){
+                            j.asgclass.addOperation(oper);
+                        }
+                    }
+                }
+            }
             sequenceDiagram.messages = sequenceDiagramLoad.messages;
 
             displaySequence(sequenceDiagram, true);
