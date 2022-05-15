@@ -3,11 +3,14 @@ package uml;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
 public class UMLArrow extends Group {
 
     private final Line line;
+    private final Line arrow1;
+    private final Line arrow2;
 
     public UMLArrow() {
         this(new Line(), new Line(), new Line());
@@ -19,6 +22,8 @@ public class UMLArrow extends Group {
     private UMLArrow(Line line, Line arrow1, Line arrow2) {
         super(line, arrow1, arrow2);
         this.line = line;
+        this.arrow1 = arrow1;
+        this.arrow2 = arrow2;
         InvalidationListener updater = o -> {
             double ex = getEndX();
             double ey = getEndY();
@@ -67,6 +72,13 @@ public class UMLArrow extends Group {
 
     public final void setStartX(double value) {
         line.setStartX(value);
+    }
+
+    public final void setColorRed() 
+    {
+        line.setStroke(Color.RED);
+        arrow1.setStroke(Color.RED);
+        arrow2.setStroke(Color.RED);
     }
 
     public final double getStartX() {

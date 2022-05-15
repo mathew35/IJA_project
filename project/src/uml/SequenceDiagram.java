@@ -150,6 +150,7 @@ public class SequenceDiagram extends ClassDiagram{
             {
                 if (rInstance.instancename.equals(dInstance.instancename))
                 {
+                    System.out.println(rInstance.asgclass.getName());
                     rInstance.deepCopyInstance(dInstance);
                 }
             }

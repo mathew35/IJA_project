@@ -325,8 +325,8 @@ public class SequenceController
             {
                 for (int j = 0; j < seqGrid.getRowCount(); j++)
                 {
-                    System.out.println("i: " + i + " j: " + j + " = " + (i + j * sequenceDiagram.instances.size()));
-                    System.out.println(seqGrid.getChildren().get(i + j * sequenceDiagram.instances.size()));
+                    //System.out.println("i: " + i + " j: " + j + " = " + (i + j * sequenceDiagram.instances.size()));
+                    //System.out.println(seqGrid.getChildren().get(i + j * sequenceDiagram.instances.size()));
             
                     for (Node node : seqGrid.getChildren()) 
                     {
@@ -352,7 +352,7 @@ public class SequenceController
 
                 while (messageCounter < maxDraw + 1)
                 {
-                    System.out.println("Counter: " + messageCounter);
+                    //System.out.println("Counter: " + messageCounter);
                     for (int j = 0; j < sequenceDiagram.instances.get(i).activations.size(); j++)
                     {
                         Integer fromIndex = sequenceDiagram.instances.get(i).activations.get(j).getStart();
@@ -389,6 +389,50 @@ public class SequenceController
                         }
                     }
                     messageCounter++;
+                }
+            }
+        }
+
+        for (int i = 0; i < seqGridMsgs.getRowCount(); i++)
+        {
+            if (sequenceDiagram.messages.get(i).operation != null)
+            {
+                System.out.println(sequenceDiagram.messages.get(i).operation.getName());
+                boolean found = false;
+                for (int j = 0; j < classes.size(); j++)
+                {
+                    for (int k = 0; k <  classes.get(j).getOperations().size(); k++)
+                    {
+                        if (classes.get(j).getOperations().get(k).getName().equals(sequenceDiagram.messages.get(i).operation.getName()))
+                        {
+                            found = true;
+                        }
+                    }
+                }
+
+                if (found == false)
+                {
+                    for (Node node : seqGridMsgs.getChildren()) 
+                    {
+                        if (GridPane.getRowIndex(node) == i) 
+                        {
+                            //System.out.println(node);
+                            if (node instanceof Label)
+                            {
+                                ((Label)node).setTextFill(Color.RED);
+                            }
+
+                            if (node instanceof UMLArrow)
+                            {
+                                ((UMLArrow)node).setColorRed();
+                            }
+
+                            if (node instanceof Line)
+                            {
+                                ((Line)node).setStroke(Color.RED);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -1515,5 +1559,6 @@ public class SequenceController
         seqGridAct = new GridPane();
 
         displaySequence(sequenceDiagram, false);
+        checkIncon();
     }
 }
