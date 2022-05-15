@@ -33,6 +33,7 @@ public class SequenceDiagram extends ClassDiagram{
     /**
      * Vytvoří instanci UML zprávy a vloží ji do diagramu.
      * 
+     * @param message Zpráva.
      * @param operation Operace dané zprávy.
      * @param sender Odesílatel zprávy.
      * @param receiver Příjemce zprávy.
@@ -54,9 +55,9 @@ public class SequenceDiagram extends ClassDiagram{
      * @param receiver Příjemce zprávy.
      * @param transmition Typ přenosu (synchroní, asynchroní).
      */
-    public UMLMessage createMessage(String message, UMLInstance  sender, UMLInstance receiver, int transmition, int order)
+    public UMLMessage createMessage(String message, UMLOperation operation, UMLInstance  sender, UMLInstance receiver, int transmition, int order)
     {
-        UMLMessage newMessage = new UMLMessage(message, sender, receiver, transmition, order);
+        UMLMessage newMessage = new UMLMessage(message, operation, sender, receiver, transmition, order);
         this.messages.add(newMessage);
 
         return newMessage;
@@ -145,6 +146,7 @@ public class SequenceDiagram extends ClassDiagram{
 
         for (UMLInstance dInstance: this.instances)
         {
+            // HEre
             retDiag.createInstance(dInstance.instancename, dInstance.asgclass);
             for (UMLInstance rInstance:retDiag.instances)
             {
@@ -158,7 +160,7 @@ public class SequenceDiagram extends ClassDiagram{
 
         for (UMLMessage diaMessage: this.messages)
         {
-            retDiag.createMessage(diaMessage.message, diaMessage.sender, diaMessage.receiver, diaMessage.transmition, diaMessage.order);
+            retDiag.createMessage(diaMessage.message, diaMessage.operation, diaMessage.sender, diaMessage.receiver, diaMessage.transmition, diaMessage.order);
         }
 
         return retDiag;
