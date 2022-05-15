@@ -144,6 +144,7 @@ public class SequenceController
                 }
             }
         }
+        updateGrids();  
     }
         
     public void changeInClass(UMLClass oldClass, UMLClass newClass){
