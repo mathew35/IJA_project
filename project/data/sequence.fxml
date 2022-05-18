@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Point3D?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<HBox fx:id="seqEditorBack" prefHeight="665.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.SequenceController">
+   <children>
+      <VBox alignment="TOP_CENTER" prefHeight="486.0" prefWidth="60.0">
+         <children>
+            <Button fx:id="addSeqObjButton" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#addSeqObj" prefHeight="30.0" prefWidth="32.0">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+               <graphic>
+                  <FontAwesomeIconView glyphName="PLUS" />
+               </graphic>
+            </Button>
+            <Button fx:id="removeObjButton" disable="true" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#removeObj" prefHeight="30.0" prefWidth="32.0">
+               <graphic>
+                  <FontAwesomeIconView glyphName="MINUS" />
+               </graphic>
+            </Button>
+            <Button fx:id="messageCreatorButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#openMessageCreator" prefHeight="30.0" prefWidth="30.0">
+               <graphic>
+                  <FontAwesomeIconView glyphName="SEND" />
+               </graphic>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="actCreatorButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#openActCreator" prefHeight="30.0" prefWidth="30.0">
+               <graphic>
+                  <FontAwesomeIconView glyphName="PLAY" wrappingWidth="8.628583908081055" />
+               </graphic>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Button>
+            <Line endX="40.0" stroke="#aeaeae" strokeWidth="2.0">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Line>
+            <Button fx:id="undoButton" alignment="CENTER" contentDisplay="CENTER" disable="true" mnemonicParsing="false" onAction="#onUndoClick" prefHeight="30.0" prefWidth="30.0">
+               <graphic>
+                  <FontAwesomeIconView glyphName="UNDO" size="15" wrappingWidth="11.02857756614685" />
+               </graphic>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Button>
+            <Button fx:id="redoButton" alignment="CENTER" contentDisplay="CENTER" disable="true" mnemonicParsing="false" onAction="#onRedoClick" prefHeight="30.0" prefWidth="30.0">
+               <graphic>
+                  <FontAwesomeIconView glyphName="UNDO" rotate="180.0" size="15" wrappingWidth="11.02857756614685">
+                     <rotationAxis>
+                        <Point3D y="-1.0" />
+                     </rotationAxis>
+                  </FontAwesomeIconView>
+               </graphic>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Button>
+         </children>
+      </VBox>
+      <StackPane fx:id="seqEditorBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="665.0" prefWidth="1220.0">
+         <children>
+            <VBox fx:id="seqObjBox" prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Region prefHeight="10.0" prefWidth="849.0" />
+               </children>
+            </VBox>
+            <VBox fx:id="seqActBox" prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Region fx:id="actRegion" prefHeight="65.0" prefWidth="900.0" />
+               </children>
+            </VBox>
+            <VBox fx:id="seqMsgBox" prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Region fx:id="msgRegion" prefHeight="65.0" prefWidth="900.0" />
+               </children>
+            </VBox>
+            <HBox fx:id="optionSeqBox" alignment="CENTER" prefHeight="100.0" prefWidth="1220.0">
+               <children>
+                  <VBox fx:id="addSeqObjFirst" alignment="CENTER" onMouseClicked="#addSeqObj" prefHeight="486.0" prefWidth="332.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Text fill="#00000081" strokeType="OUTSIDE" strokeWidth="0.0" text="+">
+                           <font>
+                              <Font size="70.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#0000007f" strokeType="OUTSIDE" strokeWidth="0.0" text="Add Object..." wrappingWidth="69.08398818969727" />
+                     </children>
+                  </VBox>
+                  <VBox fx:id="loadSeqFirst" alignment="CENTER" onMouseClicked="#loadSeqDiagram" prefHeight="486.0" prefWidth="338.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <FontAwesomeIconView fill="#757576" glyphName="EJECT" size="40" wrappingWidth="37.499104499816895">
+                           <font>
+                              <Font size="17.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="20.0" top="35.0" />
+                           </VBox.margin>
+                        </FontAwesomeIconView>
+                        <Text fill="#0000007f" strokeType="OUTSIDE" strokeWidth="0.0" text="Load Sequence..." wrappingWidth="89.08398818969727" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </StackPane>
+   </children>
+</HBox>

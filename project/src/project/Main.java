@@ -1,40 +1,91 @@
-package src.project;
+/**
+ * Incializace celé aplikace a zajišťuje spuštění JavaFX s kombinací souborů typu FXML.
+ *
+ * @author Adam Bazel (xbazel00)
+ * @author Matůš Vráblik (xvrabl05)
+ * @since  2022-04-12
+ */
+
+package project;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
-import org.json.*;
+import uml.*;
 
-public class Main extends Application{
+import java.awt.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+/**
+ * Incializace celé aplikace a zajišťuje spuštění JavaFX s kombinací souborů typu FXML.
+ */
+public class Main extends Application{    
+
+    public static Stage stage;
+
+    /**
+     * Načtení FXML souboru do scény a určení scény na "jeviště".
+     *
+     * @param stage kontejner JavaFX nejvyšší úrovně, který zobrazuje scénu.
+     */
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getClassLoader().getResource("data/hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getClassLoader().getResource("menu.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), Toolkit.getDefaultToolkit().getScreenSize().getWidth()/2, Toolkit.getDefaultToolkit().getScreenSize().getHeight()/2);
+        stage.setTitle("UML Diagram Editor");
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
 
-    public static void main(String[] args) 
-    {
-        String lCurentDir = System.getProperty("user.dir")+"/dia.txt";
-        try {
-            File myObj = new File(lCurentDir);
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-              String data = myReader.nextLine();
-              System.out.println(data);
-            }
-            myReader.close();
-          } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-          }
+    /**
+     * Inicializace aplikace.
+     *
+     * @param args Argumenty.
+     */
+    public static void main(String[] args) {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        MenuController menu = new MenuController();
+
+        /*ClassDiagram d = new ClassDiagram("My model");
+        UMLClass cls = d.createClass("C1");
+        
+        UMLClass cls2 = d.createClass("C2");                
+        UMLAttribute attr1 = new UMLAttribute("count", d.classifierForName("int"));
+        UMLAttribute attr2 = new UMLAttribute("id", d.classifierForName("certain"));
+        UMLAttribute attr3 = new UMLAttribute("c", d.classifierForName("yeah"));
+
+        UMLAttribute attr4 = new UMLAttribute("sucakge", d.classifierForName("string"));
+        UMLAttribute attr5 = new UMLAttribute("ye", d.classifierForName("volume"));
+        UMLAttribute attr6 = new UMLAttribute("insanity", d.classifierForName("sinsiter"));
+
+        cls.addAttribute(attr1);
+        cls.addAttribute(attr2);
+        cls.addAttribute(attr3);
+
+        cls2.addAttribute(attr6);
+        cls2.addAttribute(attr4);
+        cls2.addAttribute(attr5);
+
+        //menu.loadClass(objectMapper, null);
+        
+        menu.exportClass(objectMapper, d);*/
+
+        SequenceDiagram diagram = new SequenceDiagram("Sequence");
+        UMLClass cls = diagram.createClass("ATM");
+        UMLClass cls2 = diagram.createClass("Bank");
+        UMLClass cls3 = diagram.createClass("Database");
+        UMLOperation op1 = UMLOperation.create("method1", diagram.classifierForName("void"), 
+        new UMLAttribute("arg1", diagram.classifierForName("C1")),
+        new UMLAttribute("arg2", diagram.classifierForName("String")));
+
+        cls.addOperation(op1);
+
+        menu.exportSequence(objectMapper, diagram);
+        //loadSequence(objectMapper);
 
         launch();
     }
